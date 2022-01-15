@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Utilities.CustomSwerveControllorCommand;
 import frc.robot.Utilities.Util;
 //import frc.robot.subsystems.PathPlannerTrajectory.PathPlannerState;
 import static frc.robot.Constants.Constants_Swerve.*;
@@ -60,18 +61,12 @@ public class TrajectoryFollower extends SubsystemBase {
     SmartDashboard.putNumber("traj time", trajectory.getTotalTimeSeconds());
     
     PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1", 8, 5);
-    Trajectory traj3  = PathPlanner.loadPath("Path1", 8, 5);    
     trajtime=traj2.getTotalTimeSeconds();
-
-
-
-
-
 
     // Print the holonomic rotation at the sampled time
     int i=0;
     System.out.println("traj2");
-    System.out.println("time,x,y,angle,v");
+    System.out.println("time,x,y,rot,hol,angV,angA,R,v,a");
     while(i<21){
         PathPlannerState state = (PathPlannerState) traj2.sample(i*trajtime/20);
 
@@ -95,8 +90,8 @@ public class TrajectoryFollower extends SubsystemBase {
         kP_rotate, 0, 0, AutoConstants.kThetaControllerConstraints);
 thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-SwerveControllerCommand swerveControllerCommand =
-    new SwerveControllerCommand(
+CustomSwerveControllorCommand swerveControllerCommand =
+    new CustomSwerveControllorCommand(
         traj2,
         sds::getPose, // Functional interface to feed supplier
         m_kinematics,
@@ -105,6 +100,7 @@ SwerveControllerCommand swerveControllerCommand =
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
         thetaController,
+        () -> ((PathPlannerState) ( ((PathPlannerTrajectory)traj2).getStates().get(1) )).holonomicRotation,
         sds::setModuleStates,
         sds);
 

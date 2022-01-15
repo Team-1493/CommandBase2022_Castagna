@@ -22,6 +22,11 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlanner.*;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
 /**
  * A command that uses two PID controllers ({@link PIDController}) and a ProfiledPIDController
  * ({@link ProfiledPIDController}) to follow a trajectory {@link Trajectory} with a swerve drive.
@@ -36,7 +41,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("MemberName")
 public class CustomSwerveControllorCommand extends CommandBase {
   private final Timer m_timer = new Timer();
-  private final Trajectory m_trajectory;
+  private final PathPlannerTrajectory m_trajectory;
   private final Supplier<Pose2d> m_pose;
   private final SwerveDriveKinematics m_kinematics;
   private final HolonomicDriveController m_controller;
@@ -65,7 +70,7 @@ public class CustomSwerveControllorCommand extends CommandBase {
    */
   @SuppressWarnings("ParameterName")
   public CustomSwerveControllorCommand(
-      Trajectory trajectory,
+      PathPlannerTrajectory trajectory,
       Supplier<Pose2d> pose,
       SwerveDriveKinematics kinematics,
       PIDController xController,
@@ -118,7 +123,7 @@ public class CustomSwerveControllorCommand extends CommandBase {
    */
   @SuppressWarnings("ParameterName")
   public CustomSwerveControllorCommand(
-      Trajectory trajectory,
+      PathPlannerTrajectory trajectory,
       Supplier<Pose2d> pose,
       SwerveDriveKinematics kinematics,
       PIDController xController,
@@ -127,14 +132,13 @@ public class CustomSwerveControllorCommand extends CommandBase {
       Consumer<SwerveModuleState[]> outputModuleStates,
       Subsystem... requirements) {
     this(
-        trajectory,
+        (PathPlannerTrajectory)trajectory,
         pose,
         kinematics,
         xController,
         yController,
-        thetaController,
-        () ->
-            trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters.getRotation(),
+        thetaController,  
+        () -> getholonomic((PathPlannerTrajectory)trajectory),
         outputModuleStates,
         requirements);
   }
@@ -149,12 +153,12 @@ public class CustomSwerveControllorCommand extends CommandBase {
   @SuppressWarnings("LocalVariableName")
   public void execute() {
     double curTime = m_timer.get();
-    var desiredState = m_trajectory.sample(curTime);
+    PathPlannerState desiredState = 
+          (PathPlannerState)( ((PathPlannerTrajectory)m_trajectory).sample(curTime));
 
     var targetChassisSpeeds =
-        m_controller.calculate(m_pose.get(), desiredState, m_desiredRotation.get());
+        m_controller.calculate(m_pose.get(), desiredState,((PathPlannerState) desiredState).holonomicRotation );
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
-
     m_outputModuleStates.accept(targetModuleStates);
   }
 
@@ -167,4 +171,14 @@ public class CustomSwerveControllorCommand extends CommandBase {
   public boolean isFinished() {
     return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
   }
+
+  public static Rotation2d getholonomic(PathPlannerTrajectory traj){
+    Rotation2d rot=null;
+      int size=traj.getStates().size()-1;
+      PathPlannerState state = (PathPlannerState) traj.getStates().get(size);
+      rot=state.holonomicRotation;
+    return rot;
+    
+  }
+
 }

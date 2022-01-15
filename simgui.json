@@ -1,0 +1,15 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Camera": "Subsystem",
+      "/LiveWindow/CameraInterface": "Subsystem",
+      "/LiveWindow/Stick": "Subsystem",
+      "/LiveWindow/SwerveDriveSystem": "Subsystem",
+      "/LiveWindow/Tables": "Subsystem",
+      "/LiveWindow/TrajectoryFollower": "Subsystem",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler"
+    }
+  }
+}
