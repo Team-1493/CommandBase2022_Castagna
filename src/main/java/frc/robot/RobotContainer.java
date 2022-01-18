@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.RotateInPlace;
 import frc.robot.commands.TurboToggle;
 import frc.robot.Sensors.Camera;
+import frc.robot.Sensors.advancedCam;
 import frc.robot.Utilities.DriverStationInterface;
 import frc.robot.commands.DriveSwerve;
 import frc.robot.commands.ResetEncoders;
@@ -37,7 +38,7 @@ public class RobotContainer {
   public final CameraInterface m_camInt = new CameraInterface(m_swervedriveSystem);
   public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem);
   public final DriverStationInterface driverInterface = new DriverStationInterface(m_swervedriveSystem);
-  public final Camera camera = new Camera(); 
+  public final advancedCam camera = new advancedCam(); 
   final DriveSwerve m_driveswerve ;
   final UpdateTable m_updatetable ;
   final RotateInPlace m_RotateInPlace ;

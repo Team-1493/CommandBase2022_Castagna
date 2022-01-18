@@ -137,7 +137,6 @@ if (stickState[3]==1) omega=stickState[2];
 // Convert to speeds module states
     SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
     setModuleStates(moduleStates);
-  
   printModuleStates();
 }
 

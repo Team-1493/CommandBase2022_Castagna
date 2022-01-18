@@ -11,5 +11,16 @@
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler"
     }
+  },
+  "NetworkTables": {
+    "CameraPublisher": {
+      "USB Camera 0": {
+        "Property": {
+          "open": true
+        },
+        "open": true
+      },
+      "open": true
+    }
   }
 }

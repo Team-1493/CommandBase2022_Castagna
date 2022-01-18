@@ -51,7 +51,6 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     m_drive.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0, 25);
     m_drive.config_kP(0, kP_drive);
     m_drive.config_kF(0, kF_drive);
-
     feedforward_drive = new SimpleMotorFeedforward(kS_drive, kV_drive, kA_drive);
                     
 
@@ -100,7 +99,7 @@ public SwerveModuleState getState() {
 public void setMotors(double speed,double turnAngle) {
     m_drive.set(ControlMode.Velocity, speed*MPSToNativeSpeed);
     m_turn.set(ControlMode.Position,turnAngle*RadiansToNativePos);
-  }
+}
 
   public void setMotorsFF(double speed,double turnAngle) {
 //    double driveFFUnits=feedforward_drive.calculate(speed)/voltageComp;
