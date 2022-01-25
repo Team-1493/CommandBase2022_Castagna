@@ -1,26 +1,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.CameraInterface;
+import frc.robot.subsystems.BallFollowInterface;
 
 /***  This command gets called only once, so the method listed in 
        execute() should not end until it's done or a user signals it to stop.
      
 ***/
 
-public class FollowCamera extends CommandBase {
+public class FollowBall extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final CameraInterface camInt;
+  private final BallFollowInterface ballFollower;
   double[] prev_values = new double[3];
   
 
-  public FollowCamera(CameraInterface m_camInt) {
+  public FollowBall(BallFollowInterface m_ballFollower) {
 
-      camInt=m_camInt;
-      addRequirements(camInt);
-      prev_values[0] = 0;
-      prev_values[1] = 0;
-      prev_values[2] = 0;
+    ballFollower=m_ballFollower;
+      addRequirements(ballFollower);
   }
 
   @Override
@@ -29,7 +26,7 @@ public class FollowCamera extends CommandBase {
   @Override
   public void execute() {
 
-      prev_values = camInt.driveToTartget(prev_values);     
+    ballFollower.driveToTartget();     
 
       
   }

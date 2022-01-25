@@ -42,7 +42,7 @@ private SwerveModule[] modules = generator.generateModule();
 
   private final Pigeon gyro = new Pigeon(20);
   public SwerveModuleState[] moduleStatesOptimized = new SwerveModuleState[4];
-  private double heading=gyro.getHeadingRadians();
+  public double heading=gyro.getHeadingRadians();
   public SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(m_kinematics,new Rotation2d(heading));
   private Tables datatable;  
@@ -52,6 +52,7 @@ private SwerveModule[] modules = generator.generateModule();
   private double[] turnSet = new double[4]; // position setpoint for swerve motors     
   private String[] moduleNames={"FL","FR","BL","BR"};
   private double headingset=0;
+  private double previousTurnMode = 2;
 
   private boolean inDeadband=false;
   private double Pi=Math.PI;
@@ -116,7 +117,7 @@ if (stickState[3]==1) omega=stickState[2];
     if(headingset<-Pi)headingset=headingset+ twoPi;
   }
   // Heading setpoint directly supplied, need to reset the rotation pid
-  if(stickState[3]==3)
+  if(stickState[3]==3 && previousTurnMode !=3)
   {
     headingset=stickState[3];    
     pidRotate.reset(heading, 0); 
@@ -138,6 +139,7 @@ if (stickState[3]==1) omega=stickState[2];
     SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
     setModuleStates(moduleStates);
   printModuleStates();
+  previousTurnMode=stickState[3];
 }
 
 

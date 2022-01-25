@@ -13,21 +13,21 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.RotateInPlace;
 import frc.robot.commands.TurboToggle;
 import frc.robot.Sensors.Camera;
-import frc.robot.Sensors.advancedCam;
+import frc.robot.Sensors.BallFollowCamera;
 import frc.robot.Utilities.DriverStationInterface;
 import frc.robot.commands.DriveSwerve;
 import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.UpdatePID;
 import frc.robot.commands.UpdateTable;
-import frc.robot.commands.FollowCamera;
+import frc.robot.commands.FollowBall;
 import frc.robot.commands.HeadingBumpCCW;
 import frc.robot.commands.HeadingBumpCW;
 import frc.robot.subsystems.SwerveDriveSystem;
 
 import frc.robot.subsystems.Tables;
 import frc.robot.subsystems.TrajectoryFollower;
-import frc.robot.subsystems.CameraInterface;
+import frc.robot.subsystems.BallFollowInterface;
 import frc.robot.subsystems.Stick;
  
 public class RobotContainer {
@@ -35,14 +35,14 @@ public class RobotContainer {
   public final Stick stick =new Stick();
   public final Tables m_tables = new Tables();
   public final SwerveDriveSystem m_swervedriveSystem = new SwerveDriveSystem(m_tables);
-  public final CameraInterface m_camInt = new CameraInterface(m_swervedriveSystem);
   public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem);
   public final DriverStationInterface driverInterface = new DriverStationInterface(m_swervedriveSystem);
-  public final advancedCam camera = new advancedCam(); 
+  public final BallFollowCamera camera = new BallFollowCamera(); 
+  public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem,camera);
   final DriveSwerve m_driveswerve ;
   final UpdateTable m_updatetable ;
   final RotateInPlace m_RotateInPlace ;
-  final FollowCamera m_followCamera ;
+  final FollowBall m_followBall ;
   IntSupplier povSelection = () -> stick.getPOV();
   Supplier<double[]> stickState = () -> stick.getStickState();
   
@@ -52,7 +52,7 @@ public class RobotContainer {
     m_driveswerve = new DriveSwerve(m_swervedriveSystem, stickState);
     m_updatetable = new UpdateTable(m_tables);
     m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection);
-    m_followCamera = new FollowCamera(m_camInt);
+    m_followBall = new FollowBall(m_ballFollower);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
@@ -87,7 +87,7 @@ public class RobotContainer {
         new ResetGyro(m_swervedriveSystem)); 
 
     new JoystickButton(stick.getStick(), Constants.btn_followcam[Constants.stickNum]).whileHeld(
-        new FollowCamera(m_camInt)); 
+        new FollowBall(m_ballFollower)); 
   }
 
 
