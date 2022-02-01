@@ -37,12 +37,13 @@ public class RobotContainer {
   public final SwerveDriveSystem m_swervedriveSystem = new SwerveDriveSystem(m_tables);
   public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem);
   public final DriverStationInterface driverInterface = new DriverStationInterface(m_swervedriveSystem);
-  public final BallFollowCamera camera = new BallFollowCamera(); 
-  public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem,camera);
+
+//  public final BallFollowCamera camera = new BallFollowCamera(); 
+  public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
   final DriveSwerve m_driveswerve ;
   final UpdateTable m_updatetable ;
   final RotateInPlace m_RotateInPlace ;
-  final FollowBall m_followBall ;
+   final FollowBall m_followBall ;
   IntSupplier povSelection = () -> stick.getPOV();
   Supplier<double[]> stickState = () -> stick.getStickState();
   

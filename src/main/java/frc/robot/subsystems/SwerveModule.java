@@ -14,31 +14,36 @@ import static frc.robot.Constants.Constants_Swerve.*;
 import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.RelativeEncoder;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class SwerveModule{
     private final CANSparkMax m_drive;
     private final SparkMaxPIDController c_drive;
     private final RelativeEncoder e_drive;
 
+
     private final CANSparkMax m_turn;
     private final SparkMaxPIDController c_turn;
     private final RelativeEncoder e_turn;
+    private final DutyCycleEncoder e_turnAbs;
+    
 
     private final String driveVel=this.getClass().getName()+"_drive_vel";
     private final String drivePos=this.getClass().getName()+"_drive_pos";
     private final String turnVel=this.getClass().getName()+"_turn_vel";
     private final String turnPos=this.getClass().getName()+"_turn_pos";
+    private final String CCAPos=this.getClass().getName()+"_turn_CCApos";
     int rev=1;
 
     
-public SwerveModule(int driveID, int turnID, boolean invD, boolean invT,
-                 boolean invEncD, boolean invEncT){
+public SwerveModule(int driveID, int turnID, int absEncID,double zeropos, 
+                    boolean invD, boolean invT,boolean invEncD, boolean invEncT){
 
                         
 // set up the drive motor                                 
@@ -62,11 +67,17 @@ public SwerveModule(int driveID, int turnID, boolean invD, boolean invT,
     m_turn.setIdleMode(IdleMode.kBrake);
 
 // set up the turn encoder
+    e_turnAbs=new DutyCycleEncoder(absEncID);
+    e_turnAbs.setDutyCycleRange(1./4096, 4095./4096);
+    e_turnAbs.setDistancePerRotation(360.0);
+
     e_turn=m_turn.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature,4096);
     e_turn.setInverted(invEncT);  
-    e_turn.setPosition(0.0);
-    System.out.println("e_tern cpr = "+e_turn.getCountsPerRevolution());    
-// set up the turn PID controller. It will run the motor in SmartMotion mode,
+    
+    e_turn.setPosition(getTurnAbsPosition()-zeropos);
+    
+
+    // set up the turn PID controller. It will run the motor in SmartMotion mode,
 // so we set up max/min velocity and max acceleration allowed.
     c_turn=m_turn.getPIDController();                  
     c_turn.setP(kP_turn);
@@ -97,6 +108,7 @@ public void setMotors(double speed,double turnAngle) {
     SmartDashboard.putNumber(drivePos, e_drive.getPosition());
     SmartDashboard.putNumber(turnVel, e_turn.getVelocity());
     SmartDashboard.putNumber(turnPos, e_turn.getPosition());
+    SmartDashboard.putNumber(CCAPos, getTurnAbsPosition());    
     
   }
 
@@ -115,9 +127,9 @@ public void setMotors(double speed,double turnAngle) {
         return 2*Math.PI*e_turn.getPosition();
        }
 
-// dummy method to be consistent with MK4 module
+// get the turn motor absolute position
        public double getTurnAbsPosition() {
-        return 0.0;
+        return e_turnAbs.getDistance();
        }       
 
 

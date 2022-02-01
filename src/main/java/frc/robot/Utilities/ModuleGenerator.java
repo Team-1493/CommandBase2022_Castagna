@@ -17,6 +17,8 @@ public ModuleGenerator(){
     modules[0] = new SwerveModule(
       flDriveID,
       flTurnID,
+      10,
+      turnMotorZeroPos[0],
       invertDL,
       invertTL,
       invertEncDL,
@@ -27,6 +29,8 @@ public ModuleGenerator(){
       modules[1] = new SwerveModule(
       frDriveID,
       frTurnID,
+      0,
+      turnMotorZeroPos[1],
       invertDR,
       invertTR,
       invertEncDR,
@@ -37,6 +41,8 @@ public ModuleGenerator(){
     modules[2] = new SwerveModule(
       blDriveID,
       blTurnID,
+      11,
+      turnMotorZeroPos[2],
       invertDL,
       invertTL,
       invertEncDL,
@@ -47,6 +53,8 @@ public ModuleGenerator(){
     modules[3] = new SwerveModule(
       brDriveID,
       brTurnID,
+      12,
+      turnMotorZeroPos[3],
       invertDR,
       invertTR,
       invertEncDR,
@@ -63,51 +71,51 @@ public SwerveModuleMDK[] generateModuleMDK(){
   SwerveModuleMDK[] modules = new SwerveModuleMDK[4];
 
  // front left swerve module
- modules[0] = new SwerveModuleMDK(
-   flDriveID,
-   flTurnID,
-   flCancoderID,
-   turnMotorZeroPos[0],
-   invertDL,
-   invertTL,
-   invertEncDL,
-   invertEncTL
-   );
-
-// front right swerve module     
-   modules[1] = new SwerveModuleMDK(
+ modules[1] = new SwerveModuleMDK(
    frDriveID,
    frTurnID,
    frCancoderID,
-   turnMotorZeroPos[1],
+   turnMotorZeroPos[0],
    invertDR,
    invertTR,
    invertEncDR,
    invertEncTR
+   );
+
+// front right swerve module     
+   modules[0] = new SwerveModuleMDK(
+   flDriveID,
+   flTurnID,
+   flCancoderID,
+   turnMotorZeroPos[1],
+   invertDL,
+   invertTL,
+   invertEncDL,
+   invertEncTL
       );
 
 // back left swerve module         
  modules[2] = new SwerveModuleMDK(
-   blDriveID,
-   blTurnID,
-   blCancoderID,
-   turnMotorZeroPos[2],
-   invertDL,
-   invertTL,
-   invertEncDL,
-   invertEncTL
-   );
-
-// back right swerve module      
- modules[3] = new SwerveModuleMDK(
    brDriveID,
    brTurnID,
    brCancoderID,
-   turnMotorZeroPos[3],
+   turnMotorZeroPos[2],
    invertDR,
    invertTR,
    invertEncDR,
    invertEncTR
+   );
+
+// back right swerve module      
+ modules[3] = new SwerveModuleMDK(
+   blDriveID,
+   blTurnID,
+   blCancoderID,
+   turnMotorZeroPos[3],
+   invertDL,
+   invertTL,
+   invertEncDL,
+   invertEncTL
    );
 
  return modules;

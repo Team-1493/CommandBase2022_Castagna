@@ -29,13 +29,7 @@ public DriverStationInterface(SwerveDriveSystem sds){
   
     SmartDashboard.putNumber("Max Vel FPS",maxVelocityFPS);
     SmartDashboard.putNumber("Max Drive RPM",maxDriveRPM);
-  
-    SmartDashboard.putNumber("ar_kp_vx", ar_kp_vx);
-    SmartDashboard.putNumber("ar_ki_vx", ar_ki_vx);
-    SmartDashboard.putNumber("ar_kp_vy", ar_kp_vy);
-    SmartDashboard.putNumber("ar_ki_vy", ar_ki_vy);
-    SmartDashboard.putNumber("ar_kp_hs", ar_kp_hs);
-    SmartDashboard.putNumber("ar_ki_hs", ar_ki_hs);
+    
     }
 
     public static void getNewConstants(){
@@ -66,13 +60,6 @@ public DriverStationInterface(SwerveDriveSystem sds){
         rotateRP20msec= rotateDPS*Math.PI/(50.0*180.0);
         
         maxVelocityFPS= SmartDashboard.getNumber("Max Vel FPS",maxVelocityFPS);
-      
-        ar_kp_vx=SmartDashboard.getNumber("ar_kp_vx", 0);
-        ar_ki_vx=SmartDashboard.getNumber("ar_ki_vx", 0);
-        ar_kp_vy=SmartDashboard.getNumber("ar_kp_vy", 0);
-        ar_ki_vy=SmartDashboard.getNumber("ar_ki_vy", 0);
-        ar_kp_hs=SmartDashboard.getNumber("ar_kp_hs", 0);
-        ar_ki_hs=SmartDashboard.getNumber("ar_ki_hs", 0);
       
         // Calculated Values
         maxVelocityMPS = 0.3048*maxVelocityFPS; 

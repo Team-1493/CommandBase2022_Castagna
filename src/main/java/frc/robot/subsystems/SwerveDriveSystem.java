@@ -36,7 +36,7 @@ import static frc.robot.Constants.Constants_Swerve.*;
 
 public class SwerveDriveSystem  extends SubsystemBase {
   private ModuleGenerator generator = new ModuleGenerator();
-private SwerveModule[] modules = generator.generateModule();
+  private SwerveModule[] modules = generator.generateModule();
 //  private SwerveModuleMDK[] modules = generator.generateModuleMDK();
 
 
@@ -268,7 +268,7 @@ while(i<4){
   datatable.putNumber(moduleNames[i]+" Dpos",modules[i].getDrivePosition());            
   datatable.putNumber(moduleNames[i]+" Dvel",modules[i].getDriveVelocity() ); 
   datatable.putNumber(moduleNames[i]+" SP RPM",speedSet[i]*MPSToRPM);
-  
+//  SmartDashboard.putNumber(moduleNames[i]+" CCabs",modules[i].getTurnAbsPosition());
  
   i++;
 }

@@ -49,7 +49,6 @@ public static void getVideo() {
         
         UsbCamera camera = CameraServer.startAutomaticCapture();
         camera.setResolution(640, 480);
-        
 //        CameraServer.getServer().getSource().setConfigJson(config);
         System.out.println(CameraServer.getServer().getSource().getConfigJson());
 
@@ -59,6 +58,9 @@ public static void getVideo() {
         Mat source = new Mat();
 
       while(!Thread.interrupted()) {
+
+
+
         if (cvSink.grabFrame(source) == 0) {
           continue;
         }
@@ -74,7 +76,7 @@ public static void getVideo() {
           config=config+ "{\"name\":\"Exposure\",\"value\":"+Exposure+"},";
           config=config+ "{\"name\":\"Brightness\",\"value\":"+Brightness+"},";
           config=config+ "{\"name\":\"raw_Brightness\",\"value\":"+raw_Brightness+"}]}";          
-          CameraServer.getServer().getSource().setConfigJson(config);          
+//          CameraServer.getServer().getSource().setConfigJson(config);          
         }
 
         
@@ -84,7 +86,7 @@ public static void getVideo() {
             Imgproc.drawContours(source,
             bluePipe.filterContoursOutput(), -1, new Scalar(255,0,0), 2);                   
             outputStream.putFrame(source);        
-            SmartDashboard.putNumber("Num Contours", numcontours);
+            SmartDashboard.putNumber("Number Contours", numcontours);
             maxarea=0;
             area=0;
             maxareaContour=0;           
@@ -101,7 +103,7 @@ public static void getVideo() {
             Moments M =Imgproc.moments(bluePipe.filterContoursOutput().get(maxareaContour)) ;
             centerX=(M.m10/M.m00);
             centerY=(M.m01/M.m00);
-            distance=115*Math.exp(-centerY*0.00497);
+            distance=0.0773*Math.exp(1772/centerY);
             angle= 30*(centerX-320)/320;
 
             Rect rect = Imgproc.boundingRect(bluePipe.filterContoursOutput().get(maxareaContour)); 
@@ -111,6 +113,7 @@ public static void getVideo() {
             rectTLx= rect.tl().x;
             rectBRx= rect.br().x;
 
+            SmartDashboard.putNumber("ball area", maxarea);
             SmartDashboard.putNumber("ball centerX", centerX);
             SmartDashboard.putNumber("ball centerY", centerY);
             SmartDashboard.putNumber("ball distance", distance);
@@ -129,6 +132,7 @@ public static void getVideo() {
             centerY=-1;       
           } 
       }
+
     }).start();
   }
 

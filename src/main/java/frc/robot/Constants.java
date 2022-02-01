@@ -30,6 +30,9 @@ public static class Constants_Swerve{
     // scales the stick -1 to 1 input to meters/sec
     public static double maxVelocityMPS = 0.3048*maxVelocityFPS;      
     public static double maxDriveRPM = maxVelocityMPS*MPSToRPM;
+
+    // positive x: forward     positive y: left  
+    //FL-FR-BL-BR
     public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
         new Translation2d(0.4064, 0.4064), 
         new Translation2d(0.4064, -0.4064), 
@@ -108,6 +111,10 @@ public static class Constants_Swerve2{
     public static double maxOmega = 3.14; // rad/sec
     public static double RadiansToNativePos=4096.0/(2*Math.PI);
 
+
+
+ // positive x: forward     positive y: left  
+ // FR-FL-BR-BL
     public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     new Translation2d(0.4064, -0.4064), 
     new Translation2d(0.4064, +0.4064), 
@@ -115,17 +122,17 @@ public static class Constants_Swerve2{
     new Translation2d(-0.4064, +0.4064));
 
         // Motor Can ID's    
-        public static  int flDriveID=5;
-        public static int flTurnID=6;
-        public static int frDriveID=1;
+        public static  int frDriveID=1;
         public static int frTurnID=2;
+        public static int flDriveID=3;
+        public static int flTurnID=4;
+        public static int brDriveID=5;
+        public static int brTurnID=6;
         public static int blDriveID=7;
-        public static int blTurnID=8;
-        public static int brDriveID=3;
-        public static int brTurnID=4;
+        public static int blTurnID= 8;
     
-    // Turn Module Offsets in degrees
-    public static double[] turnMotorZeroPos={-123.1, -151.1, 156.9, 16.9};
+    // Turn Module Offsets in degrees   FR-FL-BR-BL
+    public static double[] turnMotorZeroPos={-15.6, 21.4, 12.4, -168.6};
 
     // Invert  Motors`
     public static boolean invertDL=false;
@@ -175,10 +182,10 @@ public static class Constants_Swerve2{
 }
 
         // Cancoder ID's
-        public static  int flCancoderID=15;
-        public static  int frCancoderID=11;   //BR
-        public static  int blCancoderID=17;
-        public static  int brCancoderID=13;
+        public static  int frCancoderID=9;  
+        public static  int flCancoderID=10;
+        public static  int brCancoderID=11;
+        public static  int blCancoderID=12;
 
 
     // max and min motor outputs

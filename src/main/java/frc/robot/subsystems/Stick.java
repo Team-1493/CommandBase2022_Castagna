@@ -61,7 +61,7 @@ public void mapStick(){
     Constants.stickNum=0;
   }
 
-  if  (stickName.equals("Bluetooth XINPUT compatible input device")) {
+  if  (stickName.contains("Bluetooth XINPUT")) {
     xID=0;
     yID=1;
     omID=4; 

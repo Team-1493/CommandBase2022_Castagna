@@ -2,6 +2,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/BallFollowInterface": "Subsystem",
       "/LiveWindow/Camera": "Subsystem",
       "/LiveWindow/CameraInterface": "Subsystem",
       "/LiveWindow/Stick": "Subsystem",
