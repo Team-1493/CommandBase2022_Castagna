@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
 import frc.robot.Utilities.Util;
 
+import edu.wpi.first.hal.can.CANStatus;
+
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.Constants_Swerve.*;
 

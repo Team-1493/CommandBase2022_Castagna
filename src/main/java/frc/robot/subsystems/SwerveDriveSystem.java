@@ -36,8 +36,8 @@ import static frc.robot.Constants.Constants_Swerve.*;
 
 public class SwerveDriveSystem  extends SubsystemBase {
   private ModuleGenerator generator = new ModuleGenerator();
-  private SwerveModule[] modules = generator.generateModule();
-//  private SwerveModuleMDK[] modules = generator.generateModuleMDK();
+
+  private SwerveModuleMDK[] modules = generator.generateModuleMDK();
 
 
   private final Pigeon gyro = new Pigeon(20);
@@ -68,9 +68,8 @@ public class SwerveDriveSystem  extends SubsystemBase {
   private ProfiledPIDController pidRotate =
     new ProfiledPIDController(kP_rotate, 0, kD_rotate,trapProf);
 
-
  // Constrcutor 
-  public SwerveDriveSystem(Tables m_datatable){ 
+  public SwerveDriveSystem(Tables m_datatable){
     datatable=m_datatable;
     datatable.putNumber("heading", 0);
     pidRotate.enableContinuousInput(-Pi, Pi);

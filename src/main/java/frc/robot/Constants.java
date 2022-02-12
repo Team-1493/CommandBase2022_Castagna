@@ -18,86 +18,8 @@ import frc.robot.Utilities.Util;
  */
 public final class Constants{
 
-// Neo    
-public static class Constants_Swerve{
-// Robot Dimensions for Neo Swerve
-    public static  double  wheelDiamInches = 3.125;//0.079375 meters 
-    public static double wheelCircumferenceMaters=wheelDiamInches*Math.PI*0.0254; // 0.24936
-    private static double gearRatioDrive=5.25; 
-    public static double MPSToRPM = 60.0*gearRatioDrive/wheelCircumferenceMaters;  // 1,263.233
-    //  maximum velocity called for when stick input is 1
-    public static  double  maxVelocityFPS = 14.8;  //max speed in feet/sec
-    // scales the stick -1 to 1 input to meters/sec
-    public static double maxVelocityMPS = 0.3048*maxVelocityFPS;      
-    public static double maxDriveRPM = maxVelocityMPS*MPSToRPM;
-
-    // positive x: forward     positive y: left  
-    //FL-FR-BL-BR
-    public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-        new Translation2d(0.4064, 0.4064), 
-        new Translation2d(0.4064, -0.4064), 
-        new Translation2d(-0.4064, 0.4064), 
-        new Translation2d(-0.4064, -0.4064)
-        );
-
-
-            // Motor Can ID's    
-    public static  int flDriveID=2;
-    public static int flTurnID=3;
-    public static int frDriveID=4;
-    public static int frTurnID=5;
-    public static int blDriveID=10;
-    public static int blTurnID=1;
-    public static int brDriveID=6;
-    public static int brTurnID=7;
-    // Turn Motor Offsets
-    public static double[] turnMotorZeroPos={0,0,0,0};
-    // Invert  Motors
-    public static boolean invertDL=false;
-    public static boolean invertDR=false;
-    public static boolean invertTL=true;
-    public static boolean invertTR=true;
-    // Invert  Drive Encoders
-    public static boolean invertEncDL=false;
-    public static boolean invertEncDR=false;
-    // Invert Turn Encoders
-    public static boolean invertEncTL=false;
-    public static boolean invertEncTR=false;
-//  PID Constants
-    // Drive Motor Constants
-    public static double kP_drive=0.0;  //0.00005;
-    public static double kF_drive=0.000175;
-    public static double kS_drive = 0;
-    public static double kV_drive = 0;
-    public static double kA_drive = 0;
-// Use these when running turn motors in Smart Motion Mode 
-// kF_turn=0.00598;   kP_turn=0.01;
-// use these when running turn motors in position control kP=5.8,kF=0
-//  Turn (Swerve) Motor Constants
-    public static double kP_turn=5.8;
-    public static double kD_turn=0.2;
-    public static double kF_turn=0.0;   
-    // Rotate (omega) Constants
-    public static double kP_rotate=4.0;
-    public static double kD_rotate=0.2;
-    public static double AllowErr_rotate=0.01;
-    public static double TrapMaxVel_rotate=20;
-    public static double TrapMaxAcc_rotate=10;
-    public static double rotateDPS=225;
-    public static double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);
-    // these are just for compat. with MK4
-    public static double SMMaxVel_turn=0;
-    public static double SMMaxAcc_turn=0;
-    public static double MPSToNativeSpeed = 0;
-    public static double RadiansToNativePos = 0;
-    public static double kP_driveff=0;
-    public static double SMMaxVelRadPerSec_turn = 0;
-    public static double  SMMaxAccRadPerSec2_turn = 0;
-
-}
-
 // MK4
-public static class Constants_Swerve2{
+public static class Constants_Swerve{
     // Robot Dimensions for MK4 Swerve
     public static  double  wheelDiamInches = 3.95;//0.10033 meters 
     public static double wheelCircumferenceMaters=wheelDiamInches*Math.PI*0.0254; //0.315195
@@ -113,7 +35,7 @@ public static class Constants_Swerve2{
 
 
 
- // positive x: forward     positive y: left  
+ // positive x: moving to front     positive y: moving left  
  // FR-FL-BR-BL
     public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     new Translation2d(0.4064, -0.4064), 
@@ -132,7 +54,7 @@ public static class Constants_Swerve2{
         public static int blTurnID= 8;
     
     // Turn Module Offsets in degrees   FR-FL-BR-BL
-    public static double[] turnMotorZeroPos={-15.6, 21.4, 12.4, -168.6};
+    public static double[] turnMotorZeroPos={65.8, 101.7, 27.6, 60.9};
 
     // Invert  Motors`
     public static boolean invertDL=false;
@@ -182,10 +104,10 @@ public static class Constants_Swerve2{
 }
 
         // Cancoder ID's
-        public static  int frCancoderID=9;  
-        public static  int flCancoderID=10;
-        public static  int brCancoderID=11;
-        public static  int blCancoderID=12;
+        public static  int frCancoderID=11;  
+        public static  int flCancoderID=13;
+        public static  int brCancoderID=15;
+        public static  int blCancoderID=17;
 
 
     // max and min motor outputs
