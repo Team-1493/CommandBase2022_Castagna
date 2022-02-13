@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.robot.Utilities.Util;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -94,9 +93,9 @@ public static class Constants_Swerve{
 
     // Rotate (omega) Constants
     public static double kP_rotate=4;
-    public static double kD_rotate=0.0;
+    public static double kD_rotate=0;
     public static double AllowErr_rotate=0.01;
-    public static double TrapMaxVel_rotate=20;
+       public static double TrapMaxVel_rotate=20;
     public static double TrapMaxAcc_rotate=10;
     public static double rotateDPS=225;
     public static double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);

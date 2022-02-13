@@ -37,8 +37,7 @@ public class Stick extends SubsystemBase{
     double vx=mag2*Math.sin(angle*Math.PI/180);
     double vy= mag2*Math.cos(angle*Math.PI/180);
     omega =mystick.getRawAxis(omID);
-
-  // send 999 in the rotate-in-place slot to indicate this is not a rotate in place
+    // flag=2 indicates we are sending a rotational rate 
     return new double[] {vx,vy,omega,2};  
   }
 

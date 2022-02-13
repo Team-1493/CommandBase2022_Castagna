@@ -1,31 +1,17 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.Trajectory.State;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Utilities.CustomSwerveControllorCommand;
 import frc.robot.Utilities.Util;
-//import frc.robot.subsystems.PathPlannerTrajectory.PathPlannerState;
 import static frc.robot.Constants.Constants_Swerve.*;
 
 

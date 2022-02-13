@@ -23,8 +23,9 @@ import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.UpdatePID;
 import frc.robot.commands.UpdateTable;
+import frc.robot.commands.LimelightFollowing.LimelightAlign;
+import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
 import frc.robot.commands.FollowBall;
-import frc.robot.commands.FollowLimelight;
 import frc.robot.commands.HeadingBumpCCW;
 import frc.robot.commands.HeadingBumpCW;
 import frc.robot.subsystems.SwerveDriveSystem;
@@ -37,7 +38,7 @@ import frc.robot.subsystems.Stick;
  
 public class RobotContainer {
   Constants constants = new Constants();
-  PowerDistribution pdHub = new PowerDistribution(1, ModuleType.kRev);
+//  PowerDistribution pdHub = new PowerDistribution(1, ModuleType.kRev);
   public final Stick stick =new Stick();
   public final Tables m_tables = new Tables();
   public final SwerveDriveSystem m_swervedriveSystem = new SwerveDriveSystem(m_tables);
@@ -47,23 +48,22 @@ public class RobotContainer {
   public final LimelightInterface m_LimelightInterface = new LimelightInterface(m_swervedriveSystem);
 
 public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
+Supplier<double[]> stickState = () -> stick.getStickState();
   final DriveSwerve m_driveswerve ;
   final UpdateTable m_updatetable ;
   final RotateInPlace m_RotateInPlace ;
    final FollowBall m_followBall ;
-   final FollowLimelight m_followLimelight ;
+   final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
   IntSupplier povSelection = () -> stick.getPOV();
-  Supplier<double[]> stickState = () -> stick.getStickState();
   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    pdHub.setSwitchableChannel(true);
+  //  pdHub.setSwitchableChannel(true);
     m_driveswerve = new DriveSwerve(m_swervedriveSystem, stickState);
     m_updatetable = new UpdateTable(m_tables);
     m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection);
     m_followBall = new FollowBall(m_ballFollower);
-    m_followLimelight = new FollowLimelight(m_LimelightInterface);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
@@ -98,10 +98,9 @@ public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swer
         new ResetGyro(m_swervedriveSystem)); 
 
     new JoystickButton(stick.getStick(), Constants.btn_followcam[Constants.stickNum]).whileHeld(
-        new FollowBall(m_ballFollower)); 
+        m_followBall); 
 
-    new JoystickButton(stick.getStick(),14).whenPressed(
-          new FollowLimelight(m_LimelightInterface)); 
+    new JoystickButton(stick.getStick(),14).whenPressed(m_limelightAutoTarget); 
   }
 
 
