@@ -1,9 +1,6 @@
 package frc.robot.commands.LimelightFollowing;
 
 import java.util.function.Supplier;
-
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
