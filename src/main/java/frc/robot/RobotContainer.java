@@ -23,47 +23,55 @@ import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.UpdatePID;
 import frc.robot.commands.UpdateTable;
+import frc.robot.commands.IntakeShooter.IntakeBallToLower;
 import frc.robot.commands.LimelightFollowing.LimelightAlign;
 import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
 import frc.robot.commands.FollowBall;
 import frc.robot.commands.HeadingBumpCCW;
 import frc.robot.commands.HeadingBumpCW;
+import frc.robot.commands.ReEnableGyro;
 import frc.robot.subsystems.SwerveDriveSystem;
 
 import frc.robot.subsystems.Tables;
 import frc.robot.subsystems.TrajectoryFollower;
 import frc.robot.subsystems.BallFollowInterface;
-import frc.robot.subsystems.LimelightInterface;
+import frc.robot.subsystems.IntakeConveyor;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Stick;
  
 public class RobotContainer {
   Constants constants = new Constants();
 //  PowerDistribution pdHub = new PowerDistribution(1, ModuleType.kRev);
-  public final Stick stick =new Stick();
-  public final Tables m_tables = new Tables();
+public final Tables m_tables = new Tables();
+
+  public final Stick stick =new Stick(0);
+//  public final Stick operatorStick =new Stick(1);
+
   public final SwerveDriveSystem m_swervedriveSystem = new SwerveDriveSystem(m_tables);
+  public final Shooter shooter = new Shooter();
+  public final IntakeConveyor intake = new IntakeConveyor();
+  
   public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem);
   public final DriverStationInterface driverInterface = new DriverStationInterface(m_swervedriveSystem);
-//  public final BallFollowCamera camera = new BallFollowCamera(); 
-  public final LimelightInterface m_LimelightInterface = new LimelightInterface(m_swervedriveSystem);
 
-public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
-Supplier<double[]> stickState = () -> stick.getStickState();
-  final DriveSwerve m_driveswerve ;
-  final UpdateTable m_updatetable ;
-  final RotateInPlace m_RotateInPlace ;
-   final FollowBall m_followBall ;
-   final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
+
+  //  public final BallFollowCamera camera = new BallFollowCamera(); 
+
+  public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
+  Supplier<double[]> stickState = () -> stick.getStickState();
   IntSupplier povSelection = () -> stick.getPOV();
-  
+
+  public final DriveSwerve m_driveswerve = new DriveSwerve(m_swervedriveSystem, stickState) ;
+  public final UpdateTable m_updatetable = new UpdateTable(m_tables);
+  public final RotateInPlace m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection); ;
+  public final FollowBall m_followBall = new FollowBall(m_ballFollower);
+  public final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
+  public final Command m_intakeBalltoLower  = new IntakeBallToLower(intake);
+  public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
   //  pdHub.setSwitchableChannel(true);
-    m_driveswerve = new DriveSwerve(m_swervedriveSystem, stickState);
-    m_updatetable = new UpdateTable(m_tables);
-    m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection);
-    m_followBall = new FollowBall(m_ballFollower);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
@@ -100,12 +108,17 @@ Supplier<double[]> stickState = () -> stick.getStickState();
     new JoystickButton(stick.getStick(), Constants.btn_followcam[Constants.stickNum]).whileHeld(
         m_followBall); 
 
-    new JoystickButton(stick.getStick(),14).whenPressed(m_limelightAutoTarget); 
+//    new JoystickButton(stick.getStick(),14).whenPressed(m_limelightAutoTarget); 
+new JoystickButton(stick.getStick(),14).whenPressed(m_intakeBalltoLower); 
   }
 
 
   public Command getAutonomousCommand() {    
     return trajectoryFollower.getFollowTrajCommand();
+  }
+
+  public void reEnableGyro(){
+    m_ReEnableGyro.resetGryoAndRobotHeading();
   }
 
 

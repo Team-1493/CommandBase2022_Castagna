@@ -19,9 +19,9 @@ public class Stick extends SubsystemBase{
   int xID=0;
   int yID=1;
   int omID=2;
-  public Stick(){
+  public Stick(int port){
     System.out.println("Initializing");
-    mapStick();
+    mapStick(port);
   }
 
   // get the squared magnitude squared of the strafe stick
@@ -42,8 +42,8 @@ public class Stick extends SubsystemBase{
   }
 
 // maps the stick axes for different contollers
-public void mapStick(){
-  mystick=new Joystick(Constants.stickPort);
+public void mapStick(int port){
+  mystick=new Joystick(port);
   String stickName = mystick.getName();
   System.out.println("**** NAME = "+stickName);
   if (stickName.equals("HORIPAD S")) {

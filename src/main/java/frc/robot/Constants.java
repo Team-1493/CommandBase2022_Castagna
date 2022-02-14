@@ -121,7 +121,6 @@ public static class Constants_Swerve{
 
     // which stick am I using, 0 =  white controller, 1 - switch 
     public static int stickNum=1;
-    public static int stickPort=1;
 
 //  Button Numbers
 // X on white controller, btn 3
