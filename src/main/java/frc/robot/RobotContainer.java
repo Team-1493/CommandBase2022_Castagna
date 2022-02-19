@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,7 +24,8 @@ import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.UpdatePID;
 import frc.robot.commands.UpdateTable;
-import frc.robot.commands.IntakeShooter.IntakeBallToLower;
+import frc.robot.commands.IntakeShooter.IntakeBall;
+import frc.robot.commands.IntakeShooter.ShootBallHigh;
 import frc.robot.commands.LimelightFollowing.LimelightAlign;
 import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
 import frc.robot.commands.FollowBall;
@@ -41,57 +43,82 @@ import frc.robot.subsystems.Stick;
  
 public class RobotContainer {
   Constants constants = new Constants();
-//  PowerDistribution pdHub = new PowerDistribution(1, ModuleType.kRev);
 public final Tables m_tables = new Tables();
 
+// Joysticks
   public final Stick stick =new Stick(0);
-//  public final Stick operatorStick =new Stick(1);
+  public final Stick operatorStick =new Stick(1);
 
+// Driver Buttons
+  public JoystickButton btnResetGyro = new JoystickButton(stick.getStick(),2);
+  public JoystickButton btnBumpCCW = new JoystickButton(stick.getStick(),5);
+  public JoystickButton btnBumpCW = new JoystickButton(stick.getStick(),6);
+  public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),10);
+  public JoystickButton btnLimelightTarget = new JoystickButton(stick.getStick(),14);
+
+
+ // Operator Buttons 
+  public JoystickButton btnIntakeBall = new JoystickButton(operatorStick.getStick(),5);
+  public JoystickButton btnShootBallLow = new JoystickButton(operatorStick.getStick(),6);
+  public JoystickButton btnShootBallHigh = new JoystickButton(operatorStick.getStick(),7);
+  public JoystickButton btnShootBallHighManual = new JoystickButton(operatorStick.getStick(),8);
+  public JoystickButton climbUpManual = new JoystickButton(operatorStick.getStick(),13);
+  public JoystickButton climbDownManual = new JoystickButton(operatorStick.getStick(),14);
+ 
+  
+
+
+  
+ // Subsystems
   public final SwerveDriveSystem m_swervedriveSystem = new SwerveDriveSystem(m_tables);
   public final Shooter shooter = new Shooter();
   public final IntakeConveyor intake = new IntakeConveyor();
-  
   public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem);
   public final DriverStationInterface driverInterface = new DriverStationInterface(m_swervedriveSystem);
-
-
+  public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
   //  public final BallFollowCamera camera = new BallFollowCamera(); 
 
-  public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
+
+ // Joystick Input Suppliers 
   Supplier<double[]> stickState = () -> stick.getStickState();
   IntSupplier povSelection = () -> stick.getPOV();
 
+ // Commands 
   public final DriveSwerve m_driveswerve = new DriveSwerve(m_swervedriveSystem, stickState) ;
   public final UpdateTable m_updatetable = new UpdateTable(m_tables);
   public final RotateInPlace m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection); ;
   public final FollowBall m_followBall = new FollowBall(m_ballFollower);
   public final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
-  public final Command m_intakeBalltoLower  = new IntakeBallToLower(intake);
+  public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall);
+  public final Command m_shootBallHigh  = new ShootBallHigh(intake, shooter, btnShootBallHigh);
+  public final Command m_shootBallLow  = new ShootBallHigh(intake, shooter, btnShootBallLow);
+  public final Command m_shootBallHighManual  = new ShootBallHigh(intake, shooter, btnShootBallHighManual);
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+
   public RobotContainer() {
-  //  pdHub.setSwitchableChannel(true);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
-
   }
  
   public void configureButtonBindings() {
-    new POVButton(stick.getStick(), Constants.pov_rotate0).whenPressed(m_RotateInPlace);
-    new POVButton(stick.getStick(), Constants.pov_rotate90).whenPressed(m_RotateInPlace);
-    new POVButton(stick.getStick(), Constants.pov_rotate180).whenPressed(m_RotateInPlace);
-    new POVButton(stick.getStick(), Constants.pov_rotate270).whenPressed(m_RotateInPlace);
+    new POVButton(stick.getStick(),0).whenPressed(m_RotateInPlace);
+    new POVButton(stick.getStick(), 270).whenPressed(m_RotateInPlace);
+    new POVButton(stick.getStick(), 180).whenPressed(m_RotateInPlace);
+    new POVButton(stick.getStick(), 90).whenPressed(m_RotateInPlace);
+    
+    btnResetGyro.whenPressed(new ResetGyro(m_swervedriveSystem)); 
+    btnBumpCCW.whenPressed(new HeadingBumpCCW(m_swervedriveSystem));
+    btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
+    btnTurbo.whenPressed(new TurboToggle(stick));
 
-    new JoystickButton(stick.getStick(), Constants.btn_turbo[Constants.stickNum]).
-    whenPressed(new TurboToggle(stick));
-
-    new JoystickButton(stick.getStick(), Constants.btn_bumpCCW[Constants.stickNum]).
-    whenPressed(new HeadingBumpCCW(m_swervedriveSystem));
-
-    new JoystickButton(stick.getStick(), Constants.btn_bumpCW[Constants.stickNum]).whenPressed(
-        new HeadingBumpCW(m_swervedriveSystem));
+    btnLimelightTarget.whenPressed(m_limelightAutoTarget); 
+    btnIntakeBall.whenPressed(m_intakeBall); 
+    btnShootBallHigh.whenPressed(m_shootBallHigh); 
+    btnShootBallHighManual.whenPressed(m_shootBallHighManual); 
+    btnShootBallLow.whenPressed(m_shootBallLow); 
 
     new JoystickButton(stick.getStick(), Constants.btn_updatePID[Constants.stickNum]).whenPressed(
       new UpdatePID(m_swervedriveSystem));
@@ -99,17 +126,8 @@ public final Tables m_tables = new Tables();
     new JoystickButton(stick.getStick(), Constants.btn_resetencoder[Constants.stickNum]).whenPressed(
       new ResetEncoders(m_swervedriveSystem));
 
-//    new JoystickButton(stick.getStick(), 10).whenPressed(
-//        new CalibrateGyro(m_swervedriveSystem));
-
-    new JoystickButton(stick.getStick(), Constants.btn_resetgyro[Constants.stickNum]).whenPressed(
-        new ResetGyro(m_swervedriveSystem)); 
-
     new JoystickButton(stick.getStick(), Constants.btn_followcam[Constants.stickNum]).whileHeld(
         m_followBall); 
-
-//    new JoystickButton(stick.getStick(),14).whenPressed(m_limelightAutoTarget); 
-new JoystickButton(stick.getStick(),14).whenPressed(m_intakeBalltoLower); 
   }
 
 

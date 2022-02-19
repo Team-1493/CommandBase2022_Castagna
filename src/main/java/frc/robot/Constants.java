@@ -152,12 +152,6 @@ public static class Constants_Swerve{
 // + button on switch, btn 10
     public static int[] btn_turbo={8,10}; 
 
-    public static int pov_rotate0=0;  // 
-    public static int pov_rotate90=270;  // 
-    public static int pov_rotate180=180;  //
-    public static int pov_rotate270=90;  // 
-
-
     // AR following PID constants
     public static double ar_kp_vx = 0;
     public static double ar_ki_vx = 0;

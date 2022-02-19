@@ -19,10 +19,10 @@ public class IntakeConveyor extends SubsystemBase{
     TalonFX intake = new TalonFX(9);
     TalonFX conveyorU = new TalonFX(11);
     TalonFX conveyorL = new TalonFX(10);
-    DigitalInput irTopSensor=new DigitalInput(9);
-    DigitalInput irBottomSensor=new DigitalInput(7);
+    DigitalInput irTopSensor=new DigitalInput(7);
+    DigitalInput irBottomSensor=new DigitalInput(8);
 
-    double intakeSpeed=0.25;
+    double intakeSpeed=0.50;
     
     boolean ballAtTop=irTopSensor.get();
     boolean ballAtBottom=irBottomSensor.get();
@@ -54,7 +54,7 @@ public void startUpperConveyor(){
 }
 
 public void stopUpperConveyor(){
-    conveyorU.set(ControlMode.PercentOutput,0.25);
+    conveyorU.set(ControlMode.PercentOutput,0);
 }
 
 public void startIntakeLowerConveyor(){
@@ -67,8 +67,27 @@ public void stopIntakeLowerConveyor(){
     conveyorL.set(ControlMode.PercentOutput,0); 
 }
 
+
+public void startIntake(){
+    intake.set(ControlMode.PercentOutput,-intakeSpeed);
+}
+
+public void startLowerConveyor(){
+    conveyorL.set(ControlMode.PercentOutput,-0.25); 
+}
+
+
+public void stopIntake(){
+    intake.set(ControlMode.PercentOutput,0);
+}
+
+public void stopLowerConveyor(){
+    conveyorL.set(ControlMode.PercentOutput,0); 
+}
+
+
 public boolean ballAtTop(){
-    return irTopSensor.get();
+    return !irTopSensor.get();
 }
 
 public boolean ballAtBottom(){
@@ -79,6 +98,7 @@ public boolean ballAtBottom(){
 @Override
 public void periodic() {
   SmartDashboard.putBoolean("lower IR snesor", ballAtBottom());
+  SmartDashboard.putBoolean("top IR snesor", ballAtTop());
 }
 
 

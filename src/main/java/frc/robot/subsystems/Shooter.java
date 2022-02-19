@@ -7,6 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -34,6 +37,12 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
  */
 public class Shooter extends SubsystemBase {
 
+  public NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  public NetworkTable limelight= inst.getTable("limelight");
+  public NetworkTableEntry tyEntry = limelight.getEntry("ty");
+  public NetworkTableEntry tvEntry = limelight.getEntry("tv");
+
+
   TalonFX shooterR = new TalonFX(13);
   TalonFX shooterL = new TalonFX(12);
   double shooterKs=0.04,shooterKv=0.000152,shooterKa=0.0;
@@ -41,8 +50,10 @@ public class Shooter extends SubsystemBase {
   
   double currentShooterSpeedL=0; 
   double currentShooterSpeedR=0; 
+  double speedFactor=100;
+  double shooterSpeed=0;
 
-  boolean atSpeed=false;
+  public boolean atSpeed=false;
 
   SimpleMotorFeedforward shootFeedforward = 
     new SimpleMotorFeedforward(shooterKs,shooterKv,shooterKa);
@@ -68,32 +79,59 @@ public Shooter(){
   }
 
 
-public void shoot(double shooterSpeed){
-    currentShooterSpeedL=shooterL.getSelectedSensorVelocity()*600/2048;
-    currentShooterSpeedR=shooterR.getSelectedSensorVelocity()*600/2048;
-
-    if (Math.abs(currentShooterSpeedL-shooterSpeed)<25 )atSpeed=true;
-    SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
-
-
-    SmartDashboard.putNumber("shooterL Vel", currentShooterSpeedL);
-    SmartDashboard.putNumber("shooterR Vel",currentShooterSpeedR);
+public void shootHigh(){
+    if(tvEntry.getDouble(1)==1){
+      double ty=tyEntry.getDouble(1);
+      shooterSpeed=speedFactor*ty;
+    }
+    else shooterSpeed=0;
 
     shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
          shootFeedforward.calculate(shooterSpeed));
-    
     shooterL.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
          shootFeedforward.calculate(-shooterSpeed));
 }
 
+
+public void shootLow(){
+  shooterSpeed=1000;
+  shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+       shootFeedforward.calculate(shooterSpeed));
+  shooterL.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+       shootFeedforward.calculate(-shooterSpeed));
+}
+
+
+public void shootManualHigh(){
+  shooterSpeed=2000;
+  shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+       shootFeedforward.calculate(shooterSpeed));
+  shooterL.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+       shootFeedforward.calculate(-shooterSpeed));
+}
+
+
 public void stopShooter(){
+      shooterSpeed=0;
       shooterL.set(ControlMode.PercentOutput,0);
       shooterR.set(ControlMode.PercentOutput,0);
       atSpeed=false;
     }
 
 
-
+    @Override
+    public void periodic() {
+      currentShooterSpeedL=shooterL.getSelectedSensorVelocity()*600/2048;
+//      currentShooterSpeedR=shooterR.getSelectedSensorVelocity()*600/2048;
+      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<25 )atSpeed=true;
+      else atSpeed=false;
+  
+      SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
+      SmartDashboard.putNumber("shooterL Vel", currentShooterSpeedL);
+//      SmartDashboard.putNumber("shooterR Vel",currentShooterSpeedR);
+  
+  
+    }
   
 
 }
