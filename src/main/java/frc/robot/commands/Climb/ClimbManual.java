@@ -1,7 +1,4 @@
 package frc.robot.commands.Climb;
-
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
@@ -11,7 +8,7 @@ import frc.robot.subsystems.Climber;
 public class ClimbManual extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
-  private Climber climber;
+  private Climber climber ;
   private int direction;
   private JoystickButton btn;
 

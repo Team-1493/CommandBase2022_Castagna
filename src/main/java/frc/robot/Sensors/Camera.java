@@ -13,7 +13,6 @@ public class Camera extends SubsystemBase{
  public Camera(){
  
     CameraServer.startAutomaticCapture(0);
-
 }    
 
 }
