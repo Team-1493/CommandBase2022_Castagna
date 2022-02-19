@@ -2,14 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Gyro;
 
 import frc.robot.subsystems.SwerveDriveSystem;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-  public class ResetGyro extends InstantCommand {
-    public ResetGyro(SwerveDriveSystem swervedrive) {
-      super(swervedrive::resetGyro, swervedrive);
+  public class CalibrateGyro extends InstantCommand {
+    public CalibrateGyro(SwerveDriveSystem swervedrive) {
+      super(swervedrive::calibrateGyro, swervedrive);
     }
   }
 

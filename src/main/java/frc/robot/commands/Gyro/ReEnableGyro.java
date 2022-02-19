@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Gyro;
 
 import java.util.function.Supplier;
 import edu.wpi.first.networktables.NetworkTable;
