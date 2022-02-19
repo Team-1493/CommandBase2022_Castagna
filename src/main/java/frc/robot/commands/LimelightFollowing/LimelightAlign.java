@@ -1,6 +1,4 @@
 package frc.robot.commands.LimelightFollowing;
-
-import java.util.function.Supplier;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -20,16 +18,14 @@ public class LimelightAlign extends CommandBase {
   public NetworkTableEntry txEntry = limelight.getEntry("tx");
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
   private SwerveDriveSystem sds;
-  private final Supplier<double[]> stickState;
   int loopsOnTarget=0;
   double allowableError=0.02;
   double error;
   double kP_lime=1;
   double minOmega=0.2;
 
-  public LimelightAlign(SwerveDriveSystem m_sds, Supplier<double[]> m_stickState) {
+  public LimelightAlign(SwerveDriveSystem m_sds) {
       sds=m_sds;
-      stickState=m_stickState;
       SmartDashboard.putNumber("kP_lime", 1);
       SmartDashboard.putNumber("minOmega_lime", 0.2);
 

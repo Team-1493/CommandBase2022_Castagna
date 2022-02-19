@@ -10,7 +10,7 @@ public class LimelightAutoTarget extends SequentialCommandGroup {
       public LimelightAutoTarget(SwerveDriveSystem m_sds, Supplier<double[]> m_stickState) {
         addCommands(
             new LimelightSearch(m_sds, m_stickState),
-            new LimelightAlign(m_sds, m_stickState)
+            new LimelightAlign(m_sds)
         );
     }
 }
