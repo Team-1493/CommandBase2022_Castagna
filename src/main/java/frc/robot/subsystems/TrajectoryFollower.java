@@ -6,19 +6,29 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Utilities.CustomSwerveControllorCommand;
 import frc.robot.Utilities.Util;
-import static frc.robot.Constants.Constants_Swerve.*;
 
 
 public class TrajectoryFollower extends SubsystemBase {
      SwerveDriveSystem sds;   
      double vm=5,am=5;
      double finalHeading=90;
+     private double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+     private double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+
+     private double kPXController = 1;
+     private double kPYController = 1;
+     private double kPThetaController = 1;
+
+ // Constraint for the motion profilied robot angle controller
+     private final TrapezoidProfile.Constraints kThetaControllerConstraints =
+         new TrapezoidProfile.Constraints(
+         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
    // Constrcutor 
   public TrajectoryFollower(SwerveDriveSystem m_sds){
@@ -56,18 +66,18 @@ public class TrajectoryFollower extends SubsystemBase {
 
     var thetaController =
     new ProfiledPIDController(
-        kP_rotate, 0, 0, AutoConstants.kThetaControllerConstraints);
+        SwerveDriveSystem.kP_rotate, 0, 0, kThetaControllerConstraints);
 thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
 CustomSwerveControllorCommand swerveControllerCommand =
     new CustomSwerveControllorCommand(
         traj2,
         sds::getPose, // Functional interface to feed supplier
-        m_kinematics,
+        SwerveDriveSystem.m_kinematics,
 
         // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
+        new PIDController(kPXController, 0, 0),
+        new PIDController(kPYController, 0, 0),
         thetaController,
         () -> ((PathPlannerState) ( ((PathPlannerTrajectory)traj2).getStates().get(1) )).holonomicRotation,
         sds::setModuleStates,

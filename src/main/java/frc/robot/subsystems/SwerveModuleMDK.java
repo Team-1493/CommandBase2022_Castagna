@@ -8,8 +8,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
 import frc.robot.Utilities.Util;
-import static frc.robot.Constants.*;
-import static frc.robot.Constants.Constants_Swerve.*;
+//import static frc.robot.Constants.*;
+//import static frc.robot.Constants.Constants_Swerve.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -27,6 +27,44 @@ public class SwerveModuleMDK{
     private final CANCoder e_turn;
     SimpleMotorFeedforward feedforward_drive;
     double voltageComp=12;
+
+
+    // Robot Dimensions for MK4 Swerve
+    private  double  wheelDiamInches = 3.95;//0.10033 meters 
+    private double wheelCircumferenceMaters=wheelDiamInches*Math.PI*0.0254; //0.315195
+    private double gearRatioDrive=8.1428; 
+    private double MPSToRPM = 60.0*gearRatioDrive/wheelCircumferenceMaters;  // 1,550.0499
+    private double MPSToNativeSpeed = MPSToRPM*2048.0/600.0;  // convert m/sec to Talon speed unit (counts/100ms)
+    //scales the stick -1 to 1 input to meters/sec
+    private double RadiansToNativePos=4096.0/(2*Math.PI);
+
+
+
+    // Drive Motor Constants
+    private double kP_drive=0;  //1.19 from characterization;
+    private double kF_drive=0.04952;   // 1023/20660
+
+    // Drive motor constants for arbitrary feed forward (currently not used)    
+    private double kA_drive=0.105;  // V*sec^2/m  (calculated from 0.0373 *(1/3600*GR)
+    private double kV_drive=2.78;  // V*sec/motorRPM , 0.868 from characterization * 1/(60*GR)
+    private double kS_drive=0.510;  // Volts  0.539 from characterization
+    private double kP_driveff=0.002209;  // V*sec/motorRPM,   1.06 from characterization * 1/(60*GR)
+
+//  Turn (Swerve) Motor Constants
+    private double kP_turn=0.5; //0.5,   0.421 from characterization 
+    private double kD_turn=0;  // 0 from characterization    
+    private double kF_turn=0.0;   //  max turn RPM on ground = 485, 3310 units/100ms
+
+
+// Motion Magic constants  (currently not used)
+    private double SMMaxVelRadPerSec_turn=60;  
+    private double SMMaxAccRadPerSec2_turn=60;
+    private double SMMaxVel_turn= 0.1*4096*SMMaxVelRadPerSec_turn/(2*Math.PI);
+    private double SMMaxAcc_turn=0.1*4096*SMMaxAccRadPerSec2_turn/(2*Math.PI);
+    
+    private double kMaxOutputDrive=1;
+    private double kMaxOutputTurn=0.8;
+
 
 
     private final String driveVel=this.getClass().getName()+"_drive_vel";
@@ -49,6 +87,7 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     m_drive.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0, 25);
     m_drive.config_kP(0, kP_drive);
     m_drive.config_kF(0, kF_drive);
+    m_drive.configClosedLoopPeakOutput(0,kMaxOutputDrive);
     feedforward_drive = new SimpleMotorFeedforward(kS_drive, kV_drive, kA_drive);
                     
 
@@ -188,7 +227,9 @@ public double getDriveErrorRPM() {
         return  vel_NativeUnits*600/2048;
     }
 
-
+    public double MPStoRPM(double mps){
+        return mps*MPSToRPM;
+    }
 
 
 

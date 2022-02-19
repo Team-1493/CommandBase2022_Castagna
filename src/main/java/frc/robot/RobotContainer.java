@@ -41,17 +41,20 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Stick;
  
 public class RobotContainer {
-  Constants constants = new Constants();
 public final Tables m_tables = new Tables();
 
 // Joysticks
   public final Stick stick =new Stick(0);
   public final Stick operatorStick =new Stick(1);
 
-// Driver Buttons
+// Driver 
+  public JoystickButton btnResetEncoders = new JoystickButton(stick.getStick(),1);
   public JoystickButton btnResetGyro = new JoystickButton(stick.getStick(),2);
+  public JoystickButton btnUpdatePID = new JoystickButton(stick.getStick(),3);
+
   public JoystickButton btnBumpCCW = new JoystickButton(stick.getStick(),5);
   public JoystickButton btnBumpCW = new JoystickButton(stick.getStick(),6);
+  public JoystickButton btnFollowBall = new JoystickButton(stick.getStick(),9);
   public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),10);
   public JoystickButton btnLimelightTarget = new JoystickButton(stick.getStick(),14);
 
@@ -67,10 +70,6 @@ public final Tables m_tables = new Tables();
   public JoystickButton btnClimbPosition2 = new JoystickButton(operatorStick.getStick(),3);
   public JoystickButton btnClimbPosition3 = new JoystickButton(operatorStick.getStick(),4);
  
-  
-
-
-  
  // Subsystems
   public final SwerveDriveSystem m_swervedriveSystem = new SwerveDriveSystem(m_tables);
   public final Shooter shooter = new Shooter();
@@ -139,17 +138,10 @@ public final Camera camera = new Camera();
     btnClimbPosition1.whileHeld(m_climbPosition1);
     btnClimbPosition2.whileHeld(m_climbPosition2);
     btnClimbPosition3.whileHeld(m_climbPosition3);
-
-
-
-    new JoystickButton(stick.getStick(), Constants.btn_updatePID[Constants.stickNum]).whenPressed(
-      new UpdatePID(m_swervedriveSystem));
-
-    new JoystickButton(stick.getStick(), Constants.btn_resetencoder[Constants.stickNum]).whenPressed(
-      new ResetEncoders(m_swervedriveSystem));
-
-    new JoystickButton(stick.getStick(), Constants.btn_followcam[Constants.stickNum]).whileHeld(
-        m_followBall); 
+  
+    btnUpdatePID.whenPressed(new UpdatePID(m_swervedriveSystem));
+    btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
+  //  btnFollowBall.whileHeld(m_followBall); 
   }
 
 

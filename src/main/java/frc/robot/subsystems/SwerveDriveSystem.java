@@ -19,6 +19,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -30,7 +31,7 @@ import frc.robot.Sensors.Pigeon;
 import frc.robot.Utilities.ModuleGenerator;
 import frc.robot.Utilities.Util;
 
-import static frc.robot.Constants.Constants_Swerve.*;
+//import static frc.robot.Constants.Constants_Swerve.*;
 
 
 
@@ -40,9 +41,36 @@ public class SwerveDriveSystem  extends SubsystemBase {
   private SwerveModuleMDK[] modules = generator.generateModuleMDK();
 
 
+
+    // Rotate (omega) Constants
+    public static double kP_rotate=4;
+    public static double kD_rotate=0;
+    private double AllowErr_rotate=0.01;
+    private double TrapMaxVel_rotate=20;
+    private double TrapMaxAcc_rotate=10;
+    private double rotateDPS=225;
+    private double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);
+
+    // Robot Dimensions for MK4 Swerve
+    private  double  maxVelocityFPS = 14.2;  //max speed in feet/sec
+    private double maxVelocityMPS = 0.3048*maxVelocityFPS; // 4.328     
+
+
+    public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+      new Translation2d(0.4064, -0.4064), 
+      new Translation2d(0.4064, +0.4064), 
+      new Translation2d(-0.4064, -0.4064), 
+      new Translation2d(-0.4064, +0.4064));
+      
+
   private final Pigeon gyro = new Pigeon(20);
   public SwerveModuleState[] moduleStatesOptimized = new SwerveModuleState[4];
   public double heading=gyro.getHeadingRadians();
+ 
+
+
+
+
   public SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(m_kinematics,new Rotation2d(heading));
   private Tables datatable;  
@@ -260,14 +288,9 @@ while(i<4){
   datatable.putNumber(moduleNames[i]+" TAbspos",modules[i].getTurnAbsPosition());
   datatable.putNumber(moduleNames[i]+" Tvel",modules[i].getTurnVelocity());
   datatable.putNumber(moduleNames[i]+" SP rot",turnSet[i]/twoPi); 
-//  datatable.putNumber(moduleNames[i]+" TmotorCLT",modules[i].getTurnMotorCLT() ); 
-//  datatable.putNumber(moduleNames[i]+" TmotorCLE",modules[i].getTurnMotorCLE()); 
-
-//    datatable.putNumber(moduleNames[i]+" Derror",-modules[i].getDriveErrorRPM() ); 
   datatable.putNumber(moduleNames[i]+" Dpos",modules[i].getDrivePosition());            
-  datatable.putNumber(moduleNames[i]+" Dvel",modules[i].getDriveVelocity() ); 
-  datatable.putNumber(moduleNames[i]+" SP RPM",speedSet[i]*MPSToRPM);
-//  SmartDashboard.putNumber(moduleNames[i]+" CCabs",modules[i].getTurnAbsPosition());
+  datatable.putNumber(moduleNames[i]+" Dvel",modules[i].getDriveVelocity()); 
+  datatable.putNumber(moduleNames[i]+" SP RPM", modules[i].MPStoRPM(speedSet[i]));
  
   i++;
 }

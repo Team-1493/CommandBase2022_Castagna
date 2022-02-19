@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Joystick;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class Stick extends SubsystemBase{
   private Joystick mystick;
@@ -15,6 +14,7 @@ public class Stick extends SubsystemBase{
   private double sfTurbo=1,sfSlow=0.5;
   private double scaleFactor=sfSlow;
   private double omega=0;
+  public int stickNum=1;
 
   int xID=0;
   int yID=1;
@@ -50,21 +50,21 @@ public void mapStick(int port){
     xID=0;
     yID=1;
     omID=2;
-    Constants.stickNum=1;
+    stickNum=1;
   }
 
   if  (stickName.equals("Wireless Xbox Controller") || stickName.contains("F310")){
     xID=0;
     yID=1;
     omID=2; 
-    Constants.stickNum=0;
+    stickNum=0;
   }
 
   if  (stickName.contains("Bluetooth XINPUT")) {
     xID=0;
     yID=1;
     omID=4; 
-    Constants.stickNum=0;
+    stickNum=0;
   }
 
   mystick.setXChannel(xID);

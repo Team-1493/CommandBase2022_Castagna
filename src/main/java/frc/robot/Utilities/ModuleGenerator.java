@@ -1,10 +1,22 @@
 package frc.robot.Utilities;
 import frc.robot.subsystems.SwerveModuleMDK;
-import static frc.robot.Constants.*;
-import static frc.robot.Constants.Constants_Swerve.*;
 
 public class ModuleGenerator{
   
+  private int frCancoderID=11, flCancoderID=13, brCancoderID=15, blCancoderID=17;
+  private int frDriveID=1, frTurnID=2;
+  private int flDriveID=3, flTurnID=4;
+  private int brDriveID=5,  brTurnID=6;
+  private int blDriveID=7,  blTurnID= 8;
+  private boolean invertDriveMotors = false;
+  private boolean invertTurnMotors = false;
+  private boolean invertDriveEncoders=false;
+  private boolean invertTurnEncoders=false;
+  
+  // Turn Module Offsets in degrees   FR-FL-BR-BL
+  public static double[] turnMotorZeroPos={65.8, 101.7, 27.6, 60.9};
+
+
 public ModuleGenerator(){
 }
 
@@ -18,10 +30,10 @@ public SwerveModuleMDK[] generateModuleMDK(){
    frTurnID,
    frCancoderID,
    turnMotorZeroPos[0],
-   invertDR,
-   invertTR,
-   invertEncDR,
-   invertEncTR
+   invertDriveMotors,
+   invertTurnMotors,
+   invertDriveEncoders,
+   invertTurnEncoders
    );
 
 // front right swerve module     
@@ -30,10 +42,10 @@ public SwerveModuleMDK[] generateModuleMDK(){
    flTurnID,
    flCancoderID,
    turnMotorZeroPos[1],
-   invertDL,
-   invertTL,
-   invertEncDL,
-   invertEncTL
+   invertDriveMotors,
+   invertTurnMotors,
+   invertDriveEncoders,
+   invertTurnEncoders
       );
 
 // back left swerve module         
@@ -42,10 +54,10 @@ public SwerveModuleMDK[] generateModuleMDK(){
    brTurnID,
    brCancoderID,
    turnMotorZeroPos[2],
-   invertDR,
-   invertTR,
-   invertEncDR,
-   invertEncTR
+   invertDriveMotors,
+   invertTurnMotors,
+   invertDriveEncoders,
+   invertTurnEncoders
    );
 
 // back right swerve module      
@@ -54,10 +66,10 @@ public SwerveModuleMDK[] generateModuleMDK(){
    blTurnID,
    blCancoderID,
    turnMotorZeroPos[3],
-   invertDL,
-   invertTL,
-   invertEncDL,
-   invertEncTL
+   invertDriveMotors,
+   invertTurnMotors,
+   invertDriveEncoders,
+   invertTurnEncoders
    );
 
  return modules;
