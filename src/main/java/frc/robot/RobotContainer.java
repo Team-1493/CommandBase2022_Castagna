@@ -24,6 +24,7 @@ import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.UpdatePID;
 import frc.robot.commands.UpdateTable;
+import frc.robot.commands.Climb.ClimbManual;
 import frc.robot.commands.IntakeShooter.IntakeBall;
 import frc.robot.commands.IntakeShooter.ShootBallHigh;
 import frc.robot.commands.LimelightFollowing.LimelightAlign;
@@ -37,6 +38,7 @@ import frc.robot.subsystems.SwerveDriveSystem;
 import frc.robot.subsystems.Tables;
 import frc.robot.subsystems.TrajectoryFollower;
 import frc.robot.subsystems.BallFollowInterface;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.IntakeConveyor;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Stick;
@@ -62,8 +64,8 @@ public final Tables m_tables = new Tables();
   public JoystickButton btnShootBallLow = new JoystickButton(operatorStick.getStick(),6);
   public JoystickButton btnShootBallHigh = new JoystickButton(operatorStick.getStick(),7);
   public JoystickButton btnShootBallHighManual = new JoystickButton(operatorStick.getStick(),8);
-  public JoystickButton climbUpManual = new JoystickButton(operatorStick.getStick(),13);
-  public JoystickButton climbDownManual = new JoystickButton(operatorStick.getStick(),14);
+  public JoystickButton btnClimbUpManual = new JoystickButton(operatorStick.getStick(),13);
+  public JoystickButton btnClimbDownManual = new JoystickButton(operatorStick.getStick(),14);
  
   
 
@@ -76,6 +78,7 @@ public final Tables m_tables = new Tables();
   public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem);
   public final DriverStationInterface driverInterface = new DriverStationInterface(m_swervedriveSystem);
   public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
+  public final Climber  m_climber  = new Climber();
   //  public final BallFollowCamera camera = new BallFollowCamera(); 
 
 
@@ -93,6 +96,11 @@ public final Tables m_tables = new Tables();
   public final Command m_shootBallHigh  = new ShootBallHigh(intake, shooter, btnShootBallHigh);
   public final Command m_shootBallLow  = new ShootBallHigh(intake, shooter, btnShootBallLow);
   public final Command m_shootBallHighManual  = new ShootBallHigh(intake, shooter, btnShootBallHighManual);
+  public final Command m_climbUpManual  = new ClimbManual(m_climber,  btnClimbUpManual, 1);
+  public final Command m_climbDownCManual  = new ClimbManual(m_climber,  btnClimbUpManual, -1)
+ 
+  ;
+  
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
 
@@ -119,6 +127,8 @@ public final Tables m_tables = new Tables();
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
     btnShootBallHighManual.whenPressed(m_shootBallHighManual); 
     btnShootBallLow.whenPressed(m_shootBallLow); 
+    btnClimbDownManual.whileHeld(m_climbDownCManual);
+    btnClimbUpManual.whileHeld(m_climbUpManual);
 
     new JoystickButton(stick.getStick(), Constants.btn_updatePID[Constants.stickNum]).whenPressed(
       new UpdatePID(m_swervedriveSystem));
