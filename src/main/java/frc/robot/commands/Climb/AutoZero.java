@@ -1,25 +1,18 @@
 package frc.robot.commands.Climb;
 
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
 
 
 
-public class ClimbPosition extends CommandBase {
+public class AutoZero extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
-  private Climber climber ;
-  private int position;
+  private Climber climber;
 
 
-  public ClimbPosition(Climber m_climber,int m_setting) {
+  public AutoZero(Climber m_climber) {
     climber=m_climber;
-    if(m_setting==1)position=2000;
-    else if (m_setting==2)position=3000;
-    else position=4000;
     addRequirements(climber);
   }
 
@@ -29,17 +22,19 @@ public class ClimbPosition extends CommandBase {
 
   @Override
   public void execute() {
-    climber.climbPosition(position);
+    climber.climbDown();
   }
 
 
   @Override
   public void end(boolean interrupted) {
+    climber.stop();
+    climber.setPositionToZero();
   }
 
   @Override
   public boolean isFinished() {
-    return (true);
+    return (climber.getLeftLimitSwitch()==1 && climber.getRightLimitSwitch()==1);
   }
   
 }   
