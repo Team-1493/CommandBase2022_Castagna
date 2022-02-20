@@ -24,7 +24,7 @@ public class ShootBallHighManual extends CommandBase {
 
   @Override
   public void initialize() {
-      shooter.shootManualHigh();
+      shooter.shootManual();
   }
 
   @Override

@@ -18,27 +18,15 @@ public class LimelightAlign extends CommandBase {
   public NetworkTableEntry txEntry = limelight.getEntry("tx");
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
   private SwerveDriveSystem sds;
-  int loopsOnTarget=0;
-  double allowableError=0.02;
-  double error;
-  double kP_lime=1;
-  double minOmega=0.2;
-
+  
   public LimelightAlign(SwerveDriveSystem m_sds) {
       sds=m_sds;
-      SmartDashboard.putNumber("kP_lime", 1);
-      SmartDashboard.putNumber("minOmega_lime", 0.2);
-
       addRequirements(sds);
 
   }
 
   @Override
   public void initialize() {
-    error=0;
-    loopsOnTarget=0;
-    kP_lime=SmartDashboard.getNumber("kP_lime", 1);
-    minOmega= SmartDashboard.getNumber("minOmega_lime", 0.2);
   }
 
   @Override

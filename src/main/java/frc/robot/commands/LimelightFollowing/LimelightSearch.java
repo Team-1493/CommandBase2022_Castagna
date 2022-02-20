@@ -39,9 +39,9 @@ public class LimelightSearch extends CommandBase {
   @Override
   public void execute() {
     sds.setMotors(new double[] {0,0,0.3*direction,2});
-    if(direction==1 && sds.heading>(startHeading+Math.PI/6))
+    if(direction==1 && sds.heading<(startHeading-Math.PI/6))
       direction=-1;
-    if(direction==-1 && sds.heading<(startHeading+Math.PI/6))
+    if(direction==-1 && sds.heading>(startHeading+Math.PI/6))
       end(true);  
 
     }

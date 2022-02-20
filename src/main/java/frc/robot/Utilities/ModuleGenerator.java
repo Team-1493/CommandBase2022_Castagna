@@ -75,16 +75,4 @@ public SwerveModuleMDK[] generateModuleMDK(){
  return modules;
 }
 
-
-
-public void updatePID(SwerveModuleMDK[] modules) {
-  // update modules (the rotate PID is updated in SwerveDriveSystem)
-    int i=0;
-    while (i<4){
-      modules[i].setTurnPID();
-      modules[i].setDrivePID();
-      i++;
-    }
-  }
-
 }

@@ -36,36 +36,43 @@ public class Shooter extends SubsystemBase {
   TalonFX shooterR = new TalonFX(13);
   TalonFX shooterL = new TalonFX(12);
   double shooterKs=0.04,shooterKv=0.000152,shooterKa=0.0;
-  double shooterKf=0.0,shooterKp=0.2,shooterKi=0;
+  double shooterKp=0.2;
   
   double currentShooterSpeedL=0; 
   double currentShooterSpeedR=0; 
   double speedFactor=100;
+  double shooterSpeedHigh=0;
+  double shooterSpeedLow=1000;
+  double shooterSpeedManual=1000;
   double shooterSpeed=0;
-
   public boolean atSpeed=false;
 
   SimpleMotorFeedforward shootFeedforward = 
     new SimpleMotorFeedforward(shooterKs,shooterKv,shooterKa);
 
 public Shooter(){
+  
     shooterL.configFactoryDefault();
     shooterL.setNeutralMode(NeutralMode.Coast);
     shooterL.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
     shooterL.config_kP(0, shooterKp);
-    shooterL.config_kF(0, shooterKf);
-    shooterL.config_kI(0, shooterKi);
-
 
     shooterR.configFactoryDefault();    
     shooterR.setNeutralMode(NeutralMode.Coast);
     shooterR.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
     shooterR.config_kP(0, shooterKp);
-    shooterR.config_kF(0, shooterKf);
-    shooterL.config_kI(0, shooterKi);
 
     SmartDashboard.putNumber("shooterL Vel",0);
     SmartDashboard.putNumber("shooterR Vel",0);
+    SmartDashboard.putNumber("shooter kS",shooterKs);
+    SmartDashboard.putNumber("shooter kV",shooterKv);
+    SmartDashboard.putNumber("shooter kA",shooterKa);
+    SmartDashboard.putNumber("shooter kP",shooterKp);
+    SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
+    SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
+
+
+
   }
 
 
@@ -75,29 +82,27 @@ public void shootHigh(){
       shooterSpeed=speedFactor*ty;
     }
     else shooterSpeed=0;
-
-    shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-         shootFeedforward.calculate(shooterSpeed));
-    shooterL.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-         shootFeedforward.calculate(-shooterSpeed));
+    set();
 }
 
 
 public void shootLow(){
-  shooterSpeed=1000;
-  shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       shootFeedforward.calculate(shooterSpeed));
-  shooterL.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       shootFeedforward.calculate(-shooterSpeed));
+  shooterSpeed=shooterSpeedLow;
+  set();
 }
 
 
-public void shootManualHigh(){
-  shooterSpeed=2000;
+public void shootManual(){
+  shooterSpeedManual=SmartDashboard.getNumber("Manual Shoot Speed", shooterSpeedManual);
+  shooterSpeed=shooterSpeedManual;
+  set();
+}
+
+public void set(){
   shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
        shootFeedforward.calculate(shooterSpeed));
   shooterL.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       shootFeedforward.calculate(-shooterSpeed));
+       shootFeedforward.calculate(-shooterSpeed)); 
 }
 
 
@@ -109,6 +114,19 @@ public void stopShooter(){
     }
 
 
+
+    public void updateConstants(){
+      shooterKs=SmartDashboard.getNumber("shooter kS", shooterKs);
+      shooterKv=SmartDashboard.getNumber("shooter kV", shooterKv);
+      shooterKa=SmartDashboard.getNumber("shooter kA", shooterKa);
+      shooterKp=SmartDashboard.getNumber("shooter kP", shooterKp);
+      shootFeedforward=new SimpleMotorFeedforward(shooterKs,shooterKv,shooterKa);
+      shooterL.config_kP(0, shooterKp);
+      shooterR.config_kP(0, shooterKp);
+    }
+
+
+
     @Override
     public void periodic() {
       currentShooterSpeedL=shooterL.getSelectedSensorVelocity()*600/2048;
@@ -118,9 +136,8 @@ public void stopShooter(){
   
       SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
       SmartDashboard.putNumber("shooterL Vel", currentShooterSpeedL);
+
 //      SmartDashboard.putNumber("shooterR Vel",currentShooterSpeedR);
-  
-  
     }
   
 
