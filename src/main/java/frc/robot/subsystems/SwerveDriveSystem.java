@@ -40,9 +40,7 @@ public class SwerveDriveSystem  extends SubsystemBase {
 
   private SwerveModuleMDK[] modules = generator.generateModuleMDK();
 
-
-
-    // Rotate (omega) Constants
+  // Rotate (omega) Constants
     public static double kP_rotate=4;
     public static double kD_rotate=0;
     private double AllowErr_rotate=0.01;
@@ -55,7 +53,6 @@ public class SwerveDriveSystem  extends SubsystemBase {
     private  double  maxVelocityFPS = 14.2;  //max speed in feet/sec
     private double maxVelocityMPS = 0.3048*maxVelocityFPS; // 4.328     
 
-
     public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       new Translation2d(0.4064, -0.4064), 
       new Translation2d(0.4064, +0.4064), 
@@ -66,10 +63,6 @@ public class SwerveDriveSystem  extends SubsystemBase {
   private final Pigeon gyro = new Pigeon(20);
   public SwerveModuleState[] moduleStatesOptimized = new SwerveModuleState[4];
   public double heading=gyro.getHeadingRadians();
- 
-
-
-
 
   public SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(m_kinematics,new Rotation2d(heading));
@@ -102,6 +95,19 @@ public class SwerveDriveSystem  extends SubsystemBase {
     datatable.putNumber("heading", 0);
     pidRotate.enableContinuousInput(-Pi, Pi);
     pidRotate.setTolerance(.01);
+
+    SmartDashboard.putNumber("kP_Rotate",kP_rotate);                    
+    SmartDashboard.putNumber("kD_Rotate",kD_rotate);                   
+    SmartDashboard.putNumber("kD_Rotate",kD_rotate);                    
+    SmartDashboard.putNumber("AllErr_Rotate",AllowErr_rotate);                    
+    SmartDashboard.putNumber("TrapMaxVel_Rotate",TrapMaxVel_rotate);
+    SmartDashboard.putNumber("TrapMaxAcc_Rotate",TrapMaxAcc_rotate);
+    SmartDashboard.putNumber("rotateDPS",rotateDPS);
+    SmartDashboard.putNumber("rotateRP20msec",rotateRP20msec);  
+    SmartDashboard.putNumber("Max Vel FPS",maxVelocityFPS);
+    SmartDashboard.putNumber("Max Drive RPM",modules[0].MPStoRPM(maxVelocityMPS));
+
+
   }      
       
 //
@@ -239,12 +245,28 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     gyro.calibrate();
   }
 
-  public void updatePID() {
-    System.out.println("Updating PID");
-    System.out.println(" ");
-    generator.updatePID(modules);
+  public void updateConstants() {
+    kP_rotate= SmartDashboard.getNumber("kP_Rotate",kP_rotate);
+    kD_rotate= SmartDashboard.getNumber("kD_Rotate",kD_rotate);
+    AllowErr_rotate= SmartDashboard.getNumber("AllErr_Rotate",AllowErr_rotate);
+    TrapMaxVel_rotate= SmartDashboard.getNumber("TrapMaxVel_Rotate",TrapMaxVel_rotate);
+    TrapMaxAcc_rotate= SmartDashboard.getNumber("TrapMaxAcc_Rotate",TrapMaxAcc_rotate);
+    rotateDPS= SmartDashboard.getNumber("rotateDPS",rotateDPS);
+    maxVelocityFPS= SmartDashboard.getNumber("Max Vel FPS",maxVelocityFPS);
+      
+    rotateRP20msec= rotateDPS*Math.PI/(50.0*180.0);
     trapProf=new TrapezoidProfile.Constraints(TrapMaxVel_rotate,TrapMaxAcc_rotate);
     pidRotate =new ProfiledPIDController(kP_rotate, 0,kD_rotate,trapProf);
+
+    maxVelocityMPS = 0.3048*maxVelocityFPS; 
+    SmartDashboard.putNumber("Max Drive RPM",modules[0].MPStoRPM(maxVelocityMPS));
+
+    int i=0;
+    while(i<4){
+      modules[i].updateConstants();
+      i++;
+    }
+
   }
 
 

@@ -122,6 +122,17 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
 	m_turn.configMotionAcceleration(SMMaxAcc_turn, 25);
 
 
+
+    SmartDashboard.putNumber("kP_Drive",kP_drive);
+    SmartDashboard.putNumber("kF_Drive",kF_drive);
+    SmartDashboard.putNumber("kP_driveff",kP_driveff);
+    SmartDashboard.putNumber("kP_Turn",kP_turn);
+    SmartDashboard.putNumber("kD_Turn",kD_turn);
+    SmartDashboard.putNumber("kF_Turn",kF_turn);
+    SmartDashboard.putNumber("SMMaxVelRadPerSec_turn",SMMaxVelRadPerSec_turn);
+    SmartDashboard.putNumber("SMMaxAccRadPerSec2_turn",SMMaxAccRadPerSec2_turn);
+    SmartDashboard.putNumber("MaxOutput Turn",kMaxOutputTurn);
+
 }
 
 
@@ -210,17 +221,6 @@ public double getDriveErrorRPM() {
    }
 
   
-    public void setTurnPID() {
-        m_turn.config_kP(0, kP_turn);
-        m_turn.config_kD(0,kD_turn);
-        m_turn.config_kF(0,kF_turn);
-        m_turn.configClosedLoopPeakOutput(0, kMaxOutputTurn);                        
-       }
-
-    public void setDrivePID() {
-        m_drive.config_kP(0,kP_drive);
-        m_drive.config_kF(0,kF_drive);
-       }       
 
 
     private double velNativeToRPM_talon(double vel_NativeUnits){
@@ -231,8 +231,32 @@ public double getDriveErrorRPM() {
         return mps*MPSToRPM;
     }
 
+    public void updateConstants(){
 
+        kP_drive= SmartDashboard.getNumber("kP_Drive",kP_drive);
+        kF_drive= SmartDashboard.getNumber("kF_Drive",kF_drive);
 
+        kP_turn= SmartDashboard.getNumber("kP_Turn",kP_turn);
+        kD_turn= SmartDashboard.getNumber("kD_Turn",kD_turn);
+        kF_turn= SmartDashboard.getNumber("kF_Turn",kF_turn);
+        kMaxOutputTurn=SmartDashboard.getNumber("MaxOutput Turn",kMaxOutputTurn);
 
+        SMMaxVelRadPerSec_turn= SmartDashboard.getNumber("SMMaxVelRadPerSec_turn",SMMaxVelRadPerSec_turn);
+        SMMaxAccRadPerSec2_turn= SmartDashboard.getNumber("SMMaxAccRadPerSec2_turn",SMMaxAccRadPerSec2_turn);
+        SMMaxVel_turn= 0.1*4096*SMMaxVelRadPerSec_turn/(2*Math.PI);
+        SMMaxAcc_turn=0.1*4096*SMMaxAccRadPerSec2_turn/(2*Math.PI);
+
+        m_drive.config_kP(0,kP_drive);
+        m_drive.config_kF(0,kF_drive);
+
+        m_turn.config_kP(0, kP_turn);
+        m_turn.config_kD(0,kD_turn);
+        m_turn.config_kF(0,kF_turn);
+        m_turn.configClosedLoopPeakOutput(0, kMaxOutputTurn);                        
+
+        
+    }
+
+  
 
 }
