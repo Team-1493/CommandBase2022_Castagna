@@ -24,6 +24,9 @@ import frc.robot.commands.Gyro.ReEnableGyro;
 import frc.robot.commands.Gyro.ResetGyro;
 import frc.robot.commands.IntakeShooter.IntakeBall;
 import frc.robot.commands.IntakeShooter.ShootBallHigh;
+import frc.robot.commands.IntakeShooter.ShootBallHighManual;
+import frc.robot.commands.IntakeShooter.ShootBallLow;
+import frc.robot.commands.IntakeShooter.SpinWheel;
 import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
 import frc.robot.commands.Rotate.HeadingBumpCCW;
 import frc.robot.commands.Rotate.HeadingBumpCW;
@@ -54,17 +57,19 @@ public final Tables m_tables = new Tables();
   public JoystickButton btnBumpCCW = new JoystickButton(stick.getStick(),5);
   public JoystickButton btnBumpCW = new JoystickButton(stick.getStick(),6);
   public JoystickButton btnFollowBall = new JoystickButton(stick.getStick(),9);
-  public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),10);
+  public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),6);
   public JoystickButton btnLimelightTarget = new JoystickButton(stick.getStick(),14);
 
 
  // Operator Buttons 
-  public JoystickButton btnIntakeBall = new JoystickButton(operatorStick.getStick(),5);
+  public JoystickButton btnSpinWheels = new JoystickButton(operatorStick.getStick(),5); 
+  public JoystickButton btnIntakeBall = new JoystickButton(operatorStick.getStick(),7);
   public JoystickButton btnShootBallLow = new JoystickButton(operatorStick.getStick(),6);
-  public JoystickButton btnShootBallHigh = new JoystickButton(operatorStick.getStick(),7);
-  public JoystickButton btnShootBallManual = new JoystickButton(operatorStick.getStick(),1);
+  public JoystickButton btnShootBallHigh = new JoystickButton(operatorStick.getStick(),1);
+  public JoystickButton btnShootBallManual = new JoystickButton(operatorStick.getStick(),8);
   public JoystickButton btnClimbUpManual = new JoystickButton(operatorStick.getStick(),13);
   public JoystickButton btnClimbDownManual = new JoystickButton(operatorStick.getStick(),14);
+
   public JoystickButton btnClimbPosition1 = new JoystickButton(operatorStick.getStick(),2);
   public JoystickButton btnClimbPosition2 = new JoystickButton(operatorStick.getStick(),3);
   public JoystickButton btnClimbPosition3 = new JoystickButton(operatorStick.getStick(),4);
@@ -93,11 +98,13 @@ public final Camera camera = new Camera();
   public final FollowBall m_followBall = new FollowBall(m_ballFollower);
   public final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
   public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall);
+  public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
+ 
   public final Command m_shootBallHigh  = new ShootBallHigh(intake, shooter, btnShootBallHigh);
-  public final Command m_shootBallLow  = new ShootBallHigh(intake, shooter, btnShootBallLow);
-  public final Command m_shootBallHighManual  = new ShootBallHigh(intake, shooter, btnShootBallManual);
-  public final Command m_climbUpManual  = new ClimbManual(m_climber,  btnClimbUpManual, 1);
-  public final Command m_climbDownManual  = new ClimbManual(m_climber,  btnClimbUpManual, -1);
+  public final Command m_shootBallLow  = new ShootBallLow(intake, shooter, btnShootBallLow);
+  public final Command m_shootBallHighManual  = new ShootBallHighManual(intake, shooter, btnShootBallManual);
+  public final Command m_climbUpManual  = new ClimbManual(m_climber,  btnClimbUpManual, -1);
+  public final Command m_climbDownManual  = new ClimbManual(m_climber,  btnClimbDownManual, 1);
   public final Command m_climbPosition1  = new ClimbPosition(m_climber,  1);
   public final Command m_climbPosition2  = new ClimbPosition(m_climber,  2);
   public final Command m_climbPosition3  = new ClimbPosition(m_climber,  3);
@@ -125,20 +132,20 @@ public final Camera camera = new Camera();
     btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
     btnTurbo.whenPressed(new TurboToggle(stick));
 
-    btnLimelightTarget.whenPressed(m_limelightAutoTarget); 
+//    btnLimelightTarget.whenPressed(m_limelightAutoTarget); 
+    btnSpinWheels.whenPressed(m_spimWheel); 
     btnIntakeBall.whenPressed(m_intakeBall); 
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
     btnShootBallManual.whenPressed(m_shootBallHighManual); 
     btnShootBallLow.whenPressed(m_shootBallLow); 
+    btnClimbUpManual.whileHeld(m_climbUpManual);
     btnClimbDownManual.whileHeld(m_climbDownManual);
-    btnClimbUpManual.whileHeld(m_climbUpManual);
-    btnClimbUpManual.whileHeld(m_climbUpManual);
     btnClimbPosition1.whileHeld(m_climbPosition1);
     btnClimbPosition2.whileHeld(m_climbPosition2);
     btnClimbPosition3.whileHeld(m_climbPosition3);
   
-    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
-    btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
+  //  btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
+   // btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
   //  btnFollowBall.whileHeld(m_followBall); 
   }
 

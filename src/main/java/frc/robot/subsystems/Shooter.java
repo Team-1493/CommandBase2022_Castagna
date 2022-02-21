@@ -35,15 +35,15 @@ public class Shooter extends SubsystemBase {
 
   TalonFX shooterR = new TalonFX(13);
   TalonFX shooterL = new TalonFX(12);
-  double shooterKs=0.04,shooterKv=0.000152,shooterKa=0.0;
+  double shooterKs=0.024,shooterKv=0.000147,shooterKa=0.1;
   double shooterKp=0.2;
   
   double currentShooterSpeedL=0; 
   double currentShooterSpeedR=0; 
   double speedFactor=100;
   double shooterSpeedHigh=0;
-  double shooterSpeedLow=1000;
-  double shooterSpeedManual=1000;
+  double shooterSpeedLow=850;
+  double shooterSpeedManual=1750;
   double shooterSpeed=0;
   public boolean atSpeed=false;
 
@@ -79,7 +79,7 @@ public Shooter(){
 public void shootHigh(){
     if(tvEntry.getDouble(1)==1){
       double ty=tyEntry.getDouble(1);
-      shooterSpeed=speedFactor*ty;
+      shooterSpeed=speedFactor;
     }
     else shooterSpeed=0;
     set();
@@ -101,7 +101,7 @@ public void shootManual(){
 public void set(){
   shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
        shootFeedforward.calculate(shooterSpeed));
-  shooterL.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+  shooterR.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
        shootFeedforward.calculate(-shooterSpeed)); 
 }
 
@@ -130,10 +130,12 @@ public void stopShooter(){
     @Override
     public void periodic() {
       currentShooterSpeedL=shooterL.getSelectedSensorVelocity()*600/2048;
-//      currentShooterSpeedR=shooterR.getSelectedSensorVelocity()*600/2048;
-      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<25 )atSpeed=true;
+      currentShooterSpeedR=shooterR.getSelectedSensorVelocity()*600/2048;
+      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<30 && 
+                    Math.abs(-currentShooterSpeedR-shooterSpeed)<30)
+          atSpeed=true;
       else atSpeed=false;
-  
+      SmartDashboard.putNumber("Shooter set speed",shooterSpeed);  
       SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
       SmartDashboard.putNumber("shooterL Vel", currentShooterSpeedL);
 

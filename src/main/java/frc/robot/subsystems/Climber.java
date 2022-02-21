@@ -2,11 +2,14 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.Climb.AutoZero;
@@ -19,7 +22,7 @@ public class Climber extends SubsystemBase {
   int lowPos=2000;
   int medPos=2000;
   int highPos=2000;
-
+  double climb_kP=.1;
 
 
 
@@ -35,15 +38,21 @@ public Climber(){
     climbMotorL.setSelectedSensorPosition(0, 0, 25);
     climbMotorR.setSelectedSensorPosition(0, 0, 25);
  
-    climbMotorL.config_kP(0, 1.0);
+    SmartDashboard.putNumber("climb_kP",climb_kP);
+    
+    climbMotorL.config_kP(0,climb_kP);
+    climbMotorR.config_kP(0,climb_kP);
+
+
     climbMotorL.config_kD(0, 0.0);
     climbMotorL.config_kF(0, 0.0);
     climbMotorL.configClosedLoopPeakOutput(0, 1);
-    climbMotorR.config_kP(0, 1.0);
     climbMotorR.config_kD(0, 0.0);
     climbMotorR.config_kF(0, 0.0);
     climbMotorR.configClosedLoopPeakOutput(0, 1);
     
+    
+
     climbMotorL.setInverted(InvertType.InvertMotorOutput);
     climbMotorL.setInverted(InvertType.FollowMaster);
     climbMotorR.setSensorPhase(false);
@@ -54,7 +63,9 @@ public Climber(){
 
     climbMotorL.configReverseSoftLimitThreshold(0);
     climbMotorL.configReverseSoftLimitEnable(false, 25);
-    
+
+//    climbMotorL.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    climbMotorR.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 
     StatorCurrentLimitConfiguration statorconfig = 
         new StatorCurrentLimitConfiguration(true,25,30,0.5);        
@@ -67,25 +78,30 @@ public Climber(){
 }
 
     public void climbUp(){
-        climbMotorL.set(ControlMode.PercentOutput, 0.5);
-        climbMotorR.set(ControlMode.Follower,leftID);
-    }
-
-    public void climbDown(){
-        climbMotorL.set(ControlMode.PercentOutput, -0.5);
-        climbMotorR.set(ControlMode.PercentOutput,-0.5);
-
-/*      if(getLeftLimitSwitch()==1)
+        climbMotorL.set(ControlMode.Follower,15);
+        climbMotorR.set(ControlMode.PercentOutput,0.5);
+        SmartDashboard.putNumber("RLS", getRightLimitSwitch());
+      if(getRightLimitSwitch()==1)
         climbMotorL.setSelectedSensorPosition(0, 0, 25);
         if(getRightLimitSwitch()==1)
         climbMotorR.setSelectedSensorPosition(0, 0, 25);
-*/
+
+    }
+
+    public void climbDown(){
+        climbMotorL.set(ControlMode.Follower,15);        
+        climbMotorR.set(ControlMode.PercentOutput,-0.5);
+      if(getRightLimitSwitch()==1)
+        climbMotorL.setSelectedSensorPosition(0, 0, 25);
+        if(getRightLimitSwitch()==1)
+        climbMotorR.setSelectedSensorPosition(0, 0, 25);
+
     }
 
 
     public void climbPosition(int position){
-        climbMotorL.set(ControlMode.Position, position);
-        climbMotorR.set(ControlMode.Follower,leftID);
+        climbMotorR.set(ControlMode.Position, position);
+        climbMotorL.set(ControlMode.Follower,15);
     }
 
 
@@ -109,12 +125,22 @@ public Climber(){
     }
 
     public int getRightLimitSwitch(){
-        return climbMotorL.getSensorCollection().isRevLimitSwitchClosed();
+        return climbMotorR.getSensorCollection().isFwdLimitSwitchClosed();
     }
 
     public void setPositionToZero(){
         climbMotorL.setSelectedSensorPosition(0,0,25);
         climbMotorR.setSelectedSensorPosition(0,0,25);
+    }
+
+    public void setClimb_kP(){
+        double DashboardClimb_kP = SmartDashboard.getNumber("climb_kP",climb_kP);
+        if (DashboardClimb_kP != climb_kP){
+            climbMotorL.config_kP(0,DashboardClimb_kP);
+            climbMotorR.config_kP(0,DashboardClimb_kP);
+            climb_kP = DashboardClimb_kP;
+            
+        }
     }
 
 }
