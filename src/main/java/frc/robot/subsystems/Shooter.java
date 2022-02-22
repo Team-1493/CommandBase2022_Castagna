@@ -138,6 +138,7 @@ public void stopShooter(){
       SmartDashboard.putNumber("Shooter set speed",shooterSpeed);  
       SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
       SmartDashboard.putNumber("shooterL Vel", currentShooterSpeedL);
+      SmartDashboard.putNumber("shooterR Vel", currentShooterSpeedR);
 
 //      SmartDashboard.putNumber("shooterR Vel",currentShooterSpeedR);
     }
