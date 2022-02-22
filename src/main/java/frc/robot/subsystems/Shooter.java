@@ -35,8 +35,8 @@ public class Shooter extends SubsystemBase {
 
   TalonFX shooterR = new TalonFX(13);
   TalonFX shooterL = new TalonFX(12);
-  double shooterKs=0.024,shooterKv=0.000147,shooterKa=0.1;
-  double shooterKp=0.2;
+  double topKs=0.024,topKv=0.000147,topKa=0.1,topKp=0.2;
+  double bottomKs=0.024,bottomKv=0.000141,bottomKa=0.1,bottomKp=0.090;
   
   double currentShooterSpeedL=0; 
   double currentShooterSpeedR=0; 
@@ -45,33 +45,44 @@ public class Shooter extends SubsystemBase {
   double shooterSpeedLow=850;
   double shooterSpeedManual=1750;
   double shooterSpeed=0;
+  double bottomclpo=0.4;
   public boolean atSpeed=false;
 
-  SimpleMotorFeedforward shootFeedforward = 
-    new SimpleMotorFeedforward(shooterKs,shooterKv,shooterKa);
+  SimpleMotorFeedforward topFF = 
+    new SimpleMotorFeedforward(topKs,topKv,topKa);
+
+    SimpleMotorFeedforward bottomFF = 
+    new SimpleMotorFeedforward(bottomKs,bottomKv,bottomKa);
 
 public Shooter(){
   
     shooterL.configFactoryDefault();
     shooterL.setNeutralMode(NeutralMode.Coast);
     shooterL.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
-    shooterL.config_kP(0, shooterKp);
+    shooterL.config_kP(0, topKp);
 
     shooterR.configFactoryDefault();    
     shooterR.setNeutralMode(NeutralMode.Coast);
     shooterR.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
-    shooterR.config_kP(0, shooterKp);
+    shooterR.configClosedLoopPeakOutput(0, bottomclpo);
+    shooterR.config_kP(0, bottomKp);
 
+//    shooterR.configClosedloopRamp(0.25);
+
+    SmartDashboard.putNumber("shooterR clpo", bottomclpo);
     SmartDashboard.putNumber("shooterL Vel",0);
     SmartDashboard.putNumber("shooterR Vel",0);
-    SmartDashboard.putNumber("shooter kS",shooterKs);
-    SmartDashboard.putNumber("shooter kV",shooterKv);
-    SmartDashboard.putNumber("shooter kA",shooterKa);
-    SmartDashboard.putNumber("shooter kP",shooterKp);
+    SmartDashboard.putNumber("shooter top kS",topKs);
+    SmartDashboard.putNumber("shooter top kV",topKv);
+    SmartDashboard.putNumber("shooter top kA",topKa);
+    SmartDashboard.putNumber("shooter top kP",topKp);
+    SmartDashboard.putNumber("shooter bottom kS",bottomKs);
+    SmartDashboard.putNumber("shooter bottom kV",bottomKv);
+    SmartDashboard.putNumber("shooter bottom kA",bottomKa);
+    SmartDashboard.putNumber("shooter bottom kP",bottomKp);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
-
-
+  
 
   }
 
@@ -79,7 +90,7 @@ public Shooter(){
 public void shootHigh(){
     if(tvEntry.getDouble(1)==1){
       double ty=tyEntry.getDouble(1);
-      shooterSpeed=speedFactor;
+      shooterSpeed=2102.42876*Math.pow(ty, -0.06006);
     }
     else shooterSpeed=0;
     set();
@@ -99,10 +110,14 @@ public void shootManual(){
 }
 
 public void set(){
+  double ffr = -shooterSpeed*(shooterSpeed* (2.1657*Math.pow(10,-8)) +8.4057*Math.pow(10,-5))   -0.04;
   shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       shootFeedforward.calculate(shooterSpeed));
-  shooterR.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       shootFeedforward.calculate(-shooterSpeed)); 
+       topFF.calculate(shooterSpeed));
+
+       shooterR.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+       bottomFF.calculate(-shooterSpeed));
+
+//  shooterR.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,ffr); 
 }
 
 
@@ -116,13 +131,21 @@ public void stopShooter(){
 
 
     public void updateConstants(){
-      shooterKs=SmartDashboard.getNumber("shooter kS", shooterKs);
-      shooterKv=SmartDashboard.getNumber("shooter kV", shooterKv);
-      shooterKa=SmartDashboard.getNumber("shooter kA", shooterKa);
-      shooterKp=SmartDashboard.getNumber("shooter kP", shooterKp);
-      shootFeedforward=new SimpleMotorFeedforward(shooterKs,shooterKv,shooterKa);
-      shooterL.config_kP(0, shooterKp);
-      shooterR.config_kP(0, shooterKp);
+      topKs=SmartDashboard.getNumber("shooter top kS", topKs);
+      topKv=SmartDashboard.getNumber("shooter top kV", topKv);
+      topKa=SmartDashboard.getNumber("shooter top kA", topKa);
+      topKp=SmartDashboard.getNumber("shooter top kP", topKp);
+      topFF=new SimpleMotorFeedforward(topKs,topKv,topKa);
+      shooterL.config_kP(0, topKp);
+      
+      bottomKs=SmartDashboard.getNumber("shooter bottom kS", bottomKs);
+      bottomKv=SmartDashboard.getNumber("shooter bottom kV", bottomKv);
+      bottomKa=SmartDashboard.getNumber("shooter bottom kA", bottomKa);
+      bottomKp=SmartDashboard.getNumber("shooter bottom kP", bottomKp);
+      bottomclpo=SmartDashboard.getNumber("shooterR clpo", bottomclpo);
+      bottomFF=new SimpleMotorFeedforward(bottomKs,bottomKv,bottomKa);     
+      shooterR.config_kP(0, bottomKp);
+      shooterR.configClosedLoopPeakOutput(0, bottomclpo);
     }
 
 
@@ -131,16 +154,15 @@ public void stopShooter(){
     public void periodic() {
       currentShooterSpeedL=shooterL.getSelectedSensorVelocity()*600/2048;
       currentShooterSpeedR=shooterR.getSelectedSensorVelocity()*600/2048;
-      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<30 && 
-                    Math.abs(-currentShooterSpeedR-shooterSpeed)<30)
+      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<60 && 
+                    Math.abs(-currentShooterSpeedR-shooterSpeed)<60)
           atSpeed=true;
       else atSpeed=false;
       SmartDashboard.putNumber("Shooter set speed",shooterSpeed);  
       SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
-      SmartDashboard.putNumber("shooterL Vel", currentShooterSpeedL);
-
-//      SmartDashboard.putNumber("shooterR Vel",currentShooterSpeedR);
-    }
+      SmartDashboard.putNumber("shooterL Vel",currentShooterSpeedL);
+      SmartDashboard.putNumber("shooterR Vel",currentShooterSpeedR);
+      }
   
 
 }
