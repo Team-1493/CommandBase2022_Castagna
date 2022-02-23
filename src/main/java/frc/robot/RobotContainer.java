@@ -23,9 +23,7 @@ import frc.robot.commands.Climb.ClimbPosition;
 import frc.robot.commands.Gyro.ReEnableGyro;
 import frc.robot.commands.Gyro.ResetGyro;
 import frc.robot.commands.IntakeShooter.IntakeBall;
-import frc.robot.commands.IntakeShooter.ShootBallHigh;
-import frc.robot.commands.IntakeShooter.ShootBallHighManual;
-import frc.robot.commands.IntakeShooter.ShootBallLow;
+import frc.robot.commands.IntakeShooter.ShootBall;
 import frc.robot.commands.IntakeShooter.SpinWheel;
 import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
 import frc.robot.commands.Rotate.HeadingBumpCCW;
@@ -33,7 +31,6 @@ import frc.robot.commands.Rotate.HeadingBumpCW;
 import frc.robot.commands.Rotate.RotateInPlace;
 import frc.robot.commands.FollowBall;
 import frc.robot.subsystems.SwerveDriveSystem;
-import frc.robot.subsystems.SwerveModuleMDK;
 import frc.robot.subsystems.Tables;
 import frc.robot.subsystems.TrajectoryFollower;
 import frc.robot.subsystems.BallFollowInterface;
@@ -100,18 +97,17 @@ public final Camera camera = new Camera();
   public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall);
   public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
  
-  public final Command m_shootBallHigh  = new ShootBallHigh(intake, shooter, btnShootBallHigh);
-  public final Command m_shootBallLow  = new ShootBallLow(intake, shooter, btnShootBallLow);
-  public final Command m_shootBallHighManual  = new ShootBallHighManual(intake, shooter, btnShootBallManual);
+  public final Command m_shootBallHigh  = new ShootBall(intake, shooter, btnShootBallHigh,1);
+  public final Command m_shootBallLow  = new ShootBall(intake, shooter, btnShootBallLow,2);
+  public final Command m_shootBallManual  = new ShootBall(intake, shooter, btnShootBallManual,3);
   public final Command m_climbUpManual  = new ClimbManual(m_climber,  btnClimbUpManual, -1);
   public final Command m_climbDownManual  = new ClimbManual(m_climber,  btnClimbDownManual, 1);
   public final Command m_climbPosition1  = new ClimbPosition(m_climber,  1);
   public final Command m_climbPosition2  = new ClimbPosition(m_climber,  2);
   public final Command m_climbPosition3  = new ClimbPosition(m_climber,  3);
- 
-  ;
   
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
+
 
 
   public RobotContainer() {
@@ -136,7 +132,7 @@ public final Camera camera = new Camera();
     btnSpinWheels.whenPressed(m_spimWheel); 
     btnIntakeBall.whenPressed(m_intakeBall); 
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
-    btnShootBallManual.whenPressed(m_shootBallHighManual); 
+    btnShootBallManual.whenPressed(m_shootBallManual); 
     btnShootBallLow.whenPressed(m_shootBallLow); 
     btnClimbUpManual.whileHeld(m_climbUpManual);
     btnClimbDownManual.whileHeld(m_climbDownManual);

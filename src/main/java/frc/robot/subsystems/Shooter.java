@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -35,6 +36,12 @@ public class Shooter extends SubsystemBase {
 
   TalonFX shooterR = new TalonFX(13);
   TalonFX shooterL = new TalonFX(12);
+
+  private Timer timer = new Timer();
+  private double shooterTOTGoal=0.2;
+  private double currentTimeOnTarget=0;
+  private double startTime=0;
+
   double topKs=0.024,topKv=0.000147,topKa=0.1,topKp=0.2;
   double bottomKs=0.024,bottomKv=0.000141,bottomKa=0.1,bottomKp=0.090;
   
@@ -47,6 +54,7 @@ public class Shooter extends SubsystemBase {
   double shooterSpeed=0;
   double bottomclpo=0.4;
   public boolean atSpeed=false;
+  private double shooterTolerance=50;
 
   SimpleMotorFeedforward topFF = 
     new SimpleMotorFeedforward(topKs,topKv,topKa);
@@ -56,6 +64,8 @@ public class Shooter extends SubsystemBase {
 
 public Shooter(){
   
+    timer.start();
+
     shooterL.configFactoryDefault();
     shooterL.setNeutralMode(NeutralMode.Coast);
     shooterL.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
@@ -82,6 +92,8 @@ public Shooter(){
     SmartDashboard.putNumber("shooter bottom kP",bottomKp);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
+    SmartDashboard.putNumber("Shooter At Spoeed",shooterTolerance);
+
   
 
   }
@@ -131,6 +143,9 @@ public void stopShooter(){
 
 
     public void updateConstants(){
+      shooterTolerance=SmartDashboard.getNumber("shooter tolerance", shooterTolerance);
+      shooterTolerance=SmartDashboard.getNumber("shooter TOTgoal", shooterTOTGoal);
+
       topKs=SmartDashboard.getNumber("shooter top kS", topKs);
       topKv=SmartDashboard.getNumber("shooter top kV", topKv);
       topKa=SmartDashboard.getNumber("shooter top kA", topKa);
@@ -154,10 +169,16 @@ public void stopShooter(){
     public void periodic() {
       currentShooterSpeedL=shooterL.getSelectedSensorVelocity()*600/2048;
       currentShooterSpeedR=shooterR.getSelectedSensorVelocity()*600/2048;
-      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<60 && 
-                    Math.abs(-currentShooterSpeedR-shooterSpeed)<60)
-          atSpeed=true;
-      else atSpeed=false;
+
+      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<shooterTolerance && 
+                    Math.abs(-currentShooterSpeedR-shooterSpeed)<shooterTolerance){
+        currentTimeOnTarget=timer.get()-startTime;
+        if(currentTimeOnTarget>shooterTOTGoal) atSpeed=true;
+      }
+     else {
+        startTime=timer.get();
+        atSpeed=false;
+      } 
       SmartDashboard.putNumber("Shooter set speed",shooterSpeed);  
       SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
       SmartDashboard.putNumber("shooterL Vel",currentShooterSpeedL);
