@@ -115,7 +115,7 @@ public final Camera camera = new Camera();
 
 
   public RobotContainer() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
@@ -132,7 +132,7 @@ public final Camera camera = new Camera();
     btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
     btnTurbo.whenPressed(new TurboToggle(stick));
 
-//    btnLimelightTarget.whenPressed(m_limelightAutoTarget); 
+    btnLimelightTarget.whenPressed(m_limelightAutoTarget); 
     btnSpinWheels.whenPressed(m_spimWheel); 
     btnIntakeBall.whenPressed(m_intakeBall); 
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
@@ -144,7 +144,7 @@ public final Camera camera = new Camera();
     btnClimbPosition2.whileHeld(m_climbPosition2);
     btnClimbPosition3.whileHeld(m_climbPosition3);
   
-  //  btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
+    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
    // btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
   //  btnFollowBall.whileHeld(m_followBall); 
   }
@@ -163,5 +163,9 @@ public final Camera camera = new Camera();
     m_swervedriveSystem.updateConstants();
   }
 
+<<<<<<< HEAD
 } 
   
+=======
+  } 
+>>>>>>> new-2_22
