@@ -43,11 +43,13 @@ public class SwerveDriveSystem  extends SubsystemBase {
   // Rotate (omega) Constants
     public static double kP_rotate=4;
     public static double kD_rotate=0;
+    private double kS_rotate=0.05;
     private double AllowErr_rotate=0.01;
     private double TrapMaxVel_rotate=20;
     private double TrapMaxAcc_rotate=10;
     private double rotateDPS=225;
     private double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);
+
 
     // Robot Dimensions for MK4 Swerve
     private  double  maxVelocityFPS = 14.2;  //max speed in feet/sec
@@ -94,11 +96,12 @@ public class SwerveDriveSystem  extends SubsystemBase {
     datatable=m_datatable;
     datatable.putNumber("heading", 0);
     pidRotate.enableContinuousInput(-Pi, Pi);
-    pidRotate.setTolerance(.01);
+    pidRotate.setTolerance(AllowErr_rotate);
 
     SmartDashboard.putNumber("kP_Rotate",kP_rotate);                    
     SmartDashboard.putNumber("kD_Rotate",kD_rotate);                   
     SmartDashboard.putNumber("kD_Rotate",kD_rotate);                    
+    SmartDashboard.putNumber("kS_Rotate",kS_rotate);                    
     SmartDashboard.putNumber("AllErr_Rotate",AllowErr_rotate);                    
     SmartDashboard.putNumber("TrapMaxVel_Rotate",TrapMaxVel_rotate);
     SmartDashboard.putNumber("TrapMaxAcc_Rotate",TrapMaxAcc_rotate);
@@ -159,8 +162,11 @@ if (stickState[3]==1) omega=stickState[2];
   }
 // calculate the required rotational rate in radians/sec using the current
 // heading from the gyro and the desired heading setpoint`
-  if (stickState[3]==2||stickState[3]==3){
-  omega=pidRotate.calculate(heading,headingset);
+  if (stickState[3]==2||stickState[3]==3){  
+    double pidout=pidRotate.calculate(heading,headingset);
+    pidout=pidout+Math.signum(pidout)*kS_rotate;
+    if (!pidRotate.atSetpoint()) omega=pidout;
+    else omega=0;
   }
 
   // Rotate the calculated angle 90 degrees CCW by supplying vy,-vx instead of vx,vy
@@ -248,6 +254,7 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
   public void updateConstants() {
     kP_rotate= SmartDashboard.getNumber("kP_Rotate",kP_rotate);
     kD_rotate= SmartDashboard.getNumber("kD_Rotate",kD_rotate);
+    kS_rotate= SmartDashboard.getNumber("kS_Rotate",kS_rotate);
     AllowErr_rotate= SmartDashboard.getNumber("AllErr_Rotate",AllowErr_rotate);
     TrapMaxVel_rotate= SmartDashboard.getNumber("TrapMaxVel_Rotate",TrapMaxVel_rotate);
     TrapMaxAcc_rotate= SmartDashboard.getNumber("TrapMaxAcc_Rotate",TrapMaxAcc_rotate);
@@ -257,7 +264,9 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     rotateRP20msec= rotateDPS*Math.PI/(50.0*180.0);
     trapProf=new TrapezoidProfile.Constraints(TrapMaxVel_rotate,TrapMaxAcc_rotate);
     pidRotate =new ProfiledPIDController(kP_rotate, 0,kD_rotate,trapProf);
+    pidRotate.setTolerance(AllowErr_rotate);
 
+    
     maxVelocityMPS = 0.3048*maxVelocityFPS; 
     SmartDashboard.putNumber("Max Drive RPM",modules[0].MPStoRPM(maxVelocityMPS));
 
