@@ -162,10 +162,4 @@ public final Camera camera = new Camera();
     shooter.updateConstants();
     m_swervedriveSystem.updateConstants();
   }
-
-<<<<<<< HEAD
-} 
-  
-=======
   } 
->>>>>>> new-2_22
