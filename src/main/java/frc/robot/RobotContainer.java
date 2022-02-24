@@ -94,7 +94,7 @@ public final Camera camera = new Camera();
   public final RotateInPlace m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection); ;
   public final FollowBall m_followBall = new FollowBall(m_ballFollower);
   public final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
-  public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall);
+  public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall); 
   public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
  
   public final Command m_shootBallHigh  = new ShootBall(intake, shooter, btnShootBallHigh,1);
