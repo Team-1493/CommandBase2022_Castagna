@@ -16,24 +16,25 @@ import frc.robot.Utilities.Util;
 
 public class TrajectoryFollower extends SubsystemBase {
      SwerveDriveSystem sds;   
-     double vm=5,am=5;
      double finalHeading=90;
      private double kMaxAngularSpeedRadiansPerSecond = Math.PI;
      private double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
      private double kPXController = 1;
      private double kPYController = 1;
-     private double kPThetaController = 1;
 
  // Constraint for the motion profilied robot angle controller
-     private final TrapezoidProfile.Constraints kThetaControllerConstraints =
+     private  TrapezoidProfile.Constraints kThetaControllerConstraints =
          new TrapezoidProfile.Constraints(
          kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
    // Constrcutor 
   public TrajectoryFollower(SwerveDriveSystem m_sds){
-    sds=m_sds;    
-
+    sds=m_sds;
+    SmartDashboard.putNumber("Trajectory kP_x", kPXController);    
+    SmartDashboard.putNumber("Trajectory kP_y", kPYController);
+    SmartDashboard.putNumber("Trajectory maxRotVel", kMaxAngularSpeedRadiansPerSecond);
+    SmartDashboard.putNumber("Trajectory maxRotAcc", kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
   //  returns a follow trajectory command
@@ -41,28 +42,6 @@ public class TrajectoryFollower extends SubsystemBase {
     PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1", 3, 3);
     double trajtime=traj2.getTotalTimeSeconds();
     SmartDashboard.putNumber("traj time", trajtime);
-
-    // Print the holonomic rotation at the sampled time
-    int i=0;
-    System.out.println("traj2");
-    System.out.println("time,x,y,rot,hol,angV,angA,R,v,a");
-    while(i<101){
-        PathPlannerState state = (PathPlannerState) traj2.sample(i*trajtime/100);
-
-            System.out.println(state.timeSeconds+","+
-            state.poseMeters.getX()+","+
-            state.poseMeters.getY()+","+
-            state.poseMeters.getRotation().getDegrees()+","+
-            state.holonomicRotation.getDegrees()+","+
-            state.angularVelocity.getDegrees()+","+
-            state.angularAcceleration.getDegrees()+","+
-            state.curvatureRadPerMeter+","+
-            state.velocityMetersPerSecond+","+
-            state.accelerationMetersPerSecondSq);
-
-            i++;
-    }
-
 
     var thetaController =
     new ProfiledPIDController(
@@ -89,6 +68,21 @@ sds.resetOdometry(traj2.getInitialPose());
 // Run path following command, then stop at the end.
 return swerveControllerCommand.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(finalHeading), 3}));
 }
+
+public void updateConstants(){
+    kPXController=SmartDashboard.getNumber("Trajectory kP_x", kPXController);    
+    kPYController=SmartDashboard.getNumber("Trajectory kP_y", kPYController);
+    kMaxAngularSpeedRadiansPerSecond =
+         SmartDashboard.getNumber("Trajectory maxRotVel", kMaxAngularSpeedRadiansPerSecond);
+    kMaxAngularSpeedRadiansPerSecondSquared = 
+        SmartDashboard.getNumber("Trajectory maxRotAcc", kMaxAngularSpeedRadiansPerSecondSquared);
+    kThetaControllerConstraints =new TrapezoidProfile.Constraints(
+         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+}
+
+
+
+
 }
 
   

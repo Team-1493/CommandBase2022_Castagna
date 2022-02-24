@@ -122,7 +122,7 @@ public void shootManual(){
 }
 
 public void set(){
-  double ffr = -shooterSpeed*(shooterSpeed* (2.1657*Math.pow(10,-8)) +8.4057*Math.pow(10,-5))   -0.04;
+//  double ffr = -shooterSpeed*(shooterSpeed* (2.1657*Math.pow(10,-8)) +8.4057*Math.pow(10,-5))   -0.04;
   shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
        topFF.calculate(shooterSpeed));
 

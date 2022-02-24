@@ -24,11 +24,14 @@ public IntakeConveyor(){
     intake.configFactoryDefault();
     intake.setNeutralMode(NeutralMode.Brake);
     intake.configOpenloopRamp(0.2);
+/*    
     SupplyCurrentLimitConfiguration supplyconfig = 
         new SupplyCurrentLimitConfiguration(true,25,30,0.5);
     StatorCurrentLimitConfiguration statorconfig = 
         new StatorCurrentLimitConfiguration(true,25,30,0.5);        
-
+    intake.configStatorCurrentLimit(statorconfig);
+    intake.configSupplyCurrentLimit(supplyconfig);
+ */   
     conveyorU.configFactoryDefault();
     conveyorU.setNeutralMode(NeutralMode.Brake);
     conveyorU.configOpenloopRamp(0.2);

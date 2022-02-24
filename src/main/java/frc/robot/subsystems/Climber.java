@@ -67,8 +67,8 @@ public Climber(){
 //    climbMotorL.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
     climbMotorR.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 
-    StatorCurrentLimitConfiguration statorconfig = 
-        new StatorCurrentLimitConfiguration(true,25,30,0.5);        
+//    StatorCurrentLimitConfiguration statorconfig = 
+//        new StatorCurrentLimitConfiguration(true,25,30,0.5);        
 
     climbMotorL.set(ControlMode.PercentOutput, 0);
     climbMotorR.set(ControlMode.PercentOutput, 0);
