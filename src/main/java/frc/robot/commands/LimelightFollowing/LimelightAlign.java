@@ -17,8 +17,11 @@ public class LimelightAlign extends CommandBase {
   public NetworkTable limelight= inst.getTable("limelight");
   public NetworkTableEntry txEntry = limelight.getEntry("tx");
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
+  private double prevDriveVel=100;
+  private double driveVel=100;
   private SwerveDriveSystem sds;
   
+
   public LimelightAlign(SwerveDriveSystem m_sds) {
       sds=m_sds;
       addRequirements(sds);
@@ -28,6 +31,7 @@ public class LimelightAlign extends CommandBase {
   @Override
   public void initialize() {
   }
+
 
   @Override
   public void execute() {
@@ -39,7 +43,10 @@ public class LimelightAlign extends CommandBase {
     double heading=sds.heading;
     SmartDashboard.putNumber("limelight angle", angle);
     if(tvEntry.getDouble(0)==1)
-    sds.setMotors(new double[] {0, 0,heading+angleRadians, 3});    
+    sds.setMotors(new double[] {0, 0,heading+angleRadians, 3});
+    prevDriveVel=driveVel;
+    driveVel=sds.getDriveVelocityMagnitude() ;   
+
   }
 
   // Called once the command ends or is interrupted.
@@ -54,7 +61,8 @@ public class LimelightAlign extends CommandBase {
   // or did autonomous end, or did the driver signal it to end
   @Override
   public boolean isFinished() {
-    return (true);
+//    return (sds.getDriveVelocityMagnitude()<5 && prevDriveVel<5);
+ return true;
   }
   
 }

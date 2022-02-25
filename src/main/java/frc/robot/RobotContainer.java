@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.TurboToggle;
@@ -23,7 +24,9 @@ import frc.robot.commands.Climb.ClimbPosition;
 import frc.robot.commands.Gyro.ReEnableGyro;
 import frc.robot.commands.Gyro.ResetGyro;
 import frc.robot.commands.IntakeShooter.IntakeBall;
+import frc.robot.commands.IntakeShooter.IntakeFirstBallAuto;
 import frc.robot.commands.IntakeShooter.ShootBall;
+import frc.robot.commands.IntakeShooter.ShootBallAuto;
 import frc.robot.commands.IntakeShooter.SpinWheel;
 import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
 import frc.robot.commands.Rotate.HeadingBumpCCW;
@@ -55,11 +58,11 @@ public final Tables m_tables = new Tables();
   public JoystickButton btnBumpCW = new JoystickButton(stick.getStick(),6);
   public JoystickButton btnFollowBall = new JoystickButton(stick.getStick(),9);
   public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),6);
-  public JoystickButton btnLimelightTarget = new JoystickButton(stick.getStick(),14);
 
 
  // Operator Buttons 
-  public JoystickButton btnSpinWheels = new JoystickButton(operatorStick.getStick(),5); 
+ public JoystickButton btnLimelightTarget = new JoystickButton(operatorStick.getStick(),5);
+//  public JoystickButton btnSpinWheels = new JoystickButton(operatorStick.getStick(),5); 
   public JoystickButton btnIntakeBall = new JoystickButton(operatorStick.getStick(),7);
   public JoystickButton btnShootBallLow = new JoystickButton(operatorStick.getStick(),6);
   public JoystickButton btnShootBallHigh = new JoystickButton(operatorStick.getStick(),1);
@@ -76,9 +79,8 @@ public final Tables m_tables = new Tables();
   public final Shooter shooter = new Shooter();
   public final IntakeConveyor intake = new IntakeConveyor();
   public final Climber  m_climber  = new Climber();  
-  public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem);
    public final BallFollowInterface m_ballFollower = new BallFollowInterface(m_swervedriveSystem);
- 
+
   //  public final BallFollowCamera camera = new BallFollowCamera(); 
 
 // Camera
@@ -95,8 +97,8 @@ public final Camera camera = new Camera();
   public final FollowBall m_followBall = new FollowBall(m_ballFollower);
   public final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
   public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall); 
-  public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
- 
+//  public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
+public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1); 
   public final Command m_shootBallHigh  = new ShootBall(intake, shooter, btnShootBallHigh,1);
   public final Command m_shootBallLow  = new ShootBall(intake, shooter, btnShootBallLow,2);
   public final Command m_shootBallManual  = new ShootBall(intake, shooter, btnShootBallManual,3);
@@ -108,7 +110,7 @@ public final Camera camera = new Camera();
   
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
-
+  public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem, intake,shooter);
 
   public RobotContainer() {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
@@ -129,7 +131,7 @@ public final Camera camera = new Camera();
     btnTurbo.whenPressed(new TurboToggle(stick));
 
     btnLimelightTarget.whenPressed(m_limelightAutoTarget); 
-    btnSpinWheels.whenPressed(m_spimWheel); 
+//    btnSpinWheels.whenPressed(m_spimWheel); 
     btnIntakeBall.whenPressed(m_intakeBall); 
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
     btnShootBallManual.whenPressed(m_shootBallManual); 
@@ -145,8 +147,7 @@ public final Camera camera = new Camera();
   //  btnFollowBall.whileHeld(m_followBall); 
   }
 
-
-  public Command getAutonomousCommand() {    
+  public SequentialCommandGroup getAutonomousCommand() {    
     return trajectoryFollower.getFollowTrajCommand();
   }
 

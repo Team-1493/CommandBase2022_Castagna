@@ -19,7 +19,7 @@ public class UpdatePID extends CommandBase {
 
   @Override
   public void execute() {
-//    swervedrive.updateConstants();
+    swervedrive.updateConstants();
     shooter.updateConstants();    
   }
 

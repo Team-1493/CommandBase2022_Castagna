@@ -11,7 +11,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -38,7 +37,7 @@ public class Shooter extends SubsystemBase {
   TalonFX shooterL = new TalonFX(12);
 
   private Timer timer = new Timer();
-  private double shooterTOTGoal=0.2;
+  private double shooterTOTGoal=1;
   private double currentTimeOnTarget=0;
   private double startTime=0;
 
@@ -54,7 +53,7 @@ public class Shooter extends SubsystemBase {
   double shooterSpeed=0;
   double bottomclpo=0.4;
   public boolean atSpeed=false;
-  private double shooterTolerance=50;
+  private double shooterTolerance=30;
 
   SimpleMotorFeedforward topFF = 
     new SimpleMotorFeedforward(topKs,topKv,topKa);
@@ -92,7 +91,8 @@ public Shooter(){
     SmartDashboard.putNumber("shooter bottom kP",bottomKp);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
-    SmartDashboard.putNumber("Shooter At Spoeed",shooterTolerance);
+    SmartDashboard.putNumber("shooter tolerance",shooterTolerance);
+    SmartDashboard.putNumber("shooter TOTgoal", shooterTOTGoal);
 
   
 
@@ -144,7 +144,7 @@ public void stopShooter(){
 
     public void updateConstants(){
       shooterTolerance=SmartDashboard.getNumber("shooter tolerance", shooterTolerance);
-      shooterTolerance=SmartDashboard.getNumber("shooter TOTgoal", shooterTOTGoal);
+      shooterTOTGoal=SmartDashboard.getNumber("shooter TOTgoal", shooterTOTGoal);
 
       topKs=SmartDashboard.getNumber("shooter top kS", topKs);
       topKv=SmartDashboard.getNumber("shooter top kV", topKv);

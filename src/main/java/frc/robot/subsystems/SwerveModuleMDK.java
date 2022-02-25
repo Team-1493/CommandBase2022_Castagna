@@ -136,10 +136,10 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
 }
 
 
-// get the module state for odometry calculations: velocity in RPM and module angle in radians
+// get the module state for odometry calculations: velocity in mps and module angle in radians
 public SwerveModuleState getState() {
     return new SwerveModuleState(
-        velNativeToRPM_talon(m_turn.getSelectedSensorVelocity())/MPSToRPM, 
+        velNativeToRPM_talon(m_drive.getSelectedSensorVelocity())/MPSToRPM, 
         new Rotation2d(getTurnPosition_Rad()));
   }
 

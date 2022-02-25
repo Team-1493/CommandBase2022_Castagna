@@ -43,8 +43,8 @@ public class SwerveDriveSystem  extends SubsystemBase {
   // Rotate (omega) Constants
     public static double kP_rotate=4;
     public static double kD_rotate=0;
-    private double kS_rotate=0.05;
-    private double AllowErr_rotate=0.01;
+    private double kS_rotate=0.0;
+    private double AllowErr_rotate=0.0;
     private double TrapMaxVel_rotate=20;
     private double TrapMaxAcc_rotate=10;
     private double rotateDPS=225;
@@ -81,6 +81,7 @@ public class SwerveDriveSystem  extends SubsystemBase {
   private double Pi=Math.PI;
   private double twoPi=2*Math.PI;
  
+
 
 // PID controller to control rotation of the robot. It will follow a trapezoidal profiel,
 // the setpot is robot heading, sensor value is the gyro angle, and the output feeds into the 
@@ -269,15 +270,20 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     
     maxVelocityMPS = 0.3048*maxVelocityFPS; 
     SmartDashboard.putNumber("Max Drive RPM",modules[0].MPStoRPM(maxVelocityMPS));
-
+/*
     int i=0;
     while(i<4){
       modules[i].updateConstants();
       i++;
     }
-
+*/
   }
 
+
+
+  public double getDriveVelocityMagnitude() {
+    return Math.abs(modules[0].getDriveVelocity());
+  }
 
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();
@@ -300,7 +306,9 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
         modules[3].getState());
         SmartDashboard.putNumber("pose-angle", m_odometry.getPoseMeters().getRotation().getDegrees());
         SmartDashboard.putNumber("pose-x", m_odometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("pose-y", m_odometry.getPoseMeters().getY());}
+        SmartDashboard.putNumber("pose-y", m_odometry.getPoseMeters().getY());
+        SmartDashboard.putNumber("module state 0 mps", modules[0].getState().speedMetersPerSecond);
+      }
         catch(Exception e){
           
         }

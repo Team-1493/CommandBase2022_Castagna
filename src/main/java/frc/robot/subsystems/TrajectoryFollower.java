@@ -7,21 +7,31 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Utilities.CustomSwerveControllorCommand;
 import frc.robot.Utilities.Util;
+import frc.robot.commands.IntakeShooter.IntakeBall;
+import frc.robot.commands.IntakeShooter.IntakeFirstBallAuto;
+import frc.robot.commands.IntakeShooter.ShootBallAuto;
+import frc.robot.commands.LimelightFollowing.LimelightAlign;
+import frc.robot.commands.IntakeShooter.ShootBall;
 
 
 public class TrajectoryFollower extends SubsystemBase {
      SwerveDriveSystem sds;   
+     private Shooter shooter;
      double finalHeading=90;
      private double kMaxAngularSpeedRadiansPerSecond = Math.PI;
      private double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
      private double kPXController = 1;
      private double kPYController = 1;
+     private IntakeConveyor intake;
 
  // Constraint for the motion profilied robot angle controller
      private  TrapezoidProfile.Constraints kThetaControllerConstraints =
@@ -29,8 +39,10 @@ public class TrajectoryFollower extends SubsystemBase {
          kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
    // Constrcutor 
-  public TrajectoryFollower(SwerveDriveSystem m_sds){
+  public TrajectoryFollower(SwerveDriveSystem m_sds, IntakeConveyor m_intake, Shooter m_shooter){
     sds=m_sds;
+    intake = m_intake;
+    shooter=m_shooter;
     SmartDashboard.putNumber("Trajectory kP_x", kPXController);    
     SmartDashboard.putNumber("Trajectory kP_y", kPYController);
     SmartDashboard.putNumber("Trajectory maxRotVel", kMaxAngularSpeedRadiansPerSecond);
@@ -39,16 +51,16 @@ public class TrajectoryFollower extends SubsystemBase {
 
   //  returns a follow trajectory command
   public SequentialCommandGroup getFollowTrajCommand(){    
-    PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1", 3, 3);
+    PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1", .5, 1);
     double trajtime=traj2.getTotalTimeSeconds();
     SmartDashboard.putNumber("traj time", trajtime);
 
     var thetaController =
     new ProfiledPIDController(
         SwerveDriveSystem.kP_rotate, 0, 0, kThetaControllerConstraints);
-thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-CustomSwerveControllorCommand swerveControllerCommand =
+    CustomSwerveControllorCommand firstSwerveControllerCommand =
     new CustomSwerveControllorCommand(
         traj2,
         sds::getPose, // Functional interface to feed supplier
@@ -63,10 +75,22 @@ CustomSwerveControllorCommand swerveControllerCommand =
         sds);
 
 // Reset odometry to the starting pose of the trajectory.
-sds.resetOdometry(traj2.getInitialPose());
+    sds.resetOdometry(traj2.getInitialPose());
 
-// Run path following command, then stop at the end.
-return swerveControllerCommand.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(finalHeading), 3}));
+    PathPlannerState endstate=  traj2.getEndState();
+    finalHeading=(endstate.holonomicRotation).getDegrees();
+
+    SequentialCommandGroup PathCommands = 
+    new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            new IntakeFirstBallAuto(intake),
+            firstSwerveControllerCommand),
+        new LimelightAlign(sds),
+        new ShootBallAuto(intake, shooter,1)
+        );
+
+return PathCommands;
+//return firstSwerveControllerCommand.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(0), 3}));
 }
 
 public void updateConstants(){
@@ -85,4 +109,4 @@ public void updateConstants(){
 
 }
 
-  
+//.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(finalHeading), 3}))  

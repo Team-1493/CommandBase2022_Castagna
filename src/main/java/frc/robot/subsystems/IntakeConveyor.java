@@ -15,7 +15,7 @@ public class IntakeConveyor extends SubsystemBase{
     DigitalInput irTopSensor=new DigitalInput(7);
     DigitalInput irBottomSensor=new DigitalInput(8);
 
-    double intakeSpeed=0.50;
+    double intakeSpeed=0.60;
     
     boolean ballAtTop=irTopSensor.get();
     boolean ballAtBottom=irBottomSensor.get();
