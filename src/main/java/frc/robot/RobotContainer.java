@@ -151,6 +151,10 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     return autoGenerator.getAuto1();
   }
 
+  public SequentialCommandGroup getAutonomousCommand2() {    
+    return autoGenerator.getAuto1();
+  }
+
   public void reEnableGyro(){
     m_ReEnableGyro.resetGryoAndRobotHeading();
   }
