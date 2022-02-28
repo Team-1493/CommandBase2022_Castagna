@@ -8,15 +8,18 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Utilities.CustomSwerveControllorCommand;
 import frc.robot.Utilities.Util;
+import frc.robot.commands.ResetPose;
 import frc.robot.commands.IntakeShooter.IntakeBall;
 import frc.robot.commands.IntakeShooter.IntakeFirstBallAuto;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
@@ -51,30 +54,52 @@ public class AutoGenerator extends SubsystemBase {
     SmartDashboard.putNumber("Trajectory maxRotAcc", kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  //  returns a follow trajectory command
+
+  //  returns a command sequence for a two-ball auto
   public SequentialCommandGroup getAuto1(){    
-    PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1", 0.5 ,1);
-    CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj2);
-// Reset odometry to the starting pose of the trajectory.
-
-//    sds.resetOdometry(traj2.getInitialPose());
-
-    SequentialCommandGroup PathCommands = 
+      // create as many trajectories as needed.  Need the initial pose only for the first trajectory!
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("Path1", 0.5 ,1); 
+    Pose2d initialPose = traj1.getInitialPose();
+    CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
+    SequentialCommandGroup commandGroup = 
     new SequentialCommandGroup(
-        new ParallelCommandGroup(
+            new ResetPose(sds, initialPose), 
+            new ParallelCommandGroup(
             new IntakeFirstBallAuto(intake),
             cscc1),
         new LimelightAlign(sds),
         new ShootBallAuto(intake, shooter,1)
         );
+return commandGroup;
+//    PathPlannerState endstate=  traj1.getEndState();
+//    finalHeading=(endstate.holonomicRotation).getDegrees();
+//return PathCommands.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(0), 3}));
+}
 
-return PathCommands;
-//return firstSwerveControllerCommand.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(0), 3}));
+
+  //  returns a command sequence for a 4 ball auto **need to modify **
+  public SequentialCommandGroup getAuto2(){    
+    // create as many trajectories as needed.  Need the initial pose only for the first trajectory!
+  PathPlannerTrajectory traj1  = PathPlanner.loadPath("Path1", 0.5 ,1); 
+  Pose2d initialPose = traj1.getInitialPose();
+  CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
+  SequentialCommandGroup commandGroup = 
+  new SequentialCommandGroup(
+          new ResetPose(sds, initialPose), 
+          new ParallelCommandGroup(
+          new IntakeFirstBallAuto(intake),
+          cscc1),
+      new LimelightAlign(sds),
+      new ShootBallAuto(intake, shooter,1)
+      );
+return commandGroup;
 }
 
 
 
-public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTrajectory traj2){
+
+//  method to get a swervecontrollercommand to follow a trajectorty
+public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTrajectory traj){
     CustomSwerveControllorCommand cscc;
 
     var thetaController =
@@ -83,7 +108,7 @@ public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTraje
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     cscc=new CustomSwerveControllorCommand(
-        traj2,
+        traj,
         sds::getPose, // Functional interface to feed supplier
         SwerveDriveSystem.m_kinematics,
 
@@ -91,7 +116,7 @@ public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTraje
         new PIDController(kPXController, 0, 0),
         new PIDController(kPYController, 0, 0),
         thetaController,
-        () -> ((PathPlannerState) ( ((PathPlannerTrajectory)traj2).getStates().get(1) )).holonomicRotation,
+        () -> ((PathPlannerState) ( ((PathPlannerTrajectory)traj).getStates().get(1) )).holonomicRotation,
         sds::setModuleStates,
         sds);
     return cscc;

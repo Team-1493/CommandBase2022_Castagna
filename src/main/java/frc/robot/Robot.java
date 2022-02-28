@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private SequentialCommandGroup m_autonomousCommand1;
+  private SequentialCommandGroup m_autonomousCommand1,m_autonomousCommand2;
   private SequentialCommandGroup m_autonomousCommand;
   private static final String kAuto1 = "Auto1";
   private static final String kAuto2 = "Auto2";
@@ -47,6 +47,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Auto2", kAuto2);
     SmartDashboard.putData("Auto choices", m_chooser);
     m_autonomousCommand1 = m_robotContainer.getAutonomousCommand1();
+    m_autonomousCommand1 = m_robotContainer.getAutonomousCommand2();
     
   }
 
@@ -85,7 +86,7 @@ public class Robot extends TimedRobot {
         m_autonomousCommand=m_autonomousCommand1;
         break;
       case kAuto2:
-//        m_autonomousCommand=m_autonomousCommand2;
+        m_autonomousCommand=m_autonomousCommand2;
         break;
       default:
         // Put default auto code here
