@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 
+import java.nio.file.Path;
+
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
@@ -22,7 +24,7 @@ import frc.robot.commands.LimelightFollowing.LimelightAlign;
 import frc.robot.commands.IntakeShooter.ShootBall;
 
 
-public class TrajectoryFollower extends SubsystemBase {
+public class AutoGenerator extends SubsystemBase {
      SwerveDriveSystem sds;   
      private Shooter shooter;
      double finalHeading=90;
@@ -39,7 +41,7 @@ public class TrajectoryFollower extends SubsystemBase {
          kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
    // Constrcutor 
-  public TrajectoryFollower(SwerveDriveSystem m_sds, IntakeConveyor m_intake, Shooter m_shooter){
+  public AutoGenerator(SwerveDriveSystem m_sds, IntakeConveyor m_intake, Shooter m_shooter){
     sds=m_sds;
     intake = m_intake;
     shooter=m_shooter;
@@ -50,18 +52,37 @@ public class TrajectoryFollower extends SubsystemBase {
   }
 
   //  returns a follow trajectory command
-  public SequentialCommandGroup getFollowTrajCommand(){    
-    PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1", .5, 1);
-    double trajtime=traj2.getTotalTimeSeconds();
-    SmartDashboard.putNumber("traj time", trajtime);
+  public SequentialCommandGroup getAuto1(){    
+    PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1", 0.5 ,1);
+    CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj2);
+// Reset odometry to the starting pose of the trajectory.
+
+//    sds.resetOdometry(traj2.getInitialPose());
+
+    SequentialCommandGroup PathCommands = 
+    new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            new IntakeFirstBallAuto(intake),
+            cscc1),
+        new LimelightAlign(sds),
+        new ShootBallAuto(intake, shooter,1)
+        );
+
+return PathCommands;
+//return firstSwerveControllerCommand.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(0), 3}));
+}
+
+
+
+public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTrajectory traj2){
+    CustomSwerveControllorCommand cscc;
 
     var thetaController =
     new ProfiledPIDController(
         SwerveDriveSystem.kP_rotate, 0, 0, kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    CustomSwerveControllorCommand firstSwerveControllerCommand =
-    new CustomSwerveControllorCommand(
+    cscc=new CustomSwerveControllorCommand(
         traj2,
         sds::getPose, // Functional interface to feed supplier
         SwerveDriveSystem.m_kinematics,
@@ -73,25 +94,19 @@ public class TrajectoryFollower extends SubsystemBase {
         () -> ((PathPlannerState) ( ((PathPlannerTrajectory)traj2).getStates().get(1) )).holonomicRotation,
         sds::setModuleStates,
         sds);
-
-// Reset odometry to the starting pose of the trajectory.
-    sds.resetOdometry(traj2.getInitialPose());
-
-    PathPlannerState endstate=  traj2.getEndState();
-    finalHeading=(endstate.holonomicRotation).getDegrees();
-
-    SequentialCommandGroup PathCommands = 
-    new SequentialCommandGroup(
-        new ParallelCommandGroup(
-            new IntakeFirstBallAuto(intake),
-            firstSwerveControllerCommand),
-        new LimelightAlign(sds),
-        new ShootBallAuto(intake, shooter,1)
-        );
-
-return PathCommands;
-//return firstSwerveControllerCommand.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(0), 3}));
+    return cscc;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 public void updateConstants(){
     kPXController=SmartDashboard.getNumber("Trajectory kP_x", kPXController);    

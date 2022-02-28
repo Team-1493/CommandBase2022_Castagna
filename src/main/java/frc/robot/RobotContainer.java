@@ -35,7 +35,7 @@ import frc.robot.commands.Rotate.RotateInPlace;
 import frc.robot.commands.FollowBall;
 import frc.robot.subsystems.SwerveDriveSystem;
 import frc.robot.subsystems.Tables;
-import frc.robot.subsystems.TrajectoryFollower;
+import frc.robot.subsystems.AutoGenerator;
 import frc.robot.subsystems.BallFollowInterface;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.IntakeConveyor;
@@ -110,7 +110,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
-  public final TrajectoryFollower trajectoryFollower = new TrajectoryFollower(m_swervedriveSystem, intake,shooter);
+  public final AutoGenerator autoGenerator = new AutoGenerator(m_swervedriveSystem, intake,shooter);
 
   public RobotContainer() {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
@@ -147,8 +147,8 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   //  btnFollowBall.whileHeld(m_followBall); 
   }
 
-  public SequentialCommandGroup getAutonomousCommand() {    
-    return trajectoryFollower.getFollowTrajCommand();
+  public SequentialCommandGroup getAutonomousCommand1() {    
+    return autoGenerator.getAuto1();
   }
 
   public void reEnableGyro(){

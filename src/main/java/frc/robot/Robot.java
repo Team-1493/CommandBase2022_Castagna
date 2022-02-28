@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,7 +20,15 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
  * project.
  */
 public class Robot extends TimedRobot {
+  private SequentialCommandGroup m_autonomousCommand1;
   private SequentialCommandGroup m_autonomousCommand;
+  private static final String kAuto1 = "Auto1";
+  private static final String kAuto2 = "Auto2";
+
+
+  private String m_autoSelected;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
 
   private RobotContainer m_robotContainer;
   Timer timer = new Timer();
@@ -32,7 +43,10 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.reEnableGyro();
-    timer.start();
+    m_chooser.setDefaultOption("Auto1", kAuto1);
+    m_chooser.addOption("Auto2", kAuto2);
+    SmartDashboard.putData("Auto choices", m_chooser);
+    m_autonomousCommand1 = m_robotContainer.getAutonomousCommand1();
     
   }
 
@@ -64,7 +78,19 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autoSelected = m_chooser.getSelected();
+
+    switch (m_autoSelected) {
+      case kAuto1:
+        m_autonomousCommand=m_autonomousCommand1;
+        break;
+      case kAuto2:
+//        m_autonomousCommand=m_autonomousCommand2;
+        break;
+      default:
+        // Put default auto code here
+        break;
+    }
     m_autonomousCommand.schedule();    
   }
 
