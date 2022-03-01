@@ -1,12 +1,11 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 public class IntakeConveyor extends SubsystemBase{
     TalonFX intake = new TalonFX(9);
@@ -14,6 +13,11 @@ public class IntakeConveyor extends SubsystemBase{
     TalonFX conveyorL = new TalonFX(10);
     DigitalInput irTopSensor=new DigitalInput(7);
     DigitalInput irBottomSensor=new DigitalInput(8);
+    DigitalOutput led1 = new DigitalOutput(0);
+    DigitalOutput led2 = new DigitalOutput(1);
+    DigitalOutput led3 = new DigitalOutput(2);
+
+    
 
     double intakeSpeed=0.60;
     
@@ -21,6 +25,7 @@ public class IntakeConveyor extends SubsystemBase{
     boolean ballAtBottom=irBottomSensor.get();
     
 public IntakeConveyor(){
+    led3.set(false);
     intake.configFactoryDefault();
     intake.setNeutralMode(NeutralMode.Brake);
     intake.configOpenloopRamp(0.2);
@@ -93,8 +98,19 @@ public boolean ballAtBottom(){
 
 @Override
 public void periodic() {
-  SmartDashboard.putBoolean("lower IR snesor", ballAtBottom());
-  SmartDashboard.putBoolean("top IR snesor", ballAtTop());
+    ballAtTop=ballAtTop();
+    ballAtBottom=ballAtBottom();
+  if(!ballAtTop && !ballAtBottom){
+    led1.set(false);led2.set(false);
+  }
+  else if (ballAtTop ^ ballAtBottom){
+    led1.set(true);led2.set(false);
+  }
+  else {
+    led1.set(true);led2.set(true);
+  }
+  SmartDashboard.putBoolean("lower IR snesor",ballAtBottom);
+  SmartDashboard.putBoolean("top IR snesor", ballAtTop);
 }
 
 

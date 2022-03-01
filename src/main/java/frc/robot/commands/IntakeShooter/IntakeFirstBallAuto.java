@@ -11,6 +11,7 @@ public class IntakeFirstBallAuto extends CommandBase {
   private IntakeConveyor intakeConveyor;
   boolean ballTop=false,ballBottom=false;
   JoystickButton btn;
+  
 
   public IntakeFirstBallAuto(IntakeConveyor m_intakeConveyor) {
     intakeConveyor=m_intakeConveyor;

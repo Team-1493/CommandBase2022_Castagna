@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -20,14 +21,11 @@ import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.UpdatePID;
 import frc.robot.commands.UpdateTable;
 import frc.robot.commands.Climb.ClimbManual;
-import frc.robot.commands.Climb.ClimbPosition;
 import frc.robot.commands.Gyro.ReEnableGyro;
 import frc.robot.commands.Gyro.ResetGyro;
 import frc.robot.commands.IntakeShooter.IntakeBall;
-import frc.robot.commands.IntakeShooter.IntakeFirstBallAuto;
 import frc.robot.commands.IntakeShooter.ShootBall;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
-import frc.robot.commands.IntakeShooter.SpinWheel;
 import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
 import frc.robot.commands.Rotate.HeadingBumpCCW;
 import frc.robot.commands.Rotate.HeadingBumpCW;
@@ -70,10 +68,13 @@ public final Tables m_tables = new Tables();
   public JoystickButton btnClimbUpManual = new JoystickButton(operatorStick.getStick(),13);
   public JoystickButton btnClimbDownManual = new JoystickButton(operatorStick.getStick(),14);
 
-  public JoystickButton btnClimbPosition1 = new JoystickButton(operatorStick.getStick(),2);
-  public JoystickButton btnClimbPosition2 = new JoystickButton(operatorStick.getStick(),3);
-  public JoystickButton btnClimbPosition3 = new JoystickButton(operatorStick.getStick(),4);
- 
+  public JoystickButton btnClimbPositionDown = new JoystickButton(operatorStick.getStick(),2);
+  public JoystickButton btnClimbPositionUp = new JoystickButton(operatorStick.getStick(),4);
+  public JoystickButton btnHotButton1 = new JoystickButton(operatorStick.getStick(),9);
+  public JoystickButton btnHotButton2 = new JoystickButton(operatorStick.getStick(),10);
+
+  
+  
  // Subsystems
   public final SwerveDriveSystem m_swervedriveSystem = new SwerveDriveSystem(m_tables);
   public final Shooter shooter = new Shooter();
@@ -104,9 +105,6 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   public final Command m_shootBallManual  = new ShootBall(intake, shooter, btnShootBallManual,3);
   public final Command m_climbUpManual  = new ClimbManual(m_climber,  btnClimbUpManual, -1);
   public final Command m_climbDownManual  = new ClimbManual(m_climber,  btnClimbDownManual, 1);
-  public final Command m_climbPosition1  = new ClimbPosition(m_climber,  1);
-  public final Command m_climbPosition2  = new ClimbPosition(m_climber,  2);
-  public final Command m_climbPosition3  = new ClimbPosition(m_climber,  3);
   
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
@@ -136,12 +134,22 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
     btnShootBallManual.whenPressed(m_shootBallManual); 
     btnShootBallLow.whenPressed(m_shootBallLow); 
+
     btnClimbUpManual.whileHeld(m_climbUpManual);
     btnClimbDownManual.whileHeld(m_climbDownManual);
-    btnClimbPosition1.whileHeld(m_climbPosition1);
-    btnClimbPosition2.whileHeld(m_climbPosition2);
-    btnClimbPosition3.whileHeld(m_climbPosition3);
-  
+    btnClimbPositionDown.whenPressed(new InstantCommand(()-> m_climber.climbPositionLower() ));
+    btnClimbPositionUp.whenPressed(new InstantCommand(()-> m_climber.climbPositionHigher() ));
+
+    btnHotButton1.and(btnClimbDownManual).whenActive(
+      new InstantCommand(()-> m_climber.climbDownLeft() ));
+    btnHotButton2.and(btnClimbDownManual).whenActive(
+        new InstantCommand(()-> m_climber.climbDownRight() ));
+
+    btnHotButton1.and(btnClimbUpManual).whenActive(
+          new InstantCommand(()-> m_climber.climbUpLeft() ));    
+    btnHotButton2.and(btnClimbUpManual).whenActive(
+            new InstantCommand(()-> m_climber.climbUpRight() ));    
+
     btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
    // btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
   //  btnFollowBall.whileHeld(m_followBall); 
@@ -151,7 +159,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     return autoGenerator.getAuto1();
   }
 
-  public SequentialCommandGroup getAutonomousCommand2() {    
+  public SequentialCommandGroup getAutonomousCommand2        () {    
     return autoGenerator.getAuto1();
   }
 
