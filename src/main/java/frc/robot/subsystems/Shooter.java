@@ -37,12 +37,12 @@ public class Shooter extends SubsystemBase {
   TalonFX shooterL = new TalonFX(12);
 
   private Timer timer = new Timer();
-  private double shooterTOTGoal=1;
+  private double shooterTOTGoal=0.1;
   private double currentTimeOnTarget=0;
   private double startTime=0;
 
-  double topKs=0.024,topKv=0.000147,topKa=0.1,topKp=0.2;
-  double bottomKs=0.024,bottomKv=0.000141,bottomKa=0.1,bottomKp=0.090;
+  double topKs=0.015,topKv=0.000147,topKa=0.1,topKp=0.15;
+  double bottomKs=0.022,bottomKv=0.000141,bottomKa=0.1,bottomKp=0.15;
   
   double currentShooterSpeedL=0; 
   double currentShooterSpeedR=0; 
@@ -122,7 +122,6 @@ public void shootManual(){
 }
 
 public void set(){
-//  double ffr = -shooterSpeed*(shooterSpeed* (2.1657*Math.pow(10,-8)) +8.4057*Math.pow(10,-5))   -0.04;
   shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
        topFF.calculate(shooterSpeed));
 

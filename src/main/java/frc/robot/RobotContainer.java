@@ -70,8 +70,6 @@ public final Tables m_tables = new Tables();
 
   public JoystickButton btnClimbPositionDown = new JoystickButton(operatorStick.getStick(),2);
   public JoystickButton btnClimbPositionUp = new JoystickButton(operatorStick.getStick(),4);
-  public JoystickButton btnHotButton1 = new JoystickButton(operatorStick.getStick(),9);
-  public JoystickButton btnHotButton2 = new JoystickButton(operatorStick.getStick(),10);
 
   
   
@@ -103,9 +101,11 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   public final Command m_shootBallHigh  = new ShootBall(intake, shooter, btnShootBallHigh,1);
   public final Command m_shootBallLow  = new ShootBall(intake, shooter, btnShootBallLow,2);
   public final Command m_shootBallManual  = new ShootBall(intake, shooter, btnShootBallManual,3);
+
   public final Command m_climbUpManual  = new ClimbManual(m_climber,  btnClimbUpManual, -1);
-  public final Command m_climbDownManual  = new ClimbManual(m_climber,  btnClimbDownManual, 1);
-  
+  public final Command m_climbDownManual  = new ClimbManual(m_climber,  btnClimbDownManual, 1);  
+
+
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
   public final AutoGenerator autoGenerator = new AutoGenerator(m_swervedriveSystem, intake,shooter);
@@ -135,22 +135,14 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnShootBallManual.whenPressed(m_shootBallManual); 
     btnShootBallLow.whenPressed(m_shootBallLow); 
 
+
     btnClimbUpManual.whileHeld(m_climbUpManual);
     btnClimbDownManual.whileHeld(m_climbDownManual);
     btnClimbPositionDown.whenPressed(new InstantCommand(()-> m_climber.climbPositionLower() ));
     btnClimbPositionUp.whenPressed(new InstantCommand(()-> m_climber.climbPositionHigher() ));
 
-    btnHotButton1.and(btnClimbDownManual).whenActive(
-      new InstantCommand(()-> m_climber.climbDownLeft() ));
-    btnHotButton2.and(btnClimbDownManual).whenActive(
-        new InstantCommand(()-> m_climber.climbDownRight() ));
 
-    btnHotButton1.and(btnClimbUpManual).whenActive(
-          new InstantCommand(()-> m_climber.climbUpLeft() ));    
-    btnHotButton2.and(btnClimbUpManual).whenActive(
-            new InstantCommand(()-> m_climber.climbUpRight() ));    
-
-    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
+//    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
    // btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
   //  btnFollowBall.whileHeld(m_followBall); 
   }
@@ -159,7 +151,11 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     return autoGenerator.getAuto1();
   }
 
-  public SequentialCommandGroup getAutonomousCommand2        () {    
+  public SequentialCommandGroup getAutonomousCommand2() {    
+    return autoGenerator.getAuto1();
+  }
+
+  public SequentialCommandGroup getAutonomousCommand3() {    
     return autoGenerator.getAuto1();
   }
 

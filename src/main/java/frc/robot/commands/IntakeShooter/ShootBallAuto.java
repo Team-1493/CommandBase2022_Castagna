@@ -21,7 +21,7 @@ public class ShootBallAuto extends CommandBase {
     intakeConveyor=m_intakeConveyor;
     shooter=m_shooter;
     shooterLevel=m_shooterLevel;
-    timer.start();
+    
     addRequirements(intakeConveyor,shooter);
   }
 
@@ -29,7 +29,9 @@ public class ShootBallAuto extends CommandBase {
   public void initialize() {
       if(shooterLevel==1) shooter.shootHigh();
       else if(shooterLevel==2) shooter.shootLow();
-      else shooter.shootManual();      
+      else shooter.shootManual(); 
+//      timer.start();
+//      timer.reset();     
       runUpper=false;
       runLower=false;
   }

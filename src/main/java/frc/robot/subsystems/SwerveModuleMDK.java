@@ -30,7 +30,7 @@ public class SwerveModuleMDK{
 
 
     // Robot Dimensions for MK4 Swerve
-    private  double  wheelDiamInches = 3.95;//0.10033 meters 
+    private  double  wheelDiamInches = 3.85;//0.10033 meters 
     private double wheelCircumferenceMaters=wheelDiamInches*Math.PI*0.0254; //0.315195
     private double gearRatioDrive=8.1428; 
     private double MPSToRPM = 60.0*gearRatioDrive/wheelCircumferenceMaters;  // 1,550.0499

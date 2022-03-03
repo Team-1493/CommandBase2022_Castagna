@@ -20,7 +20,7 @@ public class Climber extends SubsystemBase {
     double climb_kP=.1;
     boolean zeroedLeft = false;
     boolean zeroedRight = false;
-    int pos1=0,pos2=-507569,pos3=-1042522;
+    int pos1=0,pos2 = 300000, pos3=507569,pos4=1042522;
 
 
 public Climber(){
@@ -28,10 +28,10 @@ public Climber(){
     climbMotorR.configFactoryDefault();
     climbMotorL.setNeutralMode(NeutralMode.Brake);
     climbMotorL.setNeutralMode(NeutralMode.Brake);
-    climbMotorR.follow(climbMotorL);
+//    climbMotorR.follow(climbMotorL);
  
     climbMotorL.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 25);
-    climbMotorL.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 25);
+    climbMotorR.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 25);
     climbMotorL.setSelectedSensorPosition(0, 0, 25);
     climbMotorR.setSelectedSensorPosition(0, 0, 25);
  
@@ -49,20 +49,11 @@ public Climber(){
     climbMotorR.configClosedLoopPeakOutput(0, 1);
     
     
-
-    climbMotorL.setInverted(InvertType.InvertMotorOutput);
-    climbMotorL.setInverted(InvertType.FollowMaster);
-    climbMotorR.setSensorPhase(false);
-
-    
     climbMotorL.setSensorPhase(false);
     climbMotorR.setSensorPhase(false);
 
-    climbMotorL.configReverseSoftLimitThreshold(0);
-    climbMotorL.configReverseSoftLimitEnable(false, 25);
-
-    climbMotorL.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-    climbMotorR.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+    climbMotorL.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    climbMotorR.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 
 
     climbMotorL.set(ControlMode.PercentOutput, 0);
@@ -70,29 +61,40 @@ public Climber(){
 
 }
 
+/// This is really down
     public void climbUp(){
-        climbMotorL.set(ControlMode.Follower,15);
-        climbMotorR.set(ControlMode.PercentOutput,-0.5);
-    }
-
-    public void climbDown(){
-        climbMotorL.set(ControlMode.Follower,15);        
-        climbMotorR.set(ControlMode.PercentOutput,0.5);
         if(getLeftLimitSwitch()==1){
+            climbMotorL.set(ControlMode.PercentOutput,0);
             climbMotorL.setSelectedSensorPosition(0, 0, 25);
             zeroedLeft=true;
         }
-        if(getRightLimitSwitch()==0){
+        else climbMotorL.set(ControlMode.PercentOutput,-0.5);
+
+        if(getRightLimitSwitch()==1){        
+            climbMotorR.set(ControlMode.PercentOutput,0);
             climbMotorR.setSelectedSensorPosition(0, 0, 25);
             zeroedRight=true;
         }
+        else climbMotorR.set(ControlMode.PercentOutput,-0.5);
+    }
 
+/// This is really up    
+    public void climbDown(){    
+        if(zeroedLeft && climbMotorL.getSelectedSensorPosition(0)>1100000)
+            climbMotorL.set(ControlMode.PercentOutput,0.0);
+        else 
+            climbMotorL.set(ControlMode.PercentOutput,0.5);
+
+        if(zeroedRight && climbMotorR.getSelectedSensorPosition(0)>1100000)
+            climbMotorR.set(ControlMode.PercentOutput,0.0);
+        else
+            climbMotorR.set(ControlMode.PercentOutput,0.5);
     }
 
 
     public void climbDownRight(){
         climbMotorR.set(ControlMode.PercentOutput,0.5);
-        if(getRightLimitSwitch()==0){
+        if(getRightLimitSwitch()==1){
             climbMotorR.setSelectedSensorPosition(0, 0, 25);
             zeroedRight=true;    
         }
@@ -120,12 +122,13 @@ public Climber(){
 public void climbPositionHigher(){
     int pos=0;
 
-    if (position<3) position++;
-    if (position==2) position=3;
+    if (position<4) position++;
+    if (position==3) position=4;
 
     if (position==1) pos=pos1;
     if(position==2) pos=pos2;
     if(position==3) pos=pos3;
+    if(position==4) pos=pos4;
 
     if(zeroedLeft && zeroedRight){
         climbMotorR.set(ControlMode.Position, pos);
@@ -142,6 +145,7 @@ public void climbPositionLower(){
     if (position==1) pos=pos1;
     if(position==2) pos=pos2;
     if(position==3) pos=pos3;
+    if(position==4) pos=pos4;
 
     if(zeroedLeft && zeroedRight){
         climbMotorR.set(ControlMode.Position, pos);
@@ -173,11 +177,13 @@ public void climbPositionLower(){
     }   
 
     public int getLeftLimitSwitch(){
+        SmartDashboard.putNumber("Climber LLS", climbMotorL.getSensorCollection().isRevLimitSwitchClosed());
         return climbMotorL.getSensorCollection().isRevLimitSwitchClosed();
     }
 
     public int getRightLimitSwitch(){
-        return climbMotorR.getSensorCollection().isFwdLimitSwitchClosed();
+        SmartDashboard.putNumber("Climber RLS", climbMotorR.getSensorCollection().isRevLimitSwitchClosed());
+        return climbMotorR.getSensorCollection().isRevLimitSwitchClosed();
     }
 
     public void setPositionToZero(){
