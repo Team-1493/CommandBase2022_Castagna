@@ -1,4 +1,5 @@
 package frc.robot.commands.IntakeShooter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.IntakeConveyor;
@@ -15,12 +16,14 @@ public class ShootBall extends CommandBase {
   private JoystickButton btn;
   private boolean runUpper=false;
   private int shooterLevel;
+  private Timer timer = new Timer();
 
   public ShootBall(IntakeConveyor m_intakeConveyor,Shooter m_shooter,JoystickButton m_btn, int m_shooterLevel) {
     btn=m_btn;
     intakeConveyor=m_intakeConveyor;
     shooter=m_shooter;
     shooterLevel=m_shooterLevel;
+    timer.start();
     addRequirements(intakeConveyor,shooter);
   }
 
@@ -40,9 +43,10 @@ public class ShootBall extends CommandBase {
     if(atSpeed && !runUpper) {
       runUpper=true;
       intakeConveyor.startUpperConveyor();
+      timer.reset();
     }
 
-    if(atSpeed && runUpper ) {
+    if(atSpeed && runUpper && timer.hasElapsed(0.75) ) {
       intakeConveyor.startLowerConveyor();
     }
     

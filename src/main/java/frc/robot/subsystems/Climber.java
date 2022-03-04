@@ -59,6 +59,10 @@ public Climber(){
     climbMotorL.set(ControlMode.PercentOutput, 0);
     climbMotorR.set(ControlMode.PercentOutput, 0);
 
+    if(getRightLimitSwitch()==1) zeroedRight=true;
+    if(getRightLimitSwitch()==1) zeroedLeft=true;
+
+
 }
 
 /// This is really down

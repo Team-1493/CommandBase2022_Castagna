@@ -37,7 +37,7 @@ public class Shooter extends SubsystemBase {
   TalonFX shooterL = new TalonFX(12);
 
   private Timer timer = new Timer();
-  private double shooterTOTGoal=0.1;
+  private double shooterTOTGoal=0.5;
   private double currentTimeOnTarget=0;
   private double startTime=0;
 
@@ -50,10 +50,12 @@ public class Shooter extends SubsystemBase {
   double shooterSpeedHigh=0;
   double shooterSpeedLow=850;
   double shooterSpeedManual=1750;
+  double shooterSpeedManualBlue=1850;
   double shooterSpeed=0;
+  double shooterSpeedBlue=0;
   double bottomclpo=0.4;
   public boolean atSpeed=false;
-  private double shooterTolerance=30;
+  private double shooterTolerance=35;
 
   SimpleMotorFeedforward topFF = 
     new SimpleMotorFeedforward(topKs,topKv,topKa);
@@ -90,6 +92,7 @@ public Shooter(){
     SmartDashboard.putNumber("shooter bottom kA",bottomKa);
     SmartDashboard.putNumber("shooter bottom kP",bottomKp);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
+    SmartDashboard.putNumber("Manual Shoot Speed Blue",shooterSpeedManualBlue);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
     SmartDashboard.putNumber("shooter tolerance",shooterTolerance);
     SmartDashboard.putNumber("shooter TOTgoal", shooterTOTGoal);
@@ -102,7 +105,10 @@ public Shooter(){
 public void shootHigh(){
     if(tvEntry.getDouble(1)==1){
       double ty=tyEntry.getDouble(1);
-      shooterSpeed=2102.42876*Math.pow(ty, -0.06006);
+      double x=1/Math.tan(ty*Math.PI/180.);
+      shooterSpeed=2250*Math.pow(ty, -0.075);
+
+      shooterSpeed=-1.8312*x*x+74.388*x+1504.1;
     }
     else shooterSpeed=0;
     set();
@@ -117,7 +123,15 @@ public void shootLow(){
 
 public void shootManual(){
   shooterSpeedManual=SmartDashboard.getNumber("Manual Shoot Speed", shooterSpeedManual);
+  shooterSpeedManualBlue=SmartDashboard.getNumber("Manual Shoot Speed Blue", shooterSpeedManualBlue);
   shooterSpeed=shooterSpeedManual;
+  set();
+}
+
+
+public void shootAtSpeed(int rpm){
+  shooterSpeedManualBlue=SmartDashboard.getNumber("Manual Shoot Speed Blue", shooterSpeedManualBlue);
+  shooterSpeed=rpm;
   set();
 }
 

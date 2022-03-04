@@ -41,12 +41,12 @@ public class SwerveDriveSystem  extends SubsystemBase {
   private SwerveModuleMDK[] modules = generator.generateModuleMDK();
 
   // Rotate (omega) Constants
-    public static double kP_rotate=4;
-    public static double kD_rotate=0;
+    public static double kP_rotate=4.0;
+    public static double kD_rotate=.1;
     private double kS_rotate=0.0;
     private double AllowErr_rotate=0.0;
-    private double TrapMaxVel_rotate=20;
-    private double TrapMaxAcc_rotate=10;
+    private double TrapMaxVel_rotate=30;
+    private double TrapMaxAcc_rotate=20;
     private double rotateDPS=225;
     private double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);
 

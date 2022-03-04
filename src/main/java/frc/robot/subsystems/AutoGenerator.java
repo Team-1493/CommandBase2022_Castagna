@@ -38,11 +38,23 @@ public class AutoGenerator extends SubsystemBase {
          new TrapezoidProfile.Constraints(
          kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
+    public static ProfiledPIDController thetaController;
+    public static PIDController xController,yController;
+
+
    // Constrcutor 
   public AutoGenerator(SwerveDriveSystem m_sds, IntakeConveyor m_intake, Shooter m_shooter){
     sds=m_sds;
     intake = m_intake;
     shooter=m_shooter;
+    thetaController = new ProfiledPIDController(SwerveDriveSystem.kP_rotate, 0, 0, 
+        kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    xController= new PIDController(kPXController, 0, 0);
+    yController = new PIDController(kPYController, 0, 0);
+
+
+    
     SmartDashboard.putNumber("Trajectory kP_x", kPXController);    
     SmartDashboard.putNumber("Trajectory kP_y", kPYController);
     SmartDashboard.putNumber("Trajectory maxRotVel", kMaxAngularSpeedRadiansPerSecond);
@@ -59,6 +71,7 @@ public class AutoGenerator extends SubsystemBase {
   Pose2d initialPose = traj1.getInitialPose();
   CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
   PathPlannerTrajectory traj2  = PathPlanner.loadPath("Path1 Back", 0.5 ,1); 
+
   CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
   SequentialCommandGroup commandGroup = 
   //Goes to first ball, picks it up, and shoots it
@@ -70,6 +83,7 @@ public class AutoGenerator extends SubsystemBase {
     ),
   //new LimelightAlign(sds),
     new ShootBallAuto(intake, shooter,2),
+    new InstantCommand( ()->AutoGenerator.resetControllers(traj2.getInitialPose().getRotation().getRadians() ) ),  
     cscc2
   );
 return commandGroup;
@@ -196,20 +210,14 @@ return commandGroup;
 //  method to get a swervecontrollercommand to follow a trajectorty
 public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTrajectory traj){
     CustomSwerveControllorCommand cscc;
-
-    var thetaController =
-    new ProfiledPIDController(
-        SwerveDriveSystem.kP_rotate, 0, 0, kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
     cscc=new CustomSwerveControllorCommand(
         traj,
         sds::getPose, // Functional interface to feed supplier
         SwerveDriveSystem.m_kinematics,
 
         // Position controllers
-        new PIDController(kPXController, 0, 0),
-        new PIDController(kPYController, 0, 0),
+        xController,
+        yController,
         thetaController,
         () -> ((PathPlannerState) ( ((PathPlannerTrajectory)traj).getStates().get(1) )).holonomicRotation,
         sds::setModuleStates,
@@ -219,7 +227,11 @@ public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTraje
 
 
 
-
+public static void resetControllers(double heading){
+    xController.reset();
+    yController.reset();
+    thetaController.reset(heading);
+}
 
 
 

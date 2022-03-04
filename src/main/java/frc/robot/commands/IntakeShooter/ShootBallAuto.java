@@ -16,20 +16,30 @@ public class ShootBallAuto extends CommandBase {
   public boolean runLower=false;
   public int shooterLevel;
   public Timer timer = new Timer();
+  int rpm=1000;
 
   public ShootBallAuto(IntakeConveyor m_intakeConveyor,Shooter m_shooter, int m_shooterLevel) {
     intakeConveyor=m_intakeConveyor;
     shooter=m_shooter;
-    shooterLevel=m_shooterLevel;
-    
+    shooterLevel=m_shooterLevel;    
     addRequirements(intakeConveyor,shooter);
   }
+
+  public ShootBallAuto(IntakeConveyor m_intakeConveyor,Shooter m_shooter, int m_shooterLevel,int m_rpm) {
+    intakeConveyor=m_intakeConveyor;
+    shooter=m_shooter;
+    shooterLevel=m_shooterLevel;    
+    rpm=m_rpm;
+    addRequirements(intakeConveyor,shooter);
+  }
+
+
 
   @Override
   public void initialize() {
       if(shooterLevel==1) shooter.shootHigh();
       else if(shooterLevel==2) shooter.shootLow();
-      else shooter.shootManual(); 
+      else shooter.shootAtSpeed(rpm); 
 //      timer.start();
 //      timer.reset();     
       runUpper=false;
