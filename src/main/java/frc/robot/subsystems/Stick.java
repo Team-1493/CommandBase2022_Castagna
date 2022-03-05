@@ -82,7 +82,6 @@ public void turboToggle(){
   turbo=!turbo;
   if (turbo) scaleFactor=sfTurbo;
   else scaleFactor=sfSlow;
-  System.out.println("SF = "+scaleFactor);
 }
 
 // need this to provide the Joystick instance to the button bindings

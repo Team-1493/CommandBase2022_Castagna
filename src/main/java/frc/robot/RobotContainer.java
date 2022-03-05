@@ -34,6 +34,7 @@ import frc.robot.commands.FollowBall;
 import frc.robot.subsystems.SwerveDriveSystem;
 import frc.robot.subsystems.Tables;
 import frc.robot.subsystems.AutoGenerator;
+import frc.robot.subsystems.AutoGeneratorTimed;
 import frc.robot.subsystems.BallFollowInterface;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.IntakeConveyor;
@@ -109,6 +110,9 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
   public final AutoGenerator autoGenerator = new AutoGenerator(m_swervedriveSystem, intake,shooter);
+  public final AutoGeneratorTimed autoGeneratorTimed = 
+       new AutoGeneratorTimed(m_swervedriveSystem, intake,shooter);
+
 
   public RobotContainer() {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
@@ -142,7 +146,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnClimbPositionUp.whenPressed(new InstantCommand(()-> m_climber.climbPositionHigher() ));
 
 
-//    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
+   btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
    // btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
   //  btnFollowBall.whileHeld(m_followBall); 
   }
@@ -159,8 +163,17 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     return autoGenerator.getAuto1();
   }
 
+  public SequentialCommandGroup getAutonomousCommand5() {    
+    return autoGeneratorTimed.getAuto5();
+  }
+
+
   public void reEnableGyro(){
     m_ReEnableGyro.resetGryoAndRobotHeading();
+  }
+
+  public void setPIDslot(int slot){
+    m_swervedriveSystem.setPIDSlot(slot);
   }
 
   public void updateConstants(){

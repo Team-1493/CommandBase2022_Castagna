@@ -45,8 +45,8 @@ public class SwerveDriveSystem  extends SubsystemBase {
     public static double kD_rotate=.1;
     private double kS_rotate=0.0;
     private double AllowErr_rotate=0.0;
-    private double TrapMaxVel_rotate=30;
-    private double TrapMaxAcc_rotate=20;
+    public double TrapMaxVel_rotate=30;
+    public double TrapMaxAcc_rotate=20;
     private double rotateDPS=225;
     private double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);
 
@@ -55,12 +55,18 @@ public class SwerveDriveSystem  extends SubsystemBase {
     private  double  maxVelocityFPS = 14.2;  //max speed in feet/sec
     private double maxVelocityMPS = 0.3048*maxVelocityFPS; // 4.328     
 
-    public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+/*    public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       new Translation2d(0.4064, -0.4064), 
       new Translation2d(0.4064, +0.4064), 
       new Translation2d(-0.4064, -0.4064), 
       new Translation2d(-0.4064, +0.4064));
+*/      
       
+public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+  new Translation2d(0.2667, -0.2667), 
+  new Translation2d(0.2667, +0.2667), 
+  new Translation2d(-0.2667, -0.2667), 
+  new Translation2d(-0.2667, +0.2667));
 
   private final Pigeon gyro = new Pigeon(20);
   public SwerveModuleState[] moduleStatesOptimized = new SwerveModuleState[4];
@@ -178,7 +184,7 @@ if (stickState[3]==1) omega=stickState[2];
 // Convert to speeds module states
     SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
     setModuleStates(moduleStates);
-//  printModuleStates();
+  printModuleStates();
   previousTurnMode=stickState[3];
 }
 
@@ -270,15 +276,21 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     
     maxVelocityMPS = 0.3048*maxVelocityFPS; 
     SmartDashboard.putNumber("Max Drive RPM",modules[0].MPStoRPM(maxVelocityMPS));
-/*
+
     int i=0;
     while(i<4){
       modules[i].updateConstants();
       i++;
     }
-*/
   }
 
+  public void setPIDSlot(int slot){
+    int i=0;
+    while(i<4){
+      modules[i].setPIDslot(slot);;
+      i++;
+    }
+  }
 
 
   public double getDriveVelocityMagnitude() {

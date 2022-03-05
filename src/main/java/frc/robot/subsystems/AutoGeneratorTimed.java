@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 
-import java.nio.file.Path; 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -9,7 +11,9 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -17,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utilities.CustomSwerveControllorCommand;
 import frc.robot.commands.ResetPose;
+import frc.robot.commands.AutoCommands.AutoActions4Ball;
 import frc.robot.commands.IntakeShooter.IntakeFirstBallAuto;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
 import frc.robot.commands.LimelightFollowing.LimelightAlign;
@@ -26,8 +31,8 @@ public class AutoGeneratorTimed extends SubsystemBase {
      SwerveDriveSystem sds;   
      private Shooter shooter;
      double finalHeading=90;
-     private double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-     private double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+     private double kMaxAngularSpeedRadiansPerSecond;
+     private double kMaxAngularSpeedRadiansPerSecondSquared;;
 
      private double kPXController = 1;
      private double kPYController = 1;
@@ -43,6 +48,8 @@ public class AutoGeneratorTimed extends SubsystemBase {
     sds=m_sds;
     intake = m_intake;
     shooter=m_shooter;
+    kMaxAngularSpeedRadiansPerSecond = sds.TrapMaxVel_rotate;
+    kMaxAngularSpeedRadiansPerSecondSquared = sds.TrapMaxAcc_rotate;
     SmartDashboard.putNumber("Trajectory kP_x", kPXController);    
     SmartDashboard.putNumber("Trajectory kP_y", kPYController);
     SmartDashboard.putNumber("Trajectory maxRotVel", kMaxAngularSpeedRadiansPerSecond);
@@ -55,23 +62,37 @@ public class AutoGeneratorTimed extends SubsystemBase {
   //  returns a command sequence for a Timed 4-ball auto
 
   public SequentialCommandGroup getAuto5(){    
-  PathPlannerTrajectory traj1  = PathPlanner.loadPath("Timed4Ball", 1.5 ,4); 
+  PathPlannerTrajectory traj1  = PathPlanner.loadPath("Timed4Ball", 1 ,4); 
   Pose2d initialPose = traj1.getInitialPose();
   CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
+
+    int size = traj1.getStates().size();
+    double totaltime=traj1.getTotalTimeSeconds();
+    List<PathPlannerState> statesList=new ArrayList<PathPlannerState>();  
+    System.out.println("totalTime = "+totaltime);
+    System.out.println("size = "+size);   
+    int i = 0;
+    while(i<size){
+      statesList.add(traj1.getState(i));
+      System.out.println(traj1.getState(i).timeSeconds+"  "+ 
+        traj1.getState(i).velocityMetersPerSecond+" "+
+        traj1.getState(i).poseMeters.getX()+"  "+
+        traj1.getState(i).poseMeters.getY()+"  "+
+        traj1.getState(i).holonomicRotation.getDegrees());
+        i++;
+    }
 
   SequentialCommandGroup commandGroup = 
   //Goes to first ball, picks it up, and shoots it
   new SequentialCommandGroup(
     new ResetPose(sds, initialPose), 
     new ParallelCommandGroup(
-        new IntakeFirstBallAuto(intake),
-        cscc1
-    )
+        cscc1,
+        new AutoActions4Ball(intake, shooter)
+    ),
+    new InstantCommand( ()->sds.setMotors(new double[] {0, 0,sds.heading, 3}) )
   );
 return commandGroup;
-//    PathPlannerState endstate=  traj1.getEndState();
-//    finalHeading=(endstate.holonomicRotation).getDegrees();
-//return PathCommands.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(0), 3}));
 }
 
 
@@ -81,7 +102,7 @@ public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTraje
 
     var thetaController =
     new ProfiledPIDController(
-        SwerveDriveSystem.kP_rotate, 0, 0, kThetaControllerConstraints);
+        SwerveDriveSystem.kP_rotate, 0, sds.kD_rotate, kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     cscc=new CustomSwerveControllorCommand(

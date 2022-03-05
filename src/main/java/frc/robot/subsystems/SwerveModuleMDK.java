@@ -30,7 +30,7 @@ public class SwerveModuleMDK{
 
 
     // Robot Dimensions for MK4 Swerve
-    private  double  wheelDiamInches = 3.85;//0.10033 meters 
+    private  double  wheelDiamInches = 4.277;//0.10033 meters 
     private double wheelCircumferenceMaters=wheelDiamInches*Math.PI*0.0254; //0.315195
     private double gearRatioDrive=8.1428; 
     private double MPSToRPM = 60.0*gearRatioDrive/wheelCircumferenceMaters;  // 1,550.0499
@@ -43,6 +43,15 @@ public class SwerveModuleMDK{
     // Drive Motor Constants
     private double kP_drive=0;  //1.19 from characterization;
     private double kF_drive=0.04952;   // 1023/20660
+    private double kD_drive=0.0;   // 1023/20660
+
+
+   // Drive Motor Constants for auto
+   private double kP_driveAuto=0.2;  //1.19 from characterization;
+   private double kF_driveAuto=0.04952;   // 1023/20660
+   private double kD_driveAuto=0.0;   // 1023/20660
+  
+
 
     // Drive motor constants for arbitrary feed forward (currently not used)    
     private double kA_drive=0.105;  // V*sec^2/m  (calculated from 0.0373 *(1/3600*GR)
@@ -87,6 +96,12 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     m_drive.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0, 25);
     m_drive.config_kP(0, kP_drive);
     m_drive.config_kF(0, kF_drive);
+    m_drive.config_kD(0, kD_drive);
+    m_drive.config_kP(1, kP_driveAuto);
+    m_drive.config_kF(1, kF_driveAuto);
+    m_drive.config_kD(1, kD_driveAuto);
+
+
     m_drive.configClosedLoopPeakOutput(0,kMaxOutputDrive);
     feedforward_drive = new SimpleMotorFeedforward(kS_drive, kV_drive, kA_drive);
                     
@@ -122,7 +137,7 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
 	m_turn.configMotionAcceleration(SMMaxAcc_turn, 25);
 
 
-
+    SmartDashboard.putNumber("kD_Drive",kD_drive);
     SmartDashboard.putNumber("kP_Drive",kP_drive);
     SmartDashboard.putNumber("kF_Drive",kF_drive);
     SmartDashboard.putNumber("kP_driveff",kP_driveff);
@@ -232,31 +247,31 @@ public double getDriveErrorRPM() {
     }
 
     public void updateConstants(){
-
         kP_drive= SmartDashboard.getNumber("kP_Drive",kP_drive);
         kF_drive= SmartDashboard.getNumber("kF_Drive",kF_drive);
+        kD_drive= SmartDashboard.getNumber("kD_Drive",kD_drive);
+//        kP_turn= SmartDashboard.getNumber("kP_Turn",kP_turn);
+//        kD_turn= SmartDashboard.getNumber("kD_Turn",kD_turn);
+//        kF_turn= SmartDashboard.getNumber("kF_Turn",kF_turn);
+//        kMaxOutputTurn=SmartDashboard.getNumber("MaxOutput Turn",kMaxOutputTurn);
 
-        kP_turn= SmartDashboard.getNumber("kP_Turn",kP_turn);
-        kD_turn= SmartDashboard.getNumber("kD_Turn",kD_turn);
-        kF_turn= SmartDashboard.getNumber("kF_Turn",kF_turn);
-        kMaxOutputTurn=SmartDashboard.getNumber("MaxOutput Turn",kMaxOutputTurn);
-
-        SMMaxVelRadPerSec_turn= SmartDashboard.getNumber("SMMaxVelRadPerSec_turn",SMMaxVelRadPerSec_turn);
-        SMMaxAccRadPerSec2_turn= SmartDashboard.getNumber("SMMaxAccRadPerSec2_turn",SMMaxAccRadPerSec2_turn);
-        SMMaxVel_turn= 0.1*4096*SMMaxVelRadPerSec_turn/(2*Math.PI);
-        SMMaxAcc_turn=0.1*4096*SMMaxAccRadPerSec2_turn/(2*Math.PI);
-
-        m_drive.config_kP(0,kP_drive);
+ //       SMMaxVelRadPerSec_turn= SmartDashboard.getNumber("SMMaxVelRadPerSec_turn",SMMaxVelRadPerSec_turn);
+ //       SMMaxAccRadPerSec2_turn= SmartDashboard.getNumber("SMMaxAccRadPerSec2_turn",SMMaxAccRadPerSec2_turn);
+ //       SMMaxVel_turn= 0.1*4096*SMMaxVelRadPerSec_turn/(2*Math.PI);
+ //       SMMaxAcc_turn=0.1*4096*SMMaxAccRadPerSec2_turn/(2*Math.PI);
         m_drive.config_kF(0,kF_drive);
+         m_drive.config_kP(0,kP_drive);
+        m_drive.config_kD(0,kD_drive);
 
-        m_turn.config_kP(0, kP_turn);
-        m_turn.config_kD(0,kD_turn);
-        m_turn.config_kF(0,kF_turn);
-        m_turn.configClosedLoopPeakOutput(0, kMaxOutputTurn);                        
 
-        
+//        m_turn.config_kP(0, kP_turn)
+//        m_turn.config_kD(0,kD_turn);
+//        m_turn.config_kF(0,kF_turn);
+ //       m_turn.configClosedLoopPeakOutput(0, kMaxOutputTurn);                        
     }
 
-  
+    public void setPIDslot(int slot){
+        m_drive.selectProfileSlot(slot, 0);
+    }
 
 }
