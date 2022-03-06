@@ -50,9 +50,7 @@ public class Shooter extends SubsystemBase {
   double shooterSpeedHigh=0;
   double shooterSpeedLow=850;
   double shooterSpeedManual=1750;
-  double shooterSpeedManualBlue=1850;
   double shooterSpeed=0;
-  double shooterSpeedBlue=0;
   double bottomclpo=0.4;
   public boolean atSpeed=false;
   private double shooterTolerance=35;
@@ -92,7 +90,6 @@ public Shooter(){
     SmartDashboard.putNumber("shooter bottom kA",bottomKa);
     SmartDashboard.putNumber("shooter bottom kP",bottomKp);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
-    SmartDashboard.putNumber("Manual Shoot Speed Blue",shooterSpeedManualBlue);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
     SmartDashboard.putNumber("shooter tolerance",shooterTolerance);
     SmartDashboard.putNumber("shooter TOTgoal", shooterTOTGoal);
@@ -123,14 +120,12 @@ public void shootLow(){
 
 public void shootManual(){
   shooterSpeedManual=SmartDashboard.getNumber("Manual Shoot Speed", shooterSpeedManual);
-  shooterSpeedManualBlue=SmartDashboard.getNumber("Manual Shoot Speed Blue", shooterSpeedManualBlue);
   shooterSpeed=shooterSpeedManual;
   set();
 }
 
 
 public void shootAtSpeed(int rpm){
-  shooterSpeedManualBlue=SmartDashboard.getNumber("Manual Shoot Speed Blue", shooterSpeedManualBlue);
   shooterSpeed=rpm;
   set();
 }

@@ -49,11 +49,13 @@
         "open": true
       }
     },
+    "Datatable": {
+      "open": true
+    },
     "SmartDashboard": {
       "Auto choices": {
         "open": true
-      },
-      "open": true
+      }
     }
   }
 }

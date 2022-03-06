@@ -74,7 +74,7 @@ public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 
   public SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(m_kinematics,new Rotation2d(heading));
-  private Tables datatable;  
+  public Tables datatable;  
   private double[] encPositionRad = new double[4];   // encoder position of swerve motors
   private double[] speedSet = new double[4];  // speed setppiont for driver motors in mps
   private double[] rotationSetPrev={0,0,0,0};
@@ -316,10 +316,10 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
         modules[1].getState(),
         modules[2].getState(),
         modules[3].getState());
-        SmartDashboard.putNumber("pose-angle", m_odometry.getPoseMeters().getRotation().getDegrees());
+        SmartDashboard.putNumber("pose-rot", m_odometry.getPoseMeters().getRotation().getDegrees());
         SmartDashboard.putNumber("pose-x", m_odometry.getPoseMeters().getX());
         SmartDashboard.putNumber("pose-y", m_odometry.getPoseMeters().getY());
-        SmartDashboard.putNumber("module state 0 mps", modules[0].getState().speedMetersPerSecond);
+//        SmartDashboard.putNumber("module state 0 mps", modules[0].getState().speedMetersPerSecond);
       }
         catch(Exception e){
           
@@ -332,13 +332,13 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
 private void printModuleStates(){
 int i=0;
 while(i<4){
-  datatable.putNumber(moduleNames[i]+" Opt Angle", 
-  moduleStatesOptimized[i].angle.getDegrees());
-  datatable.putNumber(moduleNames[i]+" Tpos_Uncorr",Util.toDegrees(encPositionRad[i]));
-  datatable.putNumber(moduleNames[i]+" Tpos",Util.toDegrees(encPositionRad[i]));
-  datatable.putNumber(moduleNames[i]+" TAbspos",modules[i].getTurnAbsPosition());
-  datatable.putNumber(moduleNames[i]+" Tvel",modules[i].getTurnVelocity());
-  datatable.putNumber(moduleNames[i]+" SP rot",turnSet[i]/twoPi); 
+//  datatable.putNumber(moduleNames[i]+" Opt Angle", 
+//  moduleStatesOptimized[i].angle.getDegrees());
+//  datatable.putNumber(moduleNames[i]+" Tpos_Uncorr",Util.toDegrees(encPositionRad[i]));
+//  datatable.putNumber(moduleNames[i]+" Tpos",Util.toDegrees(encPositionRad[i]));
+//  datatable.putNumber(moduleNames[i]+" TAbspos",modules[i].getTurnAbsPosition());
+//  datatable.putNumber(moduleNames[i]+" Tvel",modules[i].getTurnVelocity());
+//  datatable.putNumber(moduleNames[i]+" SP rot",turnSet[i]/twoPi); 
   datatable.putNumber(moduleNames[i]+" Dpos",modules[i].getDrivePosition());            
   datatable.putNumber(moduleNames[i]+" Dvel",modules[i].getDriveVelocity()); 
   datatable.putNumber(moduleNames[i]+" SP RPM", modules[i].MPStoRPM(speedSet[i]));

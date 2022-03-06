@@ -158,9 +158,9 @@ public class CustomSwerveControllorCommand extends CommandBase {
         m_controller.calculate(m_pose.get(), desiredState,((PathPlannerState) desiredState).holonomicRotation );
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
     m_outputModuleStates.accept(targetModuleStates);
-    SmartDashboard.putNumber("desired Pose x", desiredState.poseMeters.getX());
-    SmartDashboard.putNumber("desired Pose y", desiredState.poseMeters.getY());
-    SmartDashboard.putNumber("desired Pose rot",((PathPlannerState)desiredState).holonomicRotation.getDegrees());
+    SmartDashboard.putNumber("pose-x-set", desiredState.poseMeters.getX());
+    SmartDashboard.putNumber("pose-y-set", desiredState.poseMeters.getY());
+    SmartDashboard.putNumber("pose-rot-set",((PathPlannerState)desiredState).holonomicRotation.getDegrees());
   }
 
   @Override

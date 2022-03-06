@@ -181,12 +181,10 @@ public void climbPositionLower(){
     }   
 
     public int getLeftLimitSwitch(){
-        SmartDashboard.putNumber("Climber LLS", climbMotorL.getSensorCollection().isRevLimitSwitchClosed());
         return climbMotorL.getSensorCollection().isRevLimitSwitchClosed();
     }
 
     public int getRightLimitSwitch(){
-        SmartDashboard.putNumber("Climber RLS", climbMotorR.getSensorCollection().isRevLimitSwitchClosed());
         return climbMotorR.getSensorCollection().isRevLimitSwitchClosed();
     }
 
@@ -200,8 +198,7 @@ public void climbPositionLower(){
         if (DashboardClimb_kP != climb_kP){
             climbMotorL.config_kP(0,DashboardClimb_kP);
             climbMotorR.config_kP(0,DashboardClimb_kP);
-            climb_kP = DashboardClimb_kP;
-            
+            climb_kP = DashboardClimb_kP;   
         }
     }
 

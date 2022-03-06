@@ -87,8 +87,8 @@ public class AutoGeneratorTimed extends SubsystemBase {
   new SequentialCommandGroup(
     new ResetPose(sds, initialPose), 
     new ParallelCommandGroup(
-        cscc1,
-        new AutoActions4Ball(intake, shooter)
+        cscc1
+//        new AutoActions4Ball(intake, shooter)
     ),
     new InstantCommand( ()->sds.setMotors(new double[] {0, 0,sds.heading, 3}) )
   );
