@@ -216,6 +216,14 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
   }
 }
 
+  public void allStop(){
+    int i=0;
+    while(i<4){
+      modules[i].setMotorsAllStop();
+      i++;
+    }
+
+  }
 
   public void headingBumpCCW(){
     headingset=headingset+0.06;

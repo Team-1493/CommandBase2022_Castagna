@@ -69,18 +69,6 @@ public class AutoGeneratorTimed extends SubsystemBase {
     int size = traj1.getStates().size();
     double totaltime=traj1.getTotalTimeSeconds();
     List<PathPlannerState> statesList=new ArrayList<PathPlannerState>();  
-    System.out.println("totalTime = "+totaltime);
-    System.out.println("size = "+size);   
-    int i = 0;
-    while(i<size){
-      statesList.add(traj1.getState(i));
-      System.out.println(traj1.getState(i).timeSeconds+"  "+ 
-        traj1.getState(i).velocityMetersPerSecond+" "+
-        traj1.getState(i).poseMeters.getX()+"  "+
-        traj1.getState(i).poseMeters.getY()+"  "+
-        traj1.getState(i).holonomicRotation.getDegrees());
-        i++;
-    }
 
   SequentialCommandGroup commandGroup = 
   //Goes to first ball, picks it up, and shoots it

@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   private static final String kAuto1 = "Auto1";
   private static final String kAuto2 = "Auto2";
   private static final String kAuto3 = "Auto3";
-  private static final String kAuto4 = "Auto5";
+  private static final String kAuto4 = "Auto4";
   private static final String kAuto5 = "Auto5";
   private static final String kAuto6 = "Auto6";
 
@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand1 = m_robotContainer.getAutonomousCommand1();
     m_autonomousCommand2 = m_robotContainer.getAutonomousCommand2();
     m_autonomousCommand3 = m_robotContainer.getAutonomousCommand3();
-    m_autonomousCommand5 = m_robotContainer.getAutonomousCommand5();
+    m_autonomousCommand4 = m_robotContainer.getAutonomousCommand4();
     
   }
 
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    m_robotContainer.setPIDslot(1);  // use the auto PID gains for teleop
+//    m_robotContainer.setPIDslot(1);  // use the auto PID gains for teleop
     m_autoSelected = m_chooser.getSelected();
 
     switch (m_autoSelected) {
@@ -100,8 +100,11 @@ public class Robot extends TimedRobot {
       case kAuto2:
         m_autonomousCommand=m_autonomousCommand2;
         break;
-        case kAuto5:
-        m_autonomousCommand=m_autonomousCommand5;
+      case kAuto3:
+        m_autonomousCommand=m_autonomousCommand3;
+        break;
+      case kAuto4:
+        m_autonomousCommand=m_autonomousCommand4;
         break;
       default:
       m_autonomousCommand=m_autonomousCommand1;
@@ -125,7 +128,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.reEnableGyro();
-    m_robotContainer.setPIDslot(0);  // use the teleop PID gains for teleop 
+    //m_robotContainer.setPIDslot(0);  // use the teleop PID gains for teleop 
   }
 
   /** This function is called periodically during operator control. */

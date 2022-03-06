@@ -74,7 +74,7 @@ public class ShootBallAuto extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return (timer.hasElapsed(1));
+    return (timer.hasElapsed(0.5));
   }
   
 }   

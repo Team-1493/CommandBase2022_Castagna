@@ -156,15 +156,15 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   }
 
   public SequentialCommandGroup getAutonomousCommand2() {    
-    return autoGenerator.getAuto1();
+    return autoGenerator.getAuto2();
   }
 
   public SequentialCommandGroup getAutonomousCommand3() {    
-    return autoGenerator.getAuto1();
+    return autoGenerator.getAuto3();
   }
 
-  public SequentialCommandGroup getAutonomousCommand5() {    
-    return autoGeneratorTimed.getAuto5();
+  public SequentialCommandGroup getAutonomousCommand4() {    
+    return autoGenerator.getAuto4();
   }
 
 

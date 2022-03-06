@@ -164,6 +164,12 @@ public void setMotors(double speed,double turnAngle) {
     m_turn.set(ControlMode.Position,turnAngle*RadiansToNativePos);
 }
 
+
+public void setMotorsAllStop() {
+    m_drive.set(ControlMode.PercentOutput,0);
+    m_turn.set(ControlMode.PercentOutput,0);
+}
+
   public void setMotorsFF(double speed,double turnAngle) {
     double driveFFUnits=feedforward_drive.calculate(speed)/voltageComp;
 //    m_drive.set(ControlMode.Velocity, speed*MPSToNativeSpeed,DemandType.ArbitraryFeedForward,driveFFUnits);

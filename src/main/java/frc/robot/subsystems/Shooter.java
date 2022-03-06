@@ -37,7 +37,7 @@ public class Shooter extends SubsystemBase {
   TalonFX shooterL = new TalonFX(12);
 
   private Timer timer = new Timer();
-  private double shooterTOTGoal=0.5;
+  private double shooterTOTGoal=0.25;
   private double currentTimeOnTarget=0;
   private double startTime=0;
 
