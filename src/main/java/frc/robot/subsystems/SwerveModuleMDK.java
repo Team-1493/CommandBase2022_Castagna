@@ -47,7 +47,7 @@ public class SwerveModuleMDK{
 
 
    // Drive Motor Constants for auto
-   private double kP_driveAuto=0.2;  //1.19 from characterization;
+   private double kP_driveAuto=0.1;  //1.19 from characterization;
    private double kF_driveAuto=0.04952;   // 1023/20660
    private double kD_driveAuto=0.0;   // 1023/20660
   

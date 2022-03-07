@@ -15,9 +15,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Utilities.CustomSwerveControllorCommand;
 import frc.robot.commands.ResetPose;
 import frc.robot.commands.IntakeShooter.IntakeFirstBallAuto;
+import frc.robot.commands.IntakeShooter.LowerIntake;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
 import frc.robot.commands.LimelightFollowing.LimelightAlign;
 
@@ -84,9 +86,10 @@ public class AutoGenerator extends SubsystemBase {
   new SequentialCommandGroup(
     new ResetPose(sds, initialPose1), 
     new InstantCommand( ()->resetControllers()),
-    cscc1.alongWith(new IntakeFirstBallAuto(intake)),
-    //new LimelightAlign(sds),
-    new ShootBallAuto(intake, shooter,3,1850),
+    new LowerIntake(intake).andThen(new WaitCommand(0.3)),
+    cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
+    new InstantCommand(()-> sds.allStop()),
+    new ShootBallAuto(intake, shooter,3,1825),
     new InstantCommand( ()->resetControllers()),
     cscc2,
     new InstantCommand( ()->resetControllers()),
@@ -105,14 +108,12 @@ return commandGroup;
     CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
 
     PathPlannerTrajectory traj2  = PathPlanner.loadPath("4b Path2", 1.5 ,2); 
-    Pose2d initialPose2 = traj2.getInitialPose();
     CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
 
     PathPlannerTrajectory traj3  = PathPlanner.loadPath("4b Path3", 1.5 ,2); 
     CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
 
     PathPlannerTrajectory traj4  = PathPlanner.loadPath("4b Path4", 1.5 ,2);
-    Pose2d initialPose4 = traj4.getInitialPose(); 
     CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
 
     SequentialCommandGroup commandGroup = 
@@ -120,9 +121,10 @@ return commandGroup;
     new SequentialCommandGroup(
         new ResetPose(sds, initialPose1), 
         new InstantCommand( ()->resetControllers()),
-        cscc1.alongWith(new IntakeFirstBallAuto(intake)),
-        //new LimelightAlign(sds),
-        new ShootBallAuto(intake, shooter,3,1850),
+        new LowerIntake(intake).andThen(new WaitCommand(0.2)),
+        cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,    
+        new InstantCommand(()-> sds.allStop()),
+        new ShootBallAuto(intake, shooter,3,1825),
         new InstantCommand( ()->resetControllers()),
         //Goes to get next ball
         new SequentialCommandGroup(
@@ -150,46 +152,35 @@ return commandGroup;
   Pose2d initialPose1 = traj1.getInitialPose();
   CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
 
-  PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2", 3 ,3); 
-  Pose2d initialPose2 = traj2.getInitialPose();
+  PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2", 3 ,3.5); 
   CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
 
-  PathPlannerTrajectory traj3  = PathPlanner.loadPath("5b Path3", 3 ,3);
-  Pose2d initialPose3 = traj3.getInitialPose(); 
-  CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
-
-  PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4", 3 ,3); 
-  Pose2d initialPose4 = traj4.getInitialPose();
+  PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4", 3 ,3.5); 
   CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
 
-  PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5", 3 ,3); 
-  Pose2d initialPose5 = traj5.getInitialPose();
+  PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5", 4 ,4); 
   CustomSwerveControllorCommand cscc5=getSwerveControllerCommand(traj5);
 
   SequentialCommandGroup commandGroup = 
   new SequentialCommandGroup(
     new ResetPose(sds, initialPose1), 
     new InstantCommand( ()->resetControllers()),
-    new ParallelCommandGroup(
-        new IntakeFirstBallAuto(intake),
-        cscc1
-    ),
+
+    new LowerIntake(intake).andThen(new WaitCommand(0.2)),
+    cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter, 3, 1850),
+    new ShootBallAuto(intake, shooter, 3, 1825),
     new InstantCommand( ()->resetControllers()),
-    new ParallelCommandGroup(
-        new IntakeFirstBallAuto(intake).withInterrupt(()->intake.ballAtTop),
-        cscc2
-    ),
+
+
+    cscc2.deadlineWith(new IntakeFirstBallAuto(intake).withInterrupt(()->intake.ballAtTop)),
     new InstantCommand( ()->resetControllers()),
-    //cscc3,
-    //new InstantCommand( ()->resetControllers()),
     new InstantCommand(()-> sds.allStop()),
     new ShootBallAuto(intake, shooter,3, 1850),
-    new ParallelCommandGroup(
-        new IntakeFirstBallAuto(intake),
-        cscc4
-    ),
+   
+   
+    (cscc4.andThen(new WaitCommand(0.5))).deadlineWith(new IntakeFirstBallAuto(intake)),
+
     new InstantCommand( ()->resetControllers()),
     cscc5,
     new InstantCommand(()-> sds.allStop()),
@@ -199,7 +190,7 @@ return commandGroup;
 return commandGroup;
 }
 
-  //  returns a command sequence for a 5 ball auto **need to modify **
+  //  returns a command sequence for a 2 ball auto on far side
   public SequentialCommandGroup getAuto4(){    
     // create as many trajectories as needed.  Need the initial pose only for the first trajectory!
   PathPlannerTrajectory traj1  = PathPlanner.loadPath("2b Path1", 3 ,3); 

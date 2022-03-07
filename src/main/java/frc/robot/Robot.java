@@ -21,14 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private SequentialCommandGroup m_autonomousCommand1,m_autonomousCommand2;
   private SequentialCommandGroup m_autonomousCommand3,m_autonomousCommand4;
-  private SequentialCommandGroup m_autonomousCommand5,m_autonomousCommand6;
   private SequentialCommandGroup m_autonomousCommand;
   private static final String kAuto1 = "Auto1";
   private static final String kAuto2 = "Auto2";
   private static final String kAuto3 = "Auto3";
   private static final String kAuto4 = "Auto4";
-  private static final String kAuto5 = "Auto5";
-  private static final String kAuto6 = "Auto6";
 
 
   private String m_autoSelected;
@@ -52,8 +49,6 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Auto2", kAuto2);
     m_chooser.addOption("Auto3", kAuto3);
     m_chooser.addOption("Auto4", kAuto4);
-    m_chooser.addOption("Auto5", kAuto5);
-    m_chooser.addOption("Auto6", kAuto6);
     SmartDashboard.putData("Auto choices", m_chooser);
     m_autonomousCommand1 = m_robotContainer.getAutonomousCommand1();
     m_autonomousCommand2 = m_robotContainer.getAutonomousCommand2();
@@ -90,7 +85,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-//    m_robotContainer.setPIDslot(1);  // use the auto PID gains for teleop
+    m_robotContainer.setPIDslot(1);  // use the auto PID gains for teleop
     m_autoSelected = m_chooser.getSelected();
 
     switch (m_autoSelected) {
@@ -128,7 +123,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.reEnableGyro();
-    //m_robotContainer.setPIDslot(0);  // use the teleop PID gains for teleop 
+    m_robotContainer.setPIDslot(0);  // use the teleop PID gains for teleop 
   }
 
   /** This function is called periodically during operator control. */

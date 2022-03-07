@@ -33,16 +33,16 @@ public class Shooter extends SubsystemBase {
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
 
 
-  TalonFX shooterR = new TalonFX(13);
-  TalonFX shooterL = new TalonFX(12);
+  TalonFX shooterGrey = new TalonFX(13);
+  TalonFX shooterBlue = new TalonFX(12);
 
   private Timer timer = new Timer();
   private double shooterTOTGoal=0.25;
   private double currentTimeOnTarget=0;
   private double startTime=0;
 
-  double topKs=0.015,topKv=0.000147,topKa=0.1,topKp=0.15;
-  double bottomKs=0.022,bottomKv=0.000141,bottomKa=0.1,bottomKp=0.15;
+  double blueKs=0.015,blueKv=0.000147,blueKa=0.1,blueKp=0.15;
+  double GreyKs=0.022,GreyKv=0.000141,GreyKa=0.1,GreyKp=0.15;
   
   double currentShooterSpeedL=0; 
   double currentShooterSpeedR=0; 
@@ -51,44 +51,44 @@ public class Shooter extends SubsystemBase {
   double shooterSpeedLow=850;
   double shooterSpeedManual=1750;
   double shooterSpeed=0;
-  double bottomclpo=0.4;
+  double Greyclpo=0.4;
   public boolean atSpeed=false;
   private double shooterTolerance=35;
 
-  SimpleMotorFeedforward topFF = 
-    new SimpleMotorFeedforward(topKs,topKv,topKa);
+  SimpleMotorFeedforward blueFF = 
+    new SimpleMotorFeedforward(blueKs,blueKv,blueKa);
 
-    SimpleMotorFeedforward bottomFF = 
-    new SimpleMotorFeedforward(bottomKs,bottomKv,bottomKa);
+    SimpleMotorFeedforward GreyFF = 
+    new SimpleMotorFeedforward(GreyKs,GreyKv,GreyKa);
 
 public Shooter(){
   
     timer.start();
 
-    shooterL.configFactoryDefault();
-    shooterL.setNeutralMode(NeutralMode.Coast);
-    shooterL.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
-    shooterL.config_kP(0, topKp);
+    shooterBlue.configFactoryDefault();
+    shooterBlue.setNeutralMode(NeutralMode.Coast);
+    shooterBlue.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
+    shooterBlue.config_kP(0, blueKp);
 
-    shooterR.configFactoryDefault();    
-    shooterR.setNeutralMode(NeutralMode.Coast);
-    shooterR.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
-    shooterR.configClosedLoopPeakOutput(0, bottomclpo);
-    shooterR.config_kP(0, bottomKp);
+    shooterGrey.configFactoryDefault();    
+    shooterGrey.setNeutralMode(NeutralMode.Coast);
+    shooterGrey.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
+    shooterGrey.configClosedLoopPeakOutput(0, Greyclpo);
+    shooterGrey.config_kP(0, GreyKp);
 
-//    shooterR.configClosedloopRamp(0.25);
+//    shooterGrey.configClosedloopRamp(0.25);
 
-    SmartDashboard.putNumber("shooterR clpo", bottomclpo);
-    SmartDashboard.putNumber("shooterL Vel",0);
-    SmartDashboard.putNumber("shooterR Vel",0);
-    SmartDashboard.putNumber("shooter top kS",topKs);
-    SmartDashboard.putNumber("shooter top kV",topKv);
-    SmartDashboard.putNumber("shooter top kA",topKa);
-    SmartDashboard.putNumber("shooter top kP",topKp);
-    SmartDashboard.putNumber("shooter bottom kS",bottomKs);
-    SmartDashboard.putNumber("shooter bottom kV",bottomKv);
-    SmartDashboard.putNumber("shooter bottom kA",bottomKa);
-    SmartDashboard.putNumber("shooter bottom kP",bottomKp);
+    SmartDashboard.putNumber("shooterGrey clpo", Greyclpo);
+    SmartDashboard.putNumber("shooterBlue Vel",0);
+    SmartDashboard.putNumber("shooterGrey Vel",0);
+    SmartDashboard.putNumber("shooter blue kS",blueKs);
+    SmartDashboard.putNumber("shooter blue kV",blueKv);
+    SmartDashboard.putNumber("shooter blue kA",blueKa);
+    SmartDashboard.putNumber("shooter blue kP",blueKp);
+    SmartDashboard.putNumber("shooter Grey kS",GreyKs);
+    SmartDashboard.putNumber("shooter Grey kV",GreyKv);
+    SmartDashboard.putNumber("shooter Grey kA",GreyKa);
+    SmartDashboard.putNumber("shooter Grey kP",GreyKp);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
     SmartDashboard.putNumber("shooter tolerance",shooterTolerance);
@@ -131,20 +131,20 @@ public void shootAtSpeed(int rpm){
 }
 
 public void set(){
-  shooterL.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       topFF.calculate(shooterSpeed));
+  shooterBlue.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+       blueFF.calculate(shooterSpeed));
 
-       shooterR.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       bottomFF.calculate(-shooterSpeed));
+       shooterGrey.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
+       GreyFF.calculate(-shooterSpeed));
 
-//  shooterR.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,ffr); 
+//  shooterGrey.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,ffr); 
 }
 
 
 public void stopShooter(){
       shooterSpeed=0;
-      shooterL.set(ControlMode.PercentOutput,0);
-      shooterR.set(ControlMode.PercentOutput,0);
+      shooterBlue.set(ControlMode.PercentOutput,0);
+      shooterGrey.set(ControlMode.PercentOutput,0);
       atSpeed=false;
     }
 
@@ -154,29 +154,29 @@ public void stopShooter(){
       shooterTolerance=SmartDashboard.getNumber("shooter tolerance", shooterTolerance);
       shooterTOTGoal=SmartDashboard.getNumber("shooter TOTgoal", shooterTOTGoal);
 
-      topKs=SmartDashboard.getNumber("shooter top kS", topKs);
-      topKv=SmartDashboard.getNumber("shooter top kV", topKv);
-      topKa=SmartDashboard.getNumber("shooter top kA", topKa);
-      topKp=SmartDashboard.getNumber("shooter top kP", topKp);
-      topFF=new SimpleMotorFeedforward(topKs,topKv,topKa);
-      shooterL.config_kP(0, topKp);
+      blueKs=SmartDashboard.getNumber("shooter blue kS", blueKs);
+      blueKv=SmartDashboard.getNumber("shooter blue kV", blueKv);
+      blueKa=SmartDashboard.getNumber("shooter blue kA", blueKa);
+      blueKp=SmartDashboard.getNumber("shooter blue kP", blueKp);
+      blueFF=new SimpleMotorFeedforward(blueKs,blueKv,blueKa);
+      shooterBlue.config_kP(0, blueKp);
       
-      bottomKs=SmartDashboard.getNumber("shooter bottom kS", bottomKs);
-      bottomKv=SmartDashboard.getNumber("shooter bottom kV", bottomKv);
-      bottomKa=SmartDashboard.getNumber("shooter bottom kA", bottomKa);
-      bottomKp=SmartDashboard.getNumber("shooter bottom kP", bottomKp);
-      bottomclpo=SmartDashboard.getNumber("shooterR clpo", bottomclpo);
-      bottomFF=new SimpleMotorFeedforward(bottomKs,bottomKv,bottomKa);     
-      shooterR.config_kP(0, bottomKp);
-      shooterR.configClosedLoopPeakOutput(0, bottomclpo);
+      GreyKs=SmartDashboard.getNumber("shooter Grey kS", GreyKs);
+      GreyKv=SmartDashboard.getNumber("shooter Grey kV", GreyKv);
+      GreyKa=SmartDashboard.getNumber("shooter Grey kA", GreyKa);
+      GreyKp=SmartDashboard.getNumber("shooter Grey kP", GreyKp);
+      Greyclpo=SmartDashboard.getNumber("shooterGrey clpo", Greyclpo);
+      GreyFF=new SimpleMotorFeedforward(GreyKs,GreyKv,GreyKa);     
+      shooterGrey.config_kP(0, GreyKp);
+      shooterGrey.configClosedLoopPeakOutput(0, Greyclpo);
     }
 
 
 
     @Override
     public void periodic() {
-      currentShooterSpeedL=shooterL.getSelectedSensorVelocity()*600/2048;
-      currentShooterSpeedR=shooterR.getSelectedSensorVelocity()*600/2048;
+      currentShooterSpeedL=shooterBlue.getSelectedSensorVelocity()*600/2048;
+      currentShooterSpeedR=shooterGrey.getSelectedSensorVelocity()*600/2048;
 
       if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<shooterTolerance && 
                     Math.abs(-currentShooterSpeedR-shooterSpeed)<shooterTolerance){
@@ -189,7 +189,7 @@ public void stopShooter(){
       } 
       SmartDashboard.putNumber("Shooter set speed",shooterSpeed);  
       SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
-      SmartDashboard.putNumber("shooterL Vel",currentShooterSpeedL);
-      SmartDashboard.putNumber("shooterR Vel",currentShooterSpeedR);
+      SmartDashboard.putNumber("shooterBlue Vel",currentShooterSpeedL);
+      SmartDashboard.putNumber("shooterGrey Vel",currentShooterSpeedR);
       }
 }

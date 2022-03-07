@@ -34,7 +34,6 @@ import frc.robot.commands.FollowBall;
 import frc.robot.subsystems.SwerveDriveSystem;
 import frc.robot.subsystems.Tables;
 import frc.robot.subsystems.AutoGenerator;
-import frc.robot.subsystems.AutoGeneratorTimed;
 import frc.robot.subsystems.BallFollowInterface;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.IntakeConveyor;
@@ -110,9 +109,6 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   public final ReEnableGyro m_ReEnableGyro = new ReEnableGyro(m_swervedriveSystem) ;
 
   public final AutoGenerator autoGenerator = new AutoGenerator(m_swervedriveSystem, intake,shooter);
-  public final AutoGeneratorTimed autoGeneratorTimed = 
-       new AutoGeneratorTimed(m_swervedriveSystem, intake,shooter);
-
 
   public RobotContainer() {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
