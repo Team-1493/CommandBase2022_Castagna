@@ -15,9 +15,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.TurboToggle;
 import frc.robot.Sensors.Camera;
-import frc.robot.Sensors.BallFollowCamera;
+//import frc.robot.Sensors.BallFollowCamera;
 import frc.robot.commands.DriveSwerve;
-import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.UpdatePID;
 import frc.robot.commands.UpdateTable;
 import frc.robot.commands.Climb.ClimbManual;
@@ -26,7 +25,7 @@ import frc.robot.commands.Gyro.ResetGyro;
 import frc.robot.commands.IntakeShooter.IntakeBall;
 import frc.robot.commands.IntakeShooter.ShootBall;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
-import frc.robot.commands.LimelightFollowing.LimelightAutoTarget;
+import frc.robot.commands.LimelightFollowing.LimelightAlign;
 import frc.robot.commands.Rotate.HeadingBumpCCW;
 import frc.robot.commands.Rotate.HeadingBumpCW;
 import frc.robot.commands.Rotate.RotateInPlace;
@@ -48,7 +47,6 @@ public final Tables m_tables = new Tables();
   public final Stick operatorStick =new Stick(1);
 
 // Driver Buttons
-  public JoystickButton btnResetEncoders = new JoystickButton(stick.getStick(),1);
   public JoystickButton btnResetGyro = new JoystickButton(stick.getStick(),2);
   public JoystickButton btnUpdateConstants = new JoystickButton(stick.getStick(),3);
 
@@ -59,17 +57,22 @@ public final Tables m_tables = new Tables();
 
 
  // Operator Buttons 
- public JoystickButton btnLimelightTarget = new JoystickButton(operatorStick.getStick(),5);
-//  public JoystickButton btnSpinWheels = new JoystickButton(operatorStick.getStick(),5); 
-  public JoystickButton btnIntakeBall = new JoystickButton(operatorStick.getStick(),7);
-  public JoystickButton btnShootBallLow = new JoystickButton(operatorStick.getStick(),6);
   public JoystickButton btnShootBallHigh = new JoystickButton(operatorStick.getStick(),1);
+  public JoystickButton btnClimbPositionDown = new JoystickButton(operatorStick.getStick(),2);
+  public JoystickButton btnClimbPositionUp = new JoystickButton(operatorStick.getStick(),4);
+
+  public JoystickButton btnLimelightAlign = new JoystickButton(operatorStick.getStick(),5);
+  public JoystickButton btnShootBallLow = new JoystickButton(operatorStick.getStick(),6);
+  public JoystickButton btnIntakeBall = new JoystickButton(operatorStick.getStick(),7);
   public JoystickButton btnShootBallManual = new JoystickButton(operatorStick.getStick(),8);
+
+  public JoystickButton btnReverseIntake = new JoystickButton(operatorStick.getStick(),9);
+  
   public JoystickButton btnClimbUpManual = new JoystickButton(operatorStick.getStick(),13);
   public JoystickButton btnClimbDownManual = new JoystickButton(operatorStick.getStick(),14);
 
-  public JoystickButton btnClimbPositionDown = new JoystickButton(operatorStick.getStick(),2);
-  public JoystickButton btnClimbPositionUp = new JoystickButton(operatorStick.getStick(),4);
+  
+  
 
   
   
@@ -94,7 +97,7 @@ public final Camera camera = new Camera();
   public final UpdateTable m_updatetable = new UpdateTable(m_tables);
   public final RotateInPlace m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection); ;
   public final FollowBall m_followBall = new FollowBall(m_ballFollower);
-  public final Command m_limelightAutoTarget  = new LimelightAutoTarget(m_swervedriveSystem,stickState);
+  public final Command m_limelightAlign  = new LimelightAlign(m_swervedriveSystem,btnLimelightAlign);
   public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall); 
 //  public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
 public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1); 
@@ -128,13 +131,13 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
     btnTurbo.whenPressed(new TurboToggle(stick));
 
-    btnLimelightTarget.whenPressed(m_limelightAutoTarget); 
-//    btnSpinWheels.whenPressed(m_spimWheel); 
+    btnLimelightAlign.whenPressed(m_limelightAlign); 
     btnIntakeBall.whenPressed(m_intakeBall); 
+    btnReverseIntake.whenPressed(new InstantCommand(()->intake.reverseIntake()));
+    btnReverseIntake.whenReleased(new InstantCommand(()->intake.stopIntake()));
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
     btnShootBallManual.whenPressed(m_shootBallManual); 
     btnShootBallLow.whenPressed(m_shootBallLow); 
-
 
     btnClimbUpManual.whileHeld(m_climbUpManual);
     btnClimbDownManual.whileHeld(m_climbDownManual);
@@ -142,7 +145,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnClimbPositionUp.whenPressed(new InstantCommand(()-> m_climber.climbPositionHigher() ));
 
 
-   btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
+    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
    // btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
   //  btnFollowBall.whileHeld(m_followBall); 
   }

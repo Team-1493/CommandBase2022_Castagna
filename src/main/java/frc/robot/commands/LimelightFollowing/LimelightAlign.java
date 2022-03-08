@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.SwerveDriveSystem;
 
 /***  This command gets called only once, so the method listed in 
@@ -17,13 +18,15 @@ public class LimelightAlign extends CommandBase {
   public NetworkTable limelight= inst.getTable("limelight");
   public NetworkTableEntry txEntry = limelight.getEntry("tx");
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
-  private double prevDriveVel=100;
-  private double driveVel=100;
   private SwerveDriveSystem sds;
+  private double kP=0.1, kS=0.1;
+  private double error=1;
+  private JoystickButton btn;
   
 
-  public LimelightAlign(SwerveDriveSystem m_sds) {
+  public LimelightAlign(SwerveDriveSystem m_sds,JoystickButton m_btn) {
       sds=m_sds;
+      btn=m_btn;
       addRequirements(sds);
 
   }
@@ -39,30 +42,24 @@ public class LimelightAlign extends CommandBase {
 //    double angle=-txEntry.getDouble(0)/5 - 5;
    
     double angle=-txEntry.getDouble(0);
-    double angleRadians=Math.toRadians(angle);
-    double heading=sds.heading;
+    error = Math.abs(angle);
     SmartDashboard.putNumber("limelight angle", angle);
-    if(tvEntry.getDouble(0)==1)
-    sds.setMotors(new double[] {0, 0,heading+angleRadians, 3});
-    prevDriveVel=driveVel;
-    driveVel=sds.getDriveVelocityMagnitude() ;   
+   
+    if(tvEntry.getDouble(0)==1 && error>0.5)
+      sds.setMotors(new double[] {0, 0,angle*kP+kS, 1});
+    
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-   
+    sds.setMotors(new double[] {0, 0,0, 1});
   }
 
-  // Returns true when the command should end.
-  // add code to test when the command is done.
-  // For example - is the robot close enough to the target,
-  // or did autonomous end, or did the driver signal it to end
   @Override
   public boolean isFinished() {
-//    return (sds.getDriveVelocityMagnitude()<5 && prevDriveVel<5);
- return true;
+ return (!btn.get());
   }
   
 }
