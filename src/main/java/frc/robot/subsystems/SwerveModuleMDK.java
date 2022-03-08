@@ -171,7 +171,7 @@ public void setMotorsAllStop() {
 }
 
   public void setMotorsFF(double speed,double turnAngle) {
-    double driveFFUnits=feedforward_drive.calculate(speed)/voltageComp;
+//    double driveFFUnits=feedforward_drive.calculate(speed)/voltageComp;
 //    m_drive.set(ControlMode.Velocity, speed*MPSToNativeSpeed,DemandType.ArbitraryFeedForward,driveFFUnits);
     m_turn.set(TalonFXControlMode.MotionMagic,turnAngle*RadiansToNativePos);
   }
