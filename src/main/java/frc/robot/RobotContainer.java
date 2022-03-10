@@ -131,7 +131,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
     btnTurbo.whenPressed(new TurboToggle(stick));
 
-    btnLimelightAlign.whenPressed(m_limelightAlign); 
+    btnLimelightAlign.whenPressed(m_limelightAlign.andThen(m_shootBallHigh)); 
     btnIntakeBall.whenPressed(m_intakeBall); 
     btnReverseIntake.whenPressed(new InstantCommand(()->intake.reverseIntake()));
     btnReverseIntake.whenReleased(new InstantCommand(()->intake.stopIntake()));
@@ -162,9 +162,6 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     return autoGenerator.getAuto3();
   }
 
-  public SequentialCommandGroup getAutonomousCommand4() {    
-    return autoGenerator.getAuto4();
-  }
 
 
   public void reEnableGyro(){

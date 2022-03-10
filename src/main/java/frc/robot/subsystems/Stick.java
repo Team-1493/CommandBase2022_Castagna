@@ -5,7 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Joystick;
-
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Stick extends SubsystemBase{
@@ -37,6 +37,8 @@ public class Stick extends SubsystemBase{
     double vx=-mag2*Math.sin(angle*Math.PI/180);
     double vy= -mag2*Math.cos(angle*Math.PI/180);
     omega =mystick.getRawAxis(omID);
+    if(mag2>.05)mystick.setRumble(RumbleType.kLeftRumble, 1);
+    else mystick.setRumble(RumbleType.kLeftRumble, 0);
     // flag=2 indicates we are sending a rotational rate 
     return new double[] {vx,vy,omega,2};  
   }
@@ -88,4 +90,5 @@ public void turboToggle(){
 public Joystick getStick(){
   return this.mystick;
 }
+
 }

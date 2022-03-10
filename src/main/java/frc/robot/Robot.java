@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -20,18 +19,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
   private SequentialCommandGroup m_autonomousCommand1,m_autonomousCommand2;
-  private SequentialCommandGroup m_autonomousCommand3,m_autonomousCommand4;
+  private SequentialCommandGroup m_autonomousCommand3;
   private SequentialCommandGroup m_autonomousCommand;
-  private static final String kAuto1 = "Auto1";
-  private static final String kAuto2 = "Auto2";
-  private static final String kAuto3 = "Auto3";
-  private static final String kAuto4 = "Auto4";
-
-
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-
-
+  
   private RobotContainer m_robotContainer;
   Timer timer = new Timer();
   boolean shootflag=false;
@@ -45,15 +36,9 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.reEnableGyro();
-    m_chooser.setDefaultOption("Auto1", kAuto1);
-    m_chooser.addOption("Auto2", kAuto2);
-    m_chooser.addOption("Auto3", kAuto3);
-    m_chooser.addOption("Auto4", kAuto4);
-    SmartDashboard.putData("Auto choices", m_chooser);
     m_autonomousCommand1 = m_robotContainer.getAutonomousCommand1();
     m_autonomousCommand2 = m_robotContainer.getAutonomousCommand2();
     m_autonomousCommand3 = m_robotContainer.getAutonomousCommand3();
-    m_autonomousCommand4 = m_robotContainer.getAutonomousCommand4();
     
   }
 
@@ -86,20 +71,16 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     m_robotContainer.setPIDslot(1);  // use the auto PID gains for teleop
-    m_autoSelected = m_chooser.getSelected();
-
+    m_autoSelected=SmartDashboard.getString("Auto Selector", "1");
     switch (m_autoSelected) {
-      case kAuto1:
+      case "1":
         m_autonomousCommand=m_autonomousCommand1;
         break;
-      case kAuto2:
+      case "2":
         m_autonomousCommand=m_autonomousCommand2;
         break;
-      case kAuto3:
+      case "3":
         m_autonomousCommand=m_autonomousCommand3;
-        break;
-      case kAuto4:
-        m_autonomousCommand=m_autonomousCommand4;
         break;
       default:
       m_autonomousCommand=m_autonomousCommand1;
@@ -122,6 +103,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+//    CommandScheduler.getInstance().cancelAll();
     m_robotContainer.reEnableGyro();
     m_robotContainer.setPIDslot(0);  // use the teleop PID gains for teleop 
   }

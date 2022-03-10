@@ -40,8 +40,6 @@ public class ShootBallAuto extends CommandBase {
       if(shooterLevel==1) shooter.shootHigh();
       else if(shooterLevel==2) shooter.shootLow();
       else shooter.shootAtSpeed(rpm); 
-//      timer.start();
-//      timer.reset();     
       runUpper=false;
       runLower=false;
   }

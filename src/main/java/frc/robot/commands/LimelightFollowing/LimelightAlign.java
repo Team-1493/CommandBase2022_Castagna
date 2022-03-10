@@ -2,6 +2,7 @@ package frc.robot.commands.LimelightFollowing;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -19,10 +20,11 @@ public class LimelightAlign extends CommandBase {
   public NetworkTableEntry txEntry = limelight.getEntry("tx");
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
   private SwerveDriveSystem sds;
-  private double kP=0.1, kS=0.1;
+  private double kP=0.115, kS=0.3;
   private double error=1;
   private JoystickButton btn;
-  
+  private Timer timer = new Timer();
+  private boolean onTarget=false;
 
   public LimelightAlign(SwerveDriveSystem m_sds,JoystickButton m_btn) {
       sds=m_sds;
@@ -33,33 +35,48 @@ public class LimelightAlign extends CommandBase {
 
   @Override
   public void initialize() {
+    timer.start();
+    timer.reset();
+    onTarget=false;
+
   }
 
 
   @Override
   public void execute() {
 
-//    double angle=-txEntry.getDouble(0)/5 - 5;
-   
+    double seesTarget=tvEntry.getDouble(0);
     double angle=-txEntry.getDouble(0);
     error = Math.abs(angle);
     SmartDashboard.putNumber("limelight angle", angle);
    
-    if(tvEntry.getDouble(0)==1 && error>0.5)
-      sds.setMotors(new double[] {0, 0,angle*kP+kS, 1});
-    
-
+    if(seesTarget==1 && error>0.5)
+      {
+        double output = angle*kP+kS*Math.signum(angle);
+        if (output>90) output=90;
+        if (output<-90) output=-90;
+        sds.setMotors(new double[] {0, 0,output, 1});
+        onTarget=false;
+      }
+  
+    else if(seesTarget==1 && error<= 0.5 && !onTarget)  
+      {
+        timer.reset();
+        onTarget=true;
+      }
+      
   }
+
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    sds.setMotors(new double[] {0, 0,0, 1});
+    sds.setMotors(new double[] {0, 0,sds.heading, 3});
   }
 
   @Override
   public boolean isFinished() {
- return (!btn.get());
+ return (!btn.get() || (onTarget && timer.hasElapsed(0.25)) );
   }
   
 }

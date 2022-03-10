@@ -18,13 +18,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 
-
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Shooter extends SubsystemBase {
 
   public NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -41,11 +34,11 @@ public class Shooter extends SubsystemBase {
   private double currentTimeOnTarget=0;
   private double startTime=0;
 
-  double blueKs=0.015,blueKv=0.000147,blueKa=0.1,blueKp=0.15;
-  double GreyKs=0.022,GreyKv=0.000141,GreyKa=0.1,GreyKp=0.15;
+  double blueKs=0.015,blueKv=0.000147,blueKa=0.1,blueKp=0.25,blueKd=8.0;
+  double GreyKs=0.022,GreyKv=0.000141,GreyKa=0.1,GreyKp=0.25,GreyKd=8.0;
   
-  double currentShooterSpeedL=0; 
-  double currentShooterSpeedR=0; 
+  double currentShooterSpeedBlue=0; 
+  double currentShooterSpeedGrey=0; 
   double speedFactor=100;
   double shooterSpeedHigh=0;
   double shooterSpeedLow=850;
@@ -69,12 +62,14 @@ public Shooter(){
     shooterBlue.setNeutralMode(NeutralMode.Coast);
     shooterBlue.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
     shooterBlue.config_kP(0, blueKp);
+    shooterBlue.configVoltageCompSaturation(11.5);
 
     shooterGrey.configFactoryDefault();    
     shooterGrey.setNeutralMode(NeutralMode.Coast);
     shooterGrey.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
     shooterGrey.configClosedLoopPeakOutput(0, Greyclpo);
     shooterGrey.config_kP(0, GreyKp);
+    shooterBlue.configVoltageCompSaturation(11.5);
 
 //    shooterGrey.configClosedloopRamp(0.25);
 
@@ -85,17 +80,16 @@ public Shooter(){
     SmartDashboard.putNumber("shooter blue kV",blueKv);
     SmartDashboard.putNumber("shooter blue kA",blueKa);
     SmartDashboard.putNumber("shooter blue kP",blueKp);
+    SmartDashboard.putNumber("shooter blue kD",blueKd);
     SmartDashboard.putNumber("shooter Grey kS",GreyKs);
     SmartDashboard.putNumber("shooter Grey kV",GreyKv);
     SmartDashboard.putNumber("shooter Grey kA",GreyKa);
     SmartDashboard.putNumber("shooter Grey kP",GreyKp);
+    SmartDashboard.putNumber("shooter Grey kD",GreyKd);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
     SmartDashboard.putNumber("shooter tolerance",shooterTolerance);
     SmartDashboard.putNumber("shooter TOTgoal", shooterTOTGoal);
-
-  
-
   }
 
 
@@ -103,7 +97,7 @@ public void shootHigh(){
     if(tvEntry.getDouble(1)==1){
       double ty=tyEntry.getDouble(1);
       double x=1/Math.tan(ty*Math.PI/180.);
-      shooterSpeed=2250*Math.pow(ty, -0.075);
+//      shooterSpeed=2250*Math.pow(ty, -0.075);
 
       shooterSpeed=-1.8312*x*x+74.388*x+1504.1;
     }
@@ -158,16 +152,20 @@ public void stopShooter(){
       blueKv=SmartDashboard.getNumber("shooter blue kV", blueKv);
       blueKa=SmartDashboard.getNumber("shooter blue kA", blueKa);
       blueKp=SmartDashboard.getNumber("shooter blue kP", blueKp);
+      blueKd=SmartDashboard.getNumber("shooter blue kD", blueKd);
       blueFF=new SimpleMotorFeedforward(blueKs,blueKv,blueKa);
       shooterBlue.config_kP(0, blueKp);
+      shooterBlue.config_kD(0, blueKd);
       
       GreyKs=SmartDashboard.getNumber("shooter Grey kS", GreyKs);
       GreyKv=SmartDashboard.getNumber("shooter Grey kV", GreyKv);
       GreyKa=SmartDashboard.getNumber("shooter Grey kA", GreyKa);
       GreyKp=SmartDashboard.getNumber("shooter Grey kP", GreyKp);
+      GreyKd=SmartDashboard.getNumber("shooter Grey kD", GreyKd);
       Greyclpo=SmartDashboard.getNumber("shooterGrey clpo", Greyclpo);
       GreyFF=new SimpleMotorFeedforward(GreyKs,GreyKv,GreyKa);     
       shooterGrey.config_kP(0, GreyKp);
+      shooterGrey.config_kD(0, GreyKd);
       shooterGrey.configClosedLoopPeakOutput(0, Greyclpo);
     }
 
@@ -175,11 +173,11 @@ public void stopShooter(){
 
     @Override
     public void periodic() {
-      currentShooterSpeedL=shooterBlue.getSelectedSensorVelocity()*600/2048;
-      currentShooterSpeedR=shooterGrey.getSelectedSensorVelocity()*600/2048;
+      currentShooterSpeedBlue=shooterBlue.getSelectedSensorVelocity()*600/2048;
+      currentShooterSpeedGrey=shooterGrey.getSelectedSensorVelocity()*600/2048;
 
-      if (shooterSpeed>0 && Math.abs(currentShooterSpeedL-shooterSpeed)<shooterTolerance && 
-                    Math.abs(-currentShooterSpeedR-shooterSpeed)<shooterTolerance){
+      if (shooterSpeed>0 && Math.abs(currentShooterSpeedBlue-shooterSpeed)<shooterTolerance && 
+                    Math.abs(-currentShooterSpeedGrey-shooterSpeed)<shooterTolerance){
         currentTimeOnTarget=timer.get()-startTime;
         if(currentTimeOnTarget>shooterTOTGoal) atSpeed=true;
       }
@@ -189,7 +187,7 @@ public void stopShooter(){
       } 
       SmartDashboard.putNumber("Shooter set speed",shooterSpeed);  
       SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
-      SmartDashboard.putNumber("shooterBlue Vel",currentShooterSpeedL);
-      SmartDashboard.putNumber("shooterGrey Vel",currentShooterSpeedR);
+      SmartDashboard.putNumber("shooterBlue Vel",currentShooterSpeedBlue);
+      SmartDashboard.putNumber("shooterGrey Vel",currentShooterSpeedGrey);
       }
 }
