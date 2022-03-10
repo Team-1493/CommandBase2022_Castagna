@@ -33,7 +33,7 @@ public Tables(){
     timeEntry=table.getEntry("time");
     timeEntry.setDouble(Timer.getFPGATimestamp());
 
-    // don't think we nned this anymore
+    // don't think we need this anymore
     int i=0;
     while(i<numberNames){
         tableEntry[i]=table.getEntry(names[i]);
