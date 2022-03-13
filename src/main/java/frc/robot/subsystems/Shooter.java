@@ -34,8 +34,8 @@ public class Shooter extends SubsystemBase {
   private double currentTimeOnTarget=0;
   private double startTime=0;
 
-  double blueKs=0.015,blueKv=0.000147,blueKa=0.1,blueKp=0.25,blueKd=8.0;
-  double GreyKs=0.022,GreyKv=0.000141,GreyKa=0.1,GreyKp=0.25,GreyKd=8.0;
+  double blueKs=0.015,blueKv=0.000158,blueKa=0.1,blueKp=0.25,blueKd=8.0;
+  double GreyKs=0.022,GreyKv=0.000155,GreyKa=0.1,GreyKp=0.25,GreyKd=8.0;
   
   double currentShooterSpeedBlue=0; 
   double currentShooterSpeedGrey=0; 
@@ -97,9 +97,9 @@ public void shootHigh(){
     if(tvEntry.getDouble(1)==1){
       double ty=tyEntry.getDouble(1);
       double x=1/Math.tan(ty*Math.PI/180.);
-//      shooterSpeed=2250*Math.pow(ty, -0.075);
 
-      shooterSpeed=-1.8312*x*x+74.388*x+1504.1;
+  //    shooterSpeed=-1.8312*x*x+74.388*x+1504.1;
+  shooterSpeed=-5.585*x*x+227.92*x+1057.5;
     }
     else shooterSpeed=0;
     set();

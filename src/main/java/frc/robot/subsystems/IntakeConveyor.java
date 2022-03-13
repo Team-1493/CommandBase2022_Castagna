@@ -78,6 +78,14 @@ public void reverseIntake(){
 }
 
 
+public void reverseIntakeAndConveyor(){
+    intake.set(ControlMode.PercentOutput,intakeSpeed);
+    conveyorL.set(ControlMode.PercentOutput,0.25); 
+    conveyorU.set(ControlMode.PercentOutput,-0.25);
+}
+
+
+
 public void startLowerConveyor(){
     conveyorL.set(ControlMode.PercentOutput,-0.25); 
 }

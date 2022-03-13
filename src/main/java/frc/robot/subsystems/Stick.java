@@ -40,7 +40,7 @@ public class Stick extends SubsystemBase{
     if(mag2>.05)mystick.setRumble(RumbleType.kLeftRumble, 1);
     else mystick.setRumble(RumbleType.kLeftRumble, 0);
     // flag=2 indicates we are sending a rotational rate 
-    return new double[] {vx,vy,omega,2};  
+    return new double[] {vx,vy,-omega*5,1};  
   }
 
 // maps the stick axes for different contollers

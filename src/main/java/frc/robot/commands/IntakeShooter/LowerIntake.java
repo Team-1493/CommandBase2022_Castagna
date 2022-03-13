@@ -26,7 +26,7 @@ private Timer timer = new Timer();
 
   @Override
   public void execute() {
-      intake.reverseIntake();;
+      intake.reverseIntake();
     }
 
 

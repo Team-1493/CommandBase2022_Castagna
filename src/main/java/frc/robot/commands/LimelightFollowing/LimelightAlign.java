@@ -25,6 +25,7 @@ public class LimelightAlign extends CommandBase {
   private JoystickButton btn;
   private Timer timer = new Timer();
   private boolean onTarget=false;
+  double coarseAngle=0;
 
   public LimelightAlign(SwerveDriveSystem m_sds,JoystickButton m_btn) {
       sds=m_sds;
@@ -49,7 +50,18 @@ public class LimelightAlign extends CommandBase {
     double angle=-txEntry.getDouble(0);
     error = Math.abs(angle);
     SmartDashboard.putNumber("limelight angle", angle);
-   
+   /*
+    if(seesTarget==0){
+      double x = sds.getPose().getX() - 8.27;
+      double y = sds.getPose().getY()-4.28;
+      if(x>0 && y<0) coarseAngle = Math.PI - Math.atan(x/y);
+      else if(x<0 && y<0) coarseAngle = - Math.atan(x/y);
+      else if(x>0 && y>0) coarseAngle=-180-Math.atan(x/y);
+      else coarseAngle = - Math.atan(x/y);
+      sds.setMotors(new double[] {0, 0,coarseAngle, 3});
+    }
+*/
+
     if(seesTarget==1 && error>0.5)
       {
         double output = angle*kP+kS*Math.signum(angle);
@@ -63,8 +75,7 @@ public class LimelightAlign extends CommandBase {
       {
         timer.reset();
         onTarget=true;
-      }
-      
+      }   
   }
 
 
