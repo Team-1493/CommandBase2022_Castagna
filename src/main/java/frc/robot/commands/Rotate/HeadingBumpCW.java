@@ -29,7 +29,7 @@ public class HeadingBumpCW extends CommandBase {
   public void execute() {
     // supply vx,vy,heading setpoint
 //    m_swervedrive.headingBumpCW();
-    m_swervedrive.setMotors(new double[] {0,0,-0.3,1});
+    m_swervedrive.setMotors(new double[] {0,0,-0.5,1});
   }
 
   
@@ -44,7 +44,7 @@ public class HeadingBumpCW extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.hasElapsed(.2) || m_swervedrive.heading<=finalHeading);
+    return (timer.hasElapsed(.25) || m_swervedrive.heading<=finalHeading);
   }
   
 }
