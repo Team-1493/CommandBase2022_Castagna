@@ -40,6 +40,9 @@ public class Pigeon {
         pigeon.setYaw(0);
     }
 
+    public void setAngle(double heading){
+        pigeon.setYaw(heading);
+    }
 
     public double getTemperature(){
         return  pigeon.getTemp();

@@ -309,6 +309,10 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     return m_odometry.getPoseMeters();
   }
 
+  public void setHeading(double heading){
+    gyro.setAngle(heading);
+  }
+
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(pose, new Rotation2d(heading));
   }

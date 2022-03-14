@@ -163,6 +163,9 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     return autoGenerator.getAuto3();
   }
 
+  public SequentialCommandGroup getAutonomousCommand4() {    
+    return autoGenerator.getAuto3();
+  }
 
 
   public void reEnableGyro(){

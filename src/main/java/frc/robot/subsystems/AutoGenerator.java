@@ -83,7 +83,7 @@ public class AutoGenerator extends SubsystemBase {
     cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
     new InstantCommand(()-> sds.allStop()),
 
-    new ShootBallAuto(intake, shooter,3,1825),
+    new ShootBallAuto(intake, shooter,3,1750),
     new InstantCommand( ()->resetControllers()),
     new InstantCommand( ()->sds.allStop() ),
 
@@ -94,7 +94,8 @@ public class AutoGenerator extends SubsystemBase {
     cscc3,
     new InstantCommand( ()->resetControllers()),
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter,3,1500)
+    new ShootBallAuto(intake, shooter,3,1500),
+    new InstantCommand( ()-> sds.setHeading(176.00))
   );
 return commandGroup;
 }
@@ -121,7 +122,7 @@ return commandGroup;
       cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
       new InstantCommand(()-> sds.allStop()),
 
-      new ShootBallAuto(intake, shooter,3,1825),
+      new ShootBallAuto(intake, shooter,3,1750),
       new InstantCommand( ()->resetControllers()),
       new InstantCommand( ()->sds.allStop() ),
 
@@ -132,7 +133,8 @@ return commandGroup;
       cscc3,
       new InstantCommand( ()->resetControllers()),
       new InstantCommand(()-> sds.allStop()),
-      new ShootBallAuto(intake, shooter,3,1000)
+      new ShootBallAuto(intake, shooter,3,1000),
+      new InstantCommand( ()-> sds.setHeading(-146.00))
     );
   return commandGroup;
 }
@@ -161,14 +163,14 @@ return commandGroup;
     new LowerIntake(intake).andThen(new WaitCommand(0.2)),
     cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter, 3, 1825),
+    new ShootBallAuto(intake, shooter, 3, 1750),
     new InstantCommand( ()->resetControllers()),
 
 
     cscc2.deadlineWith(new IntakeFirstBallAuto(intake).withInterrupt(()->intake.ballAtTop)),
     new InstantCommand( ()->resetControllers()),
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter,3, 1850),
+    new ShootBallAuto(intake, shooter,3, 1750),
    
    
     (cscc4.andThen(new WaitCommand(0.5))).deadlineWith(new IntakeFirstBallAuto(intake)),
@@ -176,11 +178,51 @@ return commandGroup;
     new InstantCommand( ()->resetControllers()),
     cscc5,
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter,3,1800)
+    new ShootBallAuto(intake, shooter,3,1750),
+    new InstantCommand( ()-> sds.setHeading(-146.0))
     
     );
 return commandGroup;
 }
+
+
+  //  returns a command sequence for a 4 ball auto
+  public SequentialCommandGroup getAuto4(){    
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("4b Path1", 2.5 ,2.5); 
+    Pose2d initialPose1 = traj1.getInitialPose();
+    CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
+  
+    PathPlannerTrajectory traj2  = PathPlanner.loadPath("4b Path2", 2.5 ,3); 
+    CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
+  
+    PathPlannerTrajectory traj3  = PathPlanner.loadPath("4b Path3", 2.5 ,3); 
+    CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
+  
+  
+    SequentialCommandGroup commandGroup = 
+    new SequentialCommandGroup(
+      new ResetPose(sds, initialPose1), 
+      new InstantCommand( ()->resetControllers()),
+  
+      new LowerIntake(intake).andThen(new WaitCommand(0.2)),
+      cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
+      new InstantCommand(()-> sds.allStop()),
+      new ShootBallAuto(intake, shooter, 3, 1750),
+      new InstantCommand( ()->resetControllers()),
+  
+       
+      (cscc2.andThen(new WaitCommand(1.0))).deadlineWith(new IntakeFirstBallAuto(intake)),
+  
+      new InstantCommand( ()->resetControllers()),
+      cscc3,
+      new InstantCommand(()-> sds.allStop()),
+      new ShootBallAuto(intake, shooter,3,1750),
+      new InstantCommand( ()-> sds.setHeading(-155))
+      );
+  return commandGroup;
+  }
+  
+  
 
 
 
