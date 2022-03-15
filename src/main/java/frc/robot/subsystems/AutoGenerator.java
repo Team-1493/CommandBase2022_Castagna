@@ -75,6 +75,10 @@ public class AutoGenerator extends SubsystemBase {
   
     PathPlannerTrajectory traj3  = PathPlanner.loadPath("2b Path3a", 2 ,2); 
     CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
+
+    PathPlannerTrajectory traj4  = PathPlanner.loadPath("2b Path4a", 2 ,2); 
+    CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
+  
   
   SequentialCommandGroup commandGroup = 
   new SequentialCommandGroup(
@@ -96,11 +100,11 @@ public class AutoGenerator extends SubsystemBase {
     new InstantCommand( ()->resetControllers()),
     new InstantCommand(()-> sds.allStop()),
     new ShootBallAuto(intake, shooter,3,1500),
-    new InstantCommand( ()-> sds.setHeading(176.00)),
-
-    new AlignWithField(sds),
-    new InstantCommand(()-> sds.allStop())
-
+    
+    cscc4,
+    new InstantCommand(()-> sds.allStop()),
+    new InstantCommand( ()->resetControllers()),
+    new InstantCommand( ()-> sds.setHeading(0))
   );
 return commandGroup;
 }
@@ -117,6 +121,10 @@ return commandGroup;
 
   PathPlannerTrajectory traj3  = PathPlanner.loadPath("2b Path3", 2 ,2); 
   CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
+
+  PathPlannerTrajectory traj4  = PathPlanner.loadPath("2b Path4", 2 ,2); 
+  CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
+
 
 
   SequentialCommandGroup commandGroup = 
@@ -139,11 +147,11 @@ return commandGroup;
       new InstantCommand( ()->resetControllers()),
       new InstantCommand(()-> sds.allStop()),
       new ShootBallAuto(intake, shooter,3,1000),
-      new InstantCommand( ()-> sds.setHeading(-146.00)),
 
-      new AlignWithField(sds),
-      new InstantCommand(()-> sds.allStop())
-  
+      cscc4,
+      new InstantCommand(()-> sds.allStop()),
+      new InstantCommand( ()->resetControllers()),
+      new InstantCommand( ()-> sds.setHeading(0))
     );
   return commandGroup;
 }
@@ -163,6 +171,9 @@ return commandGroup;
 
   PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5", 4 ,4); 
   CustomSwerveControllorCommand cscc5=getSwerveControllerCommand(traj5);
+
+  PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6", 4 ,6); 
+  CustomSwerveControllorCommand cscc6=getSwerveControllerCommand(traj6);
 
   SequentialCommandGroup commandGroup = 
   new SequentialCommandGroup(
@@ -188,9 +199,11 @@ return commandGroup;
     cscc5,
     new InstantCommand(()-> sds.allStop()),
     new ShootBallAuto(intake, shooter,3,1730),
-    new InstantCommand( ()-> sds.setHeading(-146.0)),
-    new AlignWithField(sds),
-    new InstantCommand(()-> sds.allStop())
+
+    cscc6,
+    new InstantCommand(()-> sds.allStop()),
+    new InstantCommand( ()->resetControllers()),
+    new InstantCommand( ()-> sds.setHeading(0))
     );
 return commandGroup;
 }
