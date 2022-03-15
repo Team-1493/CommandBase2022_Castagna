@@ -19,6 +19,7 @@ import frc.robot.commands.ResetPose;
 import frc.robot.commands.IntakeShooter.IntakeFirstBallAuto;
 import frc.robot.commands.IntakeShooter.LowerIntake;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
+import frc.robot.commands.Rotate.AlignWithField;
 
 public class AutoGenerator extends SubsystemBase {
      private SwerveDriveSystem sds;   
@@ -95,7 +96,11 @@ public class AutoGenerator extends SubsystemBase {
     new InstantCommand( ()->resetControllers()),
     new InstantCommand(()-> sds.allStop()),
     new ShootBallAuto(intake, shooter,3,1500),
-    new InstantCommand( ()-> sds.setHeading(176.00))
+    new InstantCommand( ()-> sds.setHeading(176.00)),
+
+    new AlignWithField(sds),
+    new InstantCommand(()-> sds.allStop())
+
   );
 return commandGroup;
 }
@@ -134,7 +139,11 @@ return commandGroup;
       new InstantCommand( ()->resetControllers()),
       new InstantCommand(()-> sds.allStop()),
       new ShootBallAuto(intake, shooter,3,1000),
-      new InstantCommand( ()-> sds.setHeading(-146.00))
+      new InstantCommand( ()-> sds.setHeading(-146.00)),
+
+      new AlignWithField(sds),
+      new InstantCommand(()-> sds.allStop())
+  
     );
   return commandGroup;
 }
@@ -163,14 +172,14 @@ return commandGroup;
     new LowerIntake(intake).andThen(new WaitCommand(0.2)),
     cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter, 3, 1750),
+    new ShootBallAuto(intake, shooter, 3, 1730),
     new InstantCommand( ()->resetControllers()),
 
 
     cscc2.deadlineWith(new IntakeFirstBallAuto(intake).withInterrupt(()->intake.ballAtTop)),
     new InstantCommand( ()->resetControllers()),
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter,3, 1750),
+    new ShootBallAuto(intake, shooter,3, 1775),
    
    
     (cscc4.andThen(new WaitCommand(0.5))).deadlineWith(new IntakeFirstBallAuto(intake)),
@@ -178,10 +187,36 @@ return commandGroup;
     new InstantCommand( ()->resetControllers()),
     cscc5,
     new InstantCommand(()-> sds.allStop()),
-    new ShootBallAuto(intake, shooter,3,1750),
-    new InstantCommand( ()-> sds.setHeading(-146.0))
-    
+    new ShootBallAuto(intake, shooter,3,1730),
+    new InstantCommand( ()-> sds.setHeading(-146.0)),
+    new AlignWithField(sds),
+    new InstantCommand(()-> sds.allStop())
     );
+return commandGroup;
+}
+
+
+  //  returns a command sequence for a short test  auto
+  public SequentialCommandGroup getAuto5(){    
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("TestPath", 2 ,2); 
+    Pose2d initialPose1 = traj1.getInitialPose();
+    CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
+  
+  
+  SequentialCommandGroup commandGroup = 
+  new SequentialCommandGroup(
+    new ResetPose(sds, initialPose1), 
+    new InstantCommand( ()->resetControllers()),
+    cscc1,
+    new InstantCommand(()-> sds.allStop()),
+    new WaitCommand(1),
+    new InstantCommand( ()->resetControllers()),
+    new InstantCommand( ()->sds.allStop() ),
+    new InstantCommand( ()-> sds.setHeading(-90)),
+    new AlignWithField(sds),
+    new InstantCommand(()-> sds.allStop())
+
+  );
 return commandGroup;
 }
 
