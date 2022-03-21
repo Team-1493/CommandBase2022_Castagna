@@ -176,8 +176,8 @@ public void stopShooter(){
       currentShooterSpeedBlue=shooterBlue.getSelectedSensorVelocity()*600/2048;
       currentShooterSpeedGrey=shooterGrey.getSelectedSensorVelocity()*600/2048;
 
-      if (shooterSpeed>0 && Math.abs(currentShooterSpeedBlue-shooterSpeed)<shooterTolerance && 
-                    Math.abs(-currentShooterSpeedGrey-shooterSpeed)<shooterTolerance){
+      if (shooterSpeed>0 && (-currentShooterSpeedBlue+shooterSpeed)<shooterTolerance && 
+                    (currentShooterSpeedGrey+shooterSpeed)<shooterTolerance){
         currentTimeOnTarget=timer.get()-startTime;
         if(currentTimeOnTarget>shooterTOTGoal) atSpeed=true;
       }
