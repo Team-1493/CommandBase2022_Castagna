@@ -63,10 +63,10 @@ public class SwerveDriveSystem  extends SubsystemBase {
 */      
       
 public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-  new Translation2d(0.2667, -0.2667), 
-  new Translation2d(0.2667, +0.2667), 
-  new Translation2d(-0.2667, -0.2667), 
-  new Translation2d(-0.2667, +0.2667));
+  new Translation2d(0.257, -0.257), 
+  new Translation2d(0.257, +0.257), 
+  new Translation2d(-0.257, -0.257), 
+  new Translation2d(-0.257, +0.257));
 
   private final Pigeon gyro = new Pigeon(20);
   public SwerveModuleState[] moduleStatesOptimized = new SwerveModuleState[4];
@@ -267,6 +267,7 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
   }
 
   public void updateConstants() {
+/*
     kP_rotate= SmartDashboard.getNumber("kP_Rotate",kP_rotate);
     kD_rotate= SmartDashboard.getNumber("kD_Rotate",kD_rotate);
     kS_rotate= SmartDashboard.getNumber("kS_Rotate",kS_rotate);
@@ -280,7 +281,7 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     trapProf=new TrapezoidProfile.Constraints(TrapMaxVel_rotate,TrapMaxAcc_rotate);
     pidRotate =new ProfiledPIDController(kP_rotate, 0,kD_rotate,trapProf);
     pidRotate.setTolerance(AllowErr_rotate);
-
+*/
     
     maxVelocityMPS = 0.3048*maxVelocityFPS; 
     SmartDashboard.putNumber("Max Drive RPM",modules[0].MPStoRPM(maxVelocityMPS));
@@ -295,7 +296,7 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
   public void setPIDSlot(int slot){
     int i=0;
     while(i<4){
-      modules[i].setPIDslot(slot);;
+      modules[i].setPIDslot(slot);
       i++;
     }
   }
@@ -329,8 +330,8 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
         modules[2].getState(),
         modules[3].getState());
         SmartDashboard.putNumber("pose-rot", m_odometry.getPoseMeters().getRotation().getDegrees());
-        SmartDashboard.putNumber("pose-x", m_odometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("pose-y", m_odometry.getPoseMeters().getY());
+        SmartDashboard.putNumber("pose-x", m_odometry.getPoseMeters().getX()*39.37);
+        SmartDashboard.putNumber("pose-y", m_odometry.getPoseMeters().getY()*39.37);
 //        SmartDashboard.putNumber("module state 0 mps", modules[0].getState().speedMetersPerSecond);
       }
         catch(Exception e){
