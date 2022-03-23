@@ -30,12 +30,15 @@ public class Shooter extends SubsystemBase {
   TalonFX shooterBlue = new TalonFX(12);
 
   private Timer timer = new Timer();
-  private double shooterTOTGoal=0.25;
+  private double shooterTOTGoal=0.1;
   private double currentTimeOnTarget=0;
   private double startTime=0;
+  private double blueKp=0.2,GreyKp=0.2;
+  private double blueKd=7,GreyKd=7;
+  private double blueKff=0.05,GreyKff=0.05;
+  private double bluePeakFor=1,bluePeakRev=-1;
 
-  double blueKs=0.015,blueKv=0.000158,blueKa=0.1,blueKp=0.25,blueKd=8.0;
-  double GreyKs=0.022,GreyKv=0.000155,GreyKa=0.1,GreyKp=0.25,GreyKd=8.0;
+  private double greyPeakFor=1,greyPeakRev=-1;
   
   double currentShooterSpeedBlue=0; 
   double currentShooterSpeedGrey=0; 
@@ -44,15 +47,10 @@ public class Shooter extends SubsystemBase {
   double shooterSpeedLow=850;
   double shooterSpeedManual=1750;
   double shooterSpeed=0;
-  double Greyclpo=0.4;
+  
   public boolean atSpeed=false;
-  private double shooterTolerance=35;
+  private double shooterTolerance=20;
 
-  SimpleMotorFeedforward blueFF = 
-    new SimpleMotorFeedforward(blueKs,blueKv,blueKa);
-
-    SimpleMotorFeedforward GreyFF = 
-    new SimpleMotorFeedforward(GreyKs,GreyKv,GreyKa);
 
 public Shooter(){
   
@@ -62,30 +60,40 @@ public Shooter(){
     shooterBlue.setNeutralMode(NeutralMode.Coast);
     shooterBlue.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
     shooterBlue.config_kP(0, blueKp);
-    shooterBlue.configVoltageCompSaturation(11.5);
+    shooterBlue.config_kD(0, blueKd);
+    shooterBlue.config_kF(0, blueKff);
+    shooterBlue.setStatusFramePeriod(21, 20);
+    shooterBlue.configVelocityMeasurementWindow(8, 25);
+    shooterBlue.configPeakOutputForward(bluePeakFor);
+    shooterBlue.configPeakOutputReverse(bluePeakRev);
+    shooterBlue.configVoltageCompSaturation(10);
+
 
     shooterGrey.configFactoryDefault();    
     shooterGrey.setNeutralMode(NeutralMode.Coast);
     shooterGrey.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 25);
-    shooterGrey.configClosedLoopPeakOutput(0, Greyclpo);
     shooterGrey.config_kP(0, GreyKp);
-    shooterBlue.configVoltageCompSaturation(11.5);
+    shooterGrey.config_kD(0, GreyKd);
+    shooterGrey.config_kF(0, GreyKff);
+    shooterGrey.setStatusFramePeriod(21, 20);
+    shooterGrey.configVelocityMeasurementWindow(8, 25);
+    shooterGrey.configPeakOutputForward(greyPeakFor);
+    shooterGrey.configPeakOutputReverse(greyPeakRev);
+    shooterGrey.configVoltageCompSaturation(10);
 
 //    shooterGrey.configClosedloopRamp(0.25);
 
-    SmartDashboard.putNumber("shooterGrey clpo", Greyclpo);
+  SmartDashboard.putNumber("blue Peak For",bluePeakFor);
+  SmartDashboard.putNumber("grey Peak For",greyPeakFor);
+
     SmartDashboard.putNumber("shooterBlue Vel",0);
     SmartDashboard.putNumber("shooterGrey Vel",0);
-    SmartDashboard.putNumber("shooter blue kS",blueKs);
-    SmartDashboard.putNumber("shooter blue kV",blueKv);
-    SmartDashboard.putNumber("shooter blue kA",blueKa);
     SmartDashboard.putNumber("shooter blue kP",blueKp);
-    SmartDashboard.putNumber("shooter blue kD",blueKd);
-    SmartDashboard.putNumber("shooter Grey kS",GreyKs);
-    SmartDashboard.putNumber("shooter Grey kV",GreyKv);
-    SmartDashboard.putNumber("shooter Grey kA",GreyKa);
     SmartDashboard.putNumber("shooter Grey kP",GreyKp);
+    SmartDashboard.putNumber("shooter blue kD",blueKd);
     SmartDashboard.putNumber("shooter Grey kD",GreyKd);
+    SmartDashboard.putNumber("shooter blue kF",blueKff);
+    SmartDashboard.putNumber("shooter Grey kF",GreyKff);
     SmartDashboard.putNumber("Manual Shoot Speed",shooterSpeedManual);
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
     SmartDashboard.putNumber("shooter tolerance",shooterTolerance);
@@ -125,13 +133,8 @@ public void shootAtSpeed(int rpm){
 }
 
 public void set(){
-  shooterBlue.set(ControlMode.Velocity, shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       blueFF.calculate(shooterSpeed));
-
-       shooterGrey.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,
-       GreyFF.calculate(-shooterSpeed));
-
-//  shooterGrey.set(ControlMode.Velocity, -shooterSpeed*2048/600, DemandType.ArbitraryFeedForward ,ffr); 
+       shooterBlue.set(ControlMode.Velocity, shooterSpeed*2048/600);
+       shooterGrey.set(ControlMode.Velocity, shooterSpeed*2048/600);
 }
 
 
@@ -148,36 +151,41 @@ public void stopShooter(){
       shooterTolerance=SmartDashboard.getNumber("shooter tolerance", shooterTolerance);
       shooterTOTGoal=SmartDashboard.getNumber("shooter TOTgoal", shooterTOTGoal);
 
-      blueKs=SmartDashboard.getNumber("shooter blue kS", blueKs);
-      blueKv=SmartDashboard.getNumber("shooter blue kV", blueKv);
-      blueKa=SmartDashboard.getNumber("shooter blue kA", blueKa);
+      bluePeakFor=SmartDashboard.getNumber("blue Peak For", bluePeakFor);
+      greyPeakFor=SmartDashboard.getNumber("grey Peak For", bluePeakFor);
+      shooterBlue.configPeakOutputForward(bluePeakFor);
+      shooterGrey.configPeakOutputForward(greyPeakFor);
+
+
       blueKp=SmartDashboard.getNumber("shooter blue kP", blueKp);
-      blueKd=SmartDashboard.getNumber("shooter blue kD", blueKd);
-      blueFF=new SimpleMotorFeedforward(blueKs,blueKv,blueKa);
       shooterBlue.config_kP(0, blueKp);
+      
+      GreyKp=SmartDashboard.getNumber("shooter Grey kP", GreyKp);
+      shooterGrey.config_kP(0, GreyKp);
+
+      blueKd=SmartDashboard.getNumber("shooter blue kD", blueKd);
       shooterBlue.config_kD(0, blueKd);
       
-      GreyKs=SmartDashboard.getNumber("shooter Grey kS", GreyKs);
-      GreyKv=SmartDashboard.getNumber("shooter Grey kV", GreyKv);
-      GreyKa=SmartDashboard.getNumber("shooter Grey kA", GreyKa);
-      GreyKp=SmartDashboard.getNumber("shooter Grey kP", GreyKp);
       GreyKd=SmartDashboard.getNumber("shooter Grey kD", GreyKd);
-      Greyclpo=SmartDashboard.getNumber("shooterGrey clpo", Greyclpo);
-      GreyFF=new SimpleMotorFeedforward(GreyKs,GreyKv,GreyKa);     
-      shooterGrey.config_kP(0, GreyKp);
       shooterGrey.config_kD(0, GreyKd);
-      shooterGrey.configClosedLoopPeakOutput(0, Greyclpo);
+
+      blueKff=SmartDashboard.getNumber("shooter blue kF", blueKff);
+      shooterBlue.config_kF(0, blueKff);
+      
+      GreyKff=SmartDashboard.getNumber("shooter Grey kF", GreyKff);
+      shooterGrey.config_kF(0, GreyKff);
     }
 
 
 
     @Override
     public void periodic() {
+//      inst.flush();
       currentShooterSpeedBlue=shooterBlue.getSelectedSensorVelocity()*600/2048;
       currentShooterSpeedGrey=shooterGrey.getSelectedSensorVelocity()*600/2048;
 
-      if (shooterSpeed>0 && (-currentShooterSpeedBlue+shooterSpeed)<shooterTolerance && 
-                    (currentShooterSpeedGrey+shooterSpeed)<shooterTolerance){
+      if (shooterSpeed>0 && (shooterSpeed-currentShooterSpeedBlue)<shooterTolerance && 
+                    (shooterSpeed-currentShooterSpeedGrey)<shooterTolerance){
         currentTimeOnTarget=timer.get()-startTime;
         if(currentTimeOnTarget>shooterTOTGoal) atSpeed=true;
       }

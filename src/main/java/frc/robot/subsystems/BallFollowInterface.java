@@ -15,11 +15,11 @@ public class BallFollowInterface extends SubsystemBase{
  // Constrcutor 
  public BallFollowInterface(SwerveDriveSystem m_sds){
     sds=m_sds;
-    SmartDashboard.putNumber("ball kp", kp_ball);
-    SmartDashboard.putNumber("ball vmax", vmax);
-    SmartDashboard.putNumber("ball vmin", vmin);   
-    SmartDashboard.putNumber("ball error", 0);
-    SmartDashboard.putNumber("distance1", 0);
+//    SmartDashboard.putNumber("ball kp", kp_ball);
+//    SmartDashboard.putNumber("ball vmax", vmax);
+//    SmartDashboard.putNumber("ball vmin", vmin);   
+//    SmartDashboard.putNumber("ball error", 0);
+//    SmartDashboard.putNumber("distance1", 0);
     }    
 
 

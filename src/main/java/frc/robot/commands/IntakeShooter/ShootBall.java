@@ -46,7 +46,7 @@ public class ShootBall extends CommandBase {
       timer.reset();
     }
 
-    if(atSpeed && runUpper && timer.hasElapsed(0.75) ) {
+    else if(atSpeed && runUpper && timer.hasElapsed(0.1) ) {
       intakeConveyor.startLowerConveyor();
     }
     

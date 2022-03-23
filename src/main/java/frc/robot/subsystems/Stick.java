@@ -37,8 +37,8 @@ public class Stick extends SubsystemBase{
     double vx=-mag2*Math.sin(angle*Math.PI/180);
     double vy= -mag2*Math.cos(angle*Math.PI/180);
     omega =mystick.getRawAxis(omID);
-    if(mag2>.05)mystick.setRumble(RumbleType.kLeftRumble, 1);
-    else mystick.setRumble(RumbleType.kLeftRumble, 0);
+//    if(mag2>.05)mystick.setRumble(RumbleType.kLeftRumble, 1);
+//    else mystick.setRumble(RumbleType.kLeftRumble, 0);
     // flag=2 indicates we are sending a rotational rate 
     return new double[] {vx,vy,-omega*5,1};  
   }

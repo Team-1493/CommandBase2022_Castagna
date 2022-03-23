@@ -184,7 +184,7 @@ if (stickState[3]==1) omega=stickState[2];
 // Convert to speeds module states
     SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
     setModuleStates(moduleStates);
-//  printModuleStates();
+  printModuleStates();
   previousTurnMode=stickState[3];
 }
 
@@ -353,6 +353,7 @@ while(i<4){
 //  datatable.putNumber(moduleNames[i]+" SP rot",turnSet[i]/twoPi); 
   datatable.putNumber(moduleNames[i]+" Dpos",modules[i].getDrivePosition());            
   datatable.putNumber(moduleNames[i]+" Dvel",modules[i].getDriveVelocity()); 
+  datatable.putNumber(moduleNames[i]+" Volt",modules[i].getVoltage()); 
   datatable.putNumber(moduleNames[i]+" SP RPM", modules[i].MPStoRPM(speedSet[i]));
  
   i++;

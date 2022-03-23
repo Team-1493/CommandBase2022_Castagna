@@ -236,6 +236,11 @@ public double getTurnMotorCLE() {
         return  velNativeToRPM_talon(m_drive.getSelectedSensorVelocity());
        }
 
+// get voltage
+    public double getVoltage() {
+        return  m_drive.getMotorOutputVoltage();
+    }
+    
 // get the drive encoder velocity, measured in rpm
 public double getDriveErrorRPM() {
     return  velNativeToRPM_talon(m_drive.getClosedLoopError());
