@@ -19,7 +19,7 @@ public class IntakeConveyor extends SubsystemBase{
 
     
 
-    double intakeSpeed=0.60;
+    double intakeSpeed=0.40;
     
     boolean ballAtTop=irTopSensor.get();
     boolean ballAtBottom=irBottomSensor.get();

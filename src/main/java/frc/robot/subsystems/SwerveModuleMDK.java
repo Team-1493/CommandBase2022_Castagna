@@ -4,13 +4,10 @@
 
 package frc.robot.subsystems;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
 import frc.robot.Utilities.Util;
-//import static frc.robot.Constants.*;
-//import static frc.robot.Constants.Constants_Swerve.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -46,21 +43,15 @@ public class SwerveModuleMDK{
     private double kP_drive=0.11;  //1.19 from characterization;
     private double kF_drive=0.052;   // 1023/20660
     private double kD_drive=0.0;   // 1023/20660
+    private double kS_drive= 0.471;  // Volts  0.539 from characterization
 
 
    // Drive Motor Constants for auto
-   private double kP_driveAuto=0.1;  //1.19 from characterization;
-   private double kF_driveAuto=0.04952;   // 1023/20660
+   private double kP_driveAuto=0.11;  //1.19 from characterization;
+   private double kF_driveAuto=0.0452;   // 1023/20660
    private double kD_driveAuto=0.0;   // 1023/20660
+   private double kS_driveAuto= 0.471;  // Volts  0.539 from characterization
   
-
-
-    // Drive motor constants for arbitrary feed forward (currently not used)    
-    private double kA_drive=0.105;  // V*sec^2/m  (calculated from 0.0373 *(1/3600*GR)
-    private double kV_drive=2.78;  // V*sec/motorRPM , 0.868 from characterization * 1/(60*GR)
-    private double kS_drive=0.0;  // Volts  0.539 from characterization
-    private double kP_driveff=0.002209;  // V*sec/motorRPM,   1.06 from characterization * 1/(60*GR)
-
 //  Turn (Swerve) Motor Constants
     private double kP_turn=0.5; //0.5,   0.421 from characterization 
     private double kD_turn=0;  // 0 from characterization    
@@ -93,9 +84,11 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     m_drive.configFactoryDefault();
     m_drive.setInverted(invD);
     m_drive.configVoltageCompSaturation(voltageComp);
-    m_drive.enableVoltageCompensation(true);
+    m_drive.enableVoltageCompensation(false);
     m_drive.setNeutralMode(NeutralMode.Brake);
     m_drive.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0, 25);
+    m_drive.configVelocityMeasurementWindow(8, 10);
+    m_drive.setStatusFramePeriod(21, 20);
     m_drive.config_kP(0, kP_drive);
     m_drive.config_kF(0, kF_drive);
     m_drive.config_kD(0, kD_drive);
@@ -105,7 +98,6 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
 
 
     m_drive.configClosedLoopPeakOutput(0,kMaxOutputDrive);
-    feedforward_drive = new SimpleMotorFeedforward(kS_drive, kV_drive, kA_drive);
                     
 
 
@@ -142,10 +134,15 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     SmartDashboard.putNumber("kD_Drive",kD_drive);
     SmartDashboard.putNumber("kP_Drive",kP_drive);
     SmartDashboard.putNumber("kF_Drive",kF_drive);
+    SmartDashboard.putNumber("kS_Drive",kS_drive);
 
-    SmartDashboard.putNumber("kP_driveff",kP_driveff);
-    SmartDashboard.putNumber("kS_drive",kS_drive);
-    SmartDashboard.putNumber("kV_drive",kV_drive);
+    SmartDashboard.putNumber("kD_DriveAuto",kD_driveAuto);
+    SmartDashboard.putNumber("kP_DriveAuto",kP_driveAuto);
+    SmartDashboard.putNumber("kF_DriveAuto",kF_driveAuto);
+    SmartDashboard.putNumber("kS_DriveAuto",kS_driveAuto);
+
+    
+
     SmartDashboard.putNumber("kP_Turn",kP_turn);
     SmartDashboard.putNumber("kD_Turn",kD_turn);
     SmartDashboard.putNumber("kF_Turn",kF_turn);
@@ -165,8 +162,8 @@ public SwerveModuleState getState() {
 
 
 public void setMotors(double speed,double turnAngle) {
-//    m_drive.set(ControlMode.Velocity, speed*MPSToNativeSpeed);
-m_drive.set(ControlMode.Velocity,  speed*MPSToNativeSpeed, DemandType.ArbitraryFeedForward, kS_drive);
+    m_drive.set(ControlMode.Velocity, speed*MPSToNativeSpeed+kS_drive*Math.signum(speed));
+//m_drive.set(ControlMode.Velocity,  speed*MPSToNativeSpeed, DemandType.ArbitraryFeedForward, kS_drive);
     m_turn.set(ControlMode.Position,turnAngle*RadiansToNativePos);
 }
 
@@ -177,7 +174,7 @@ public void setMotorsAllStop() {
 }
 
   public void setMotorsFF(double speed,double turnAngle) {
-//    double driveFFUnits=feedforward_drive.calculate(speed)/voltageComp;
+    double driveFFUnits=feedforward_drive.calculate(speed)/voltageComp;
 //    m_drive.set(ControlMode.Velocity, speed*MPSToNativeSpeed,DemandType.ArbitraryFeedForward,driveFFUnits);
     m_turn.set(TalonFXControlMode.MotionMagic,turnAngle*RadiansToNativePos);
   }
@@ -268,8 +265,11 @@ public double getDriveErrorRPM() {
         kF_drive= SmartDashboard.getNumber("kF_Drive",kF_drive);
         kD_drive= SmartDashboard.getNumber("kD_Drive",kD_drive);
         kS_drive= SmartDashboard.getNumber("kS_Drive",kS_drive);
-        kV_drive= SmartDashboard.getNumber("kV_Drive",kV_drive);
-        kP_driveff= SmartDashboard.getNumber("kP_DriveFF",kP_driveff);
+
+        kP_driveAuto= SmartDashboard.getNumber("kP_DriveAuto",kP_driveAuto);
+        kF_driveAuto= SmartDashboard.getNumber("kF_DriveAuto",kF_driveAuto);
+        kD_driveAuto= SmartDashboard.getNumber("kD_DriveAuto",kD_driveAuto);
+        kS_driveAuto= SmartDashboard.getNumber("kS_DriveAuto",kS_driveAuto);
 
 //        kP_turn= SmartDashboard.getNumber("kP_Turn",kP_turn);
 //        kD_turn= SmartDashboard.getNumber("kD_Turn",kD_turn);
@@ -281,10 +281,11 @@ public double getDriveErrorRPM() {
  //       SMMaxVel_turn= 0.1*4096*SMMaxVelRadPerSec_turn/(2*Math.PI);
  //       SMMaxAcc_turn=0.1*4096*SMMaxAccRadPerSec2_turn/(2*Math.PI);
         m_drive.config_kF(0,kF_drive);
-         m_drive.config_kP(0,kP_drive);
+        m_drive.config_kP(0,kP_drive);
         m_drive.config_kD(0,kD_drive);
-        feedforward_drive = new SimpleMotorFeedforward(kS_drive, kV_drive, 0);
-
+        m_drive.config_kF(1,kF_driveAuto);
+        m_drive.config_kP(1,kP_driveAuto);
+        m_drive.config_kD(1,kD_driveAuto);
 
 
 //        m_turn.config_kP(0, kP_turn)

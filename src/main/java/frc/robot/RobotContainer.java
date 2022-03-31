@@ -27,6 +27,7 @@ import frc.robot.commands.IntakeShooter.ReverseIntake;
 import frc.robot.commands.IntakeShooter.ShootBall;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
 import frc.robot.commands.LimelightFollowing.LimelightAlign;
+import frc.robot.commands.LimelightFollowing.LimelightMove;
 import frc.robot.commands.Rotate.HeadingBumpCCW;
 import frc.robot.commands.Rotate.HeadingBumpCW;
 import frc.robot.commands.Rotate.RotateInPlace;
@@ -98,7 +99,8 @@ public final Camera camera = new Camera();
   public final UpdateTable m_updatetable = new UpdateTable(m_tables);
   public final RotateInPlace m_RotateInPlace = new RotateInPlace(m_swervedriveSystem,povSelection); ;
   public final FollowBall m_followBall = new FollowBall(m_ballFollower);
-  public final Command m_limelightAlign  = new LimelightAlign(m_swervedriveSystem,btnLimelightAlign);
+  //public final Command m_limelightAlign  = new LimelightAlign(m_swervedriveSystem,btnLimelightAlign);
+  public final Command m_limelightMove  = new LimelightMove(m_swervedriveSystem,btnLimelightAlign, stickState, shooter);
   public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall); 
   public final Command m_reverseIntake  = new ReverseIntake(intake, btnReverseIntake); 
   //  public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
@@ -133,7 +135,8 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
     btnTurbo.whenPressed(new TurboToggle(stick));
 
-    btnLimelightAlign.whenPressed(m_limelightAlign); 
+    //btnLimelightAlign.whenPressed(m_limelightAlign); 
+    btnLimelightAlign.whenPressed(m_limelightMove); 
     btnIntakeBall.whenPressed(m_intakeBall); 
     btnReverseIntake.whenPressed(m_reverseIntake);
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
@@ -164,11 +167,14 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   }
 
   public SequentialCommandGroup getAutonomousCommand4() {    
-    return autoGenerator.getAuto3();
+    return autoGenerator.getAuto4();
   }
 
   public SequentialCommandGroup getAutonomousCommand5() {    
-    return autoGenerator.getAuto3();
+    return autoGenerator.getAuto5();
+  }
+  public SequentialCommandGroup getAutonomousCommand6() {    
+    return autoGenerator.getAuto6();
   }
 
 

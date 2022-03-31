@@ -16,6 +16,10 @@
 //            feedforward object providing the feedforward component.
 
 package frc.robot.subsystems;
+import java.nio.file.Path;
+
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +28,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -181,10 +186,10 @@ if (stickState[3]==1) omega=stickState[2];
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
     vy, vx, omega,  new Rotation2d(heading));
 
+
 // Convert to speeds module states
     SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
     setModuleStates(moduleStates);
-  printModuleStates();
   previousTurnMode=stickState[3];
 }
 
@@ -257,9 +262,9 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
 
   public void resetGyro() {
     gyro.resetAngle();
+    resetOdometryToZero();
     headingset=0;
-    pidRotate.reset(0,0);
-    
+    pidRotate.reset(0,0);    
   }
 
   public void calibrateGyro() {
@@ -318,6 +323,11 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     m_odometry.resetPosition(pose, new Rotation2d(heading));
   }
 
+public void resetOdometryToZero(){
+  Pose2d zeroPose= new Pose2d(new Translation2d(0,0),new Rotation2d(0));
+  m_odometry.resetPosition(zeroPose,new Rotation2d(0));
+}
+
 
   @Override
   public void periodic() {
@@ -329,9 +339,10 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
         modules[1].getState(),
         modules[2].getState(),
         modules[3].getState());
-        SmartDashboard.putNumber("pose-rot", m_odometry.getPoseMeters().getRotation().getDegrees());
-        SmartDashboard.putNumber("pose-x", m_odometry.getPoseMeters().getX()*39.37);
-        SmartDashboard.putNumber("pose-y", m_odometry.getPoseMeters().getY()*39.37);
+        datatable.putNumber("pose-rot", m_odometry.getPoseMeters().getRotation().getDegrees());
+        datatable.putNumber("pose-x", m_odometry.getPoseMeters().getX()*39.37);
+        datatable.putNumber("pose-y", m_odometry.getPoseMeters().getY()*39.37);
+        printModuleStates();
 //        SmartDashboard.putNumber("module state 0 mps", modules[0].getState().speedMetersPerSecond);
       }
         catch(Exception e){
@@ -360,6 +371,13 @@ while(i<4){
   i++;
 }
 
+}
+
+public void printTrajectoryPose(PathPlannerState state){
+  datatable.putNumber("Traj x",state.poseMeters.getX());
+  datatable.putNumber("Traj y",state.poseMeters.getX());
+  datatable.putNumber("Traj rot",state.poseMeters.getRotation().getDegrees());
+  datatable.putNumber("Traj hol",state.holonomicRotation.getDegrees());
 }
 
 

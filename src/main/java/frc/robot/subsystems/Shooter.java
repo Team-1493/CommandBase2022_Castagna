@@ -106,7 +106,8 @@ public void shootHigh(){
       double ty=tyEntry.getDouble(1);
       double x=1/Math.tan(ty*Math.PI/180.);
 
-      shooterSpeed=0.96*(-1.8312*x*x+74.388*x+1504.1);
+      shooterSpeed=0.96*(-1.8312*x*x+74.388*x+1504.1); 
+      shooterSpeed = ty * 30;
  // shooterSpeed=-5.585*x*x+227.92*x+1057.5;
     }
     else shooterSpeed=0;

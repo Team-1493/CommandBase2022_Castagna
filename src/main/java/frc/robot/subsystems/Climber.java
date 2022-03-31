@@ -1,9 +1,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
@@ -14,26 +17,40 @@ public class Climber extends SubsystemBase {
   int leftID=14, rightID=15;
   TalonFX climbMotorL = new TalonFX(leftID);
   TalonFX climbMotorR = new TalonFX(rightID);
-  
+    double currentLimit=35;
     public int position=0;
-    double climb_kP=.1;
+    double climb_kP=.05;
     boolean zeroedLeft = false;
     boolean zeroedRight = false;
-    int pos1=0,pos2 = 300000, pos3=507569,pos4=1042522;
+    int pos1=0,pos2 = 100000, pos3=169189,pos4=340000;//347507
 
 
 public Climber(){
     climbMotorL.configFactoryDefault();
     climbMotorR.configFactoryDefault();
+
+//    climbMotorL.setInverted(InvertType.InvertMotorOutput);
+    climbMotorR.setInverted(InvertType.InvertMotorOutput);
+
     climbMotorL.setNeutralMode(NeutralMode.Brake);
-    climbMotorL.setNeutralMode(NeutralMode.Brake);
+    climbMotorR.setNeutralMode(NeutralMode.Brake);
 //    climbMotorR.follow(climbMotorL);
  
-    climbMotorL.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 25);
-    climbMotorR.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 25);
+//    climbMotorL.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 25);
+//    climbMotorR.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 25);
     climbMotorL.setSelectedSensorPosition(0, 0, 25);
     climbMotorR.setSelectedSensorPosition(0, 0, 25);
- 
+
+    climbMotorL.configSupplyCurrentLimit(
+        new SupplyCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+    climbMotorR.configSupplyCurrentLimit(
+        new SupplyCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+
+    climbMotorL.configStatorCurrentLimit(
+        new StatorCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+    climbMotorR.configStatorCurrentLimit(
+        new StatorCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+
     SmartDashboard.putNumber("climb_kP",climb_kP);
     
     climbMotorL.config_kP(0,climb_kP);
@@ -49,7 +66,7 @@ public Climber(){
     
     
     climbMotorL.setSensorPhase(false);
-    climbMotorR.setSensorPhase(false);
+    climbMotorR.setSensorPhase(true);
 
     climbMotorL.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
     climbMotorR.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
@@ -71,14 +88,14 @@ public Climber(){
             climbMotorL.setSelectedSensorPosition(0, 0, 25);
             zeroedLeft=true;
         }
-        else climbMotorL.set(ControlMode.PercentOutput,-0.5);
+        else climbMotorL.set(ControlMode.PercentOutput,-0.4);
 
         if(getRightLimitSwitch()==1){        
             climbMotorR.set(ControlMode.PercentOutput,0);
             climbMotorR.setSelectedSensorPosition(0, 0, 25);
             zeroedRight=true;
         }
-        else climbMotorR.set(ControlMode.PercentOutput,-0.5);
+        else climbMotorR.set(ControlMode.PercentOutput,-0.4);
     }
 
 /// This is really up    
@@ -86,12 +103,12 @@ public Climber(){
         if(zeroedLeft && climbMotorL.getSelectedSensorPosition(0)>1100000)
             climbMotorL.set(ControlMode.PercentOutput,0.0);
         else 
-            climbMotorL.set(ControlMode.PercentOutput,0.5);
+            climbMotorL.set(ControlMode.PercentOutput,0.4);
 
         if(zeroedRight && climbMotorR.getSelectedSensorPosition(0)>1100000)
             climbMotorR.set(ControlMode.PercentOutput,0.0);
         else
-            climbMotorR.set(ControlMode.PercentOutput,0.5);
+            climbMotorR.set(ControlMode.PercentOutput,0.4);
     }
 
 

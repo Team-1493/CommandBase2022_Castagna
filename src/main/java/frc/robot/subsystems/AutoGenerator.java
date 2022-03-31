@@ -265,7 +265,7 @@ return commandGroup;
 
   //  returns a command sequence for a short test  auto
   public SequentialCommandGroup getAuto6(){    
-    PathPlannerTrajectory traj1  = PathPlanner.loadPath("TestPath", 2 ,2); 
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("TestPath20ft", 2 ,2); 
     Pose2d initialPose1 = traj1.getInitialPose();
     CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
   
@@ -275,12 +275,6 @@ return commandGroup;
     new ResetPose(sds, initialPose1), 
     new InstantCommand( ()->resetControllers()),
     cscc1,
-    new InstantCommand(()-> sds.allStop()),
-    new WaitCommand(1),
-    new InstantCommand( ()->resetControllers()),
-    new InstantCommand( ()->sds.allStop() ),
-    new InstantCommand( ()-> sds.setHeading(-90)),
-    new AlignWithField(sds),
     new InstantCommand(()-> sds.allStop())
 
   );
@@ -341,6 +335,7 @@ public CustomSwerveControllorCommand getSwerveControllerCommand(PathPlannerTraje
         yController,
         thetaController,
         () -> ((PathPlannerState) ( ((PathPlannerTrajectory)traj).getStates().get(1) )).holonomicRotation,
+        sds::printTrajectoryPose,
         sds::setModuleStates,
         sds);
     return cscc;

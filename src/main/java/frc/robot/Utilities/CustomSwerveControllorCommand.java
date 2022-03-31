@@ -43,6 +43,8 @@ public class CustomSwerveControllorCommand extends CommandBase {
   private final SwerveDriveKinematics m_kinematics;
   private final HolonomicDriveController m_controller;
   private final Consumer<SwerveModuleState[]> m_outputModuleStates;
+  private final Consumer<PathPlannerState> m_printTraj;
+
   private final Supplier<Rotation2d> m_desiredRotation;
 
   /**
@@ -74,6 +76,7 @@ public class CustomSwerveControllorCommand extends CommandBase {
       PIDController yController,
       ProfiledPIDController thetaController,
       Supplier<Rotation2d> desiredRotation,
+      Consumer<PathPlannerState> printTraj,
       Consumer<SwerveModuleState[]> outputModuleStates,
       Subsystem... requirements) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "SwerveControllerCommand");
@@ -88,7 +91,7 @@ public class CustomSwerveControllorCommand extends CommandBase {
 
     m_outputModuleStates =
         requireNonNullParam(outputModuleStates, "frontLeftOutput", "SwerveControllerCommand");
-
+    m_printTraj=printTraj;    
     m_desiredRotation =
         requireNonNullParam(desiredRotation, "desiredRotation", "SwerveControllerCommand");
 
@@ -126,6 +129,7 @@ public class CustomSwerveControllorCommand extends CommandBase {
       PIDController xController,
       PIDController yController,
       ProfiledPIDController thetaController,
+      Consumer<PathPlannerState> printTraj,
       Consumer<SwerveModuleState[]> outputModuleStates,
       Subsystem... requirements) {
     this(
@@ -136,6 +140,7 @@ public class CustomSwerveControllorCommand extends CommandBase {
         yController,
         thetaController,  
         () -> getholonomic((PathPlannerTrajectory)trajectory),
+        printTraj,
         outputModuleStates,
         requirements);
   }
@@ -152,14 +157,13 @@ public class CustomSwerveControllorCommand extends CommandBase {
     double curTime = m_timer.get();
     PathPlannerState desiredState = 
           (PathPlannerState)( ((PathPlannerTrajectory)m_trajectory).sample(curTime));
-
+    
     var targetChassisSpeeds =
         m_controller.calculate(m_pose.get(), desiredState,((PathPlannerState) desiredState).holonomicRotation );
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
     m_outputModuleStates.accept(targetModuleStates);
-    //SmartDashboard.putNumber("pose-x-set", desiredState.poseMeters.getX());
-    //SmartDashboard.putNumber("pose-y-set", desiredState.poseMeters.getY());
-   // SmartDashboard.putNumber("pose-rot-set",((PathPlannerState)desiredState).holonomicRotation.getDegrees());
+    m_printTraj.accept(desiredState);
+
   }
 
   @Override
