@@ -1,4 +1,5 @@
 package frc.robot.commands;
+import frc.robot.subsystems.AutoGenerator;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveDriveSystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -7,11 +8,13 @@ public class UpdatePID extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final SwerveDriveSystem swervedrive;
  private final Shooter shooter;
+ private final AutoGenerator autoGenerator;
 
-  public UpdatePID(SwerveDriveSystem m_swervedrive, Shooter m_shooter) {
+  public UpdatePID(SwerveDriveSystem m_swervedrive, Shooter m_shooter,AutoGenerator m_autoGenerator) {
     swervedrive = m_swervedrive;
     shooter = m_shooter;
-    addRequirements(swervedrive,shooter);
+    autoGenerator=m_autoGenerator;
+    addRequirements(swervedrive,shooter,m_autoGenerator);
   }
 
   @Override
@@ -21,6 +24,7 @@ public class UpdatePID extends CommandBase {
   public void execute() {
     swervedrive.updateConstants();
     shooter.updateConstants();    
+    autoGenerator.updateConstants();
   }
 
   

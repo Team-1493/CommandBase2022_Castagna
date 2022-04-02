@@ -28,7 +28,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -55,9 +54,8 @@ public class SwerveDriveSystem  extends SubsystemBase {
     private double rotateDPS=225;
     private double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);
 
-
     // Robot Dimensions for MK4 Swerve
-    private  double  maxVelocityFPS = 14.2;  //max speed in feet/sec
+    private  double  maxVelocityFPS = 13.7;  //max speed in feet/sec
     private double maxVelocityMPS = 0.3048*maxVelocityFPS; // 4.328     
 
 /*    public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -238,14 +236,6 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     headingset=headingset-0.06;
   }
 
-// Write encoder values
-  public void writeEncoders() {
-    int i = 0;
-    while(i<4){
-      modules[i].writeEncoders();
-      i++;
-    }
-  }
 
 // a bunch of getters - so that the everything except the SwerveModules class can be 
 // independant of the type of motors being used
@@ -273,7 +263,6 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
 
   public void updateConstants() {
 /*
-    kP_rotate= SmartDashboard.getNumber("kP_Rotate",kP_rotate);
     kD_rotate= SmartDashboard.getNumber("kD_Rotate",kD_rotate);
     kS_rotate= SmartDashboard.getNumber("kS_Rotate",kS_rotate);
     AllowErr_rotate= SmartDashboard.getNumber("AllErr_Rotate",AllowErr_rotate);
@@ -287,7 +276,8 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     pidRotate =new ProfiledPIDController(kP_rotate, 0,kD_rotate,trapProf);
     pidRotate.setTolerance(AllowErr_rotate);
 */
-    
+    kP_rotate= SmartDashboard.getNumber("kP_Rotate",kP_rotate);
+    kD_rotate= SmartDashboard.getNumber("kD_Rotate",kD_rotate);
     maxVelocityMPS = 0.3048*maxVelocityFPS; 
     SmartDashboard.putNumber("Max Drive RPM",modules[0].MPStoRPM(maxVelocityMPS));
 
@@ -367,7 +357,7 @@ while(i<4){
   datatable.putNumber(moduleNames[i]+" Dvel",modules[i].getDriveVelocity()); 
   datatable.putNumber(moduleNames[i]+" Volt",modules[i].getVoltage()); 
   datatable.putNumber(moduleNames[i]+" SP RPM", modules[i].MPStoRPM(speedSet[i]));
- 
+  
   i++;
 }
 
@@ -375,7 +365,7 @@ while(i<4){
 
 public void printTrajectoryPose(PathPlannerState state){
   datatable.putNumber("Traj x",state.poseMeters.getX());
-  datatable.putNumber("Traj y",state.poseMeters.getX());
+  datatable.putNumber("Traj y",state.poseMeters.getY());
   datatable.putNumber("Traj rot",state.poseMeters.getRotation().getDegrees());
   datatable.putNumber("Traj hol",state.holonomicRotation.getDegrees());
 }

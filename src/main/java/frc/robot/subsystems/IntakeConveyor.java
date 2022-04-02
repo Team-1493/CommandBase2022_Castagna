@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -16,6 +19,9 @@ public class IntakeConveyor extends SubsystemBase{
     DigitalOutput led1 = new DigitalOutput(0);
     DigitalOutput led2 = new DigitalOutput(1);
     DigitalOutput led3 = new DigitalOutput(2);
+    PneumaticHub hub = new PneumaticHub();
+    DoubleSolenoid solLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1,2);
+    DoubleSolenoid solRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3,4);
 
     
 
@@ -25,6 +31,8 @@ public class IntakeConveyor extends SubsystemBase{
     boolean ballAtBottom=irBottomSensor.get();
     
 public IntakeConveyor(){
+    solLeft.set(DoubleSolenoid.Value.kForward);
+    solRight.set(DoubleSolenoid.Value.kForward);
     led3.set(false);
     intake.configFactoryDefault();
     intake.setNeutralMode(NeutralMode.Brake);
@@ -108,6 +116,9 @@ public boolean ballAtBottom(){
     return !irBottomSensor.get();
 }
 
+public void toggleIntake(){
+    solLeft.toggle();
+}
 
 @Override
 public void periodic() {

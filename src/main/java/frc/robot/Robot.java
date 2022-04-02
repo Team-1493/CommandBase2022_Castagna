@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
+    m_autonomousCommand6 = m_robotContainer.getAutonomousCommand6();
     m_robotContainer.setPIDslot(1);  // use the auto PID gains for teleop
     m_autoSelected=SmartDashboard.getString("Auto Selector", "1");
     switch (m_autoSelected) {

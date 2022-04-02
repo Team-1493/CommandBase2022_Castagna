@@ -26,6 +26,7 @@ import frc.robot.commands.IntakeShooter.IntakeBall;
 import frc.robot.commands.IntakeShooter.ReverseIntake;
 import frc.robot.commands.IntakeShooter.ShootBall;
 import frc.robot.commands.IntakeShooter.ShootBallAuto;
+import frc.robot.commands.IntakeShooter.ToggleIntake;
 import frc.robot.commands.LimelightFollowing.LimelightAlign;
 import frc.robot.commands.LimelightFollowing.LimelightMove;
 import frc.robot.commands.Rotate.HeadingBumpCCW;
@@ -39,6 +40,7 @@ import frc.robot.subsystems.BallFollowInterface;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.IntakeConveyor;
 import frc.robot.subsystems.Shooter;
+
 import frc.robot.subsystems.Stick;
  
 public class RobotContainer {
@@ -54,8 +56,8 @@ public final Tables m_tables = new Tables();
 
   public JoystickButton btnBumpCCW = new JoystickButton(stick.getStick(),5);
   public JoystickButton btnBumpCW = new JoystickButton(stick.getStick(),6);
-  public JoystickButton btnFollowBall = new JoystickButton(stick.getStick(),9);
-  public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),6);
+   public JoystickButton btnToggleIntake = new JoystickButton(stick.getStick(),9);
+  public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),8);
 
 
  // Operator Buttons 
@@ -102,6 +104,7 @@ public final Camera camera = new Camera();
   //public final Command m_limelightAlign  = new LimelightAlign(m_swervedriveSystem,btnLimelightAlign);
   public final Command m_limelightMove  = new LimelightMove(m_swervedriveSystem,btnLimelightAlign, stickState, shooter);
   public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall); 
+  public final Command m_toggleIntake  = new ToggleIntake(intake); 
   public final Command m_reverseIntake  = new ReverseIntake(intake, btnReverseIntake); 
   //  public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
 public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1); 
@@ -118,7 +121,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   public final AutoGenerator autoGenerator = new AutoGenerator(m_swervedriveSystem, intake,shooter);
 
   public RobotContainer() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
@@ -134,6 +137,8 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnBumpCCW.whenPressed(new HeadingBumpCCW(m_swervedriveSystem));
     btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
     btnTurbo.whenPressed(new TurboToggle(stick));
+    btnToggleIntake.whenPressed(new ToggleIntake(intake));
+    
 
     //btnLimelightAlign.whenPressed(m_limelightAlign); 
     btnLimelightAlign.whenPressed(m_limelightMove); 
@@ -149,7 +154,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnClimbPositionUp.whenPressed(new InstantCommand(()-> m_climber.climbPositionHigher() ));
 
 
-    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter));
+    btnUpdateConstants.whenPressed(new UpdatePID(m_swervedriveSystem, shooter,autoGenerator));
    // btnResetEncoders.whenPressed(new ResetEncoders(m_swervedriveSystem));
   //  btnFollowBall.whileHeld(m_followBall); 
   }
@@ -186,8 +191,5 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     m_swervedriveSystem.setPIDSlot(slot);
   }
 
-  public void updateConstants(){
-    shooter.updateConstants();
-    m_swervedriveSystem.updateConstants();
-  }
+
   } 

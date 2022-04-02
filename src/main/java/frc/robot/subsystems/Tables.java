@@ -24,7 +24,7 @@ public class Tables extends SubsystemBase {
 
 
 //String entryNamesList = "FL Opt Angle,FL Tpos,FL Tvel,FL SP rot,FL SP RPM,FL TmotorOut,heading,gyro temp,FL Dvel,heading";
-String entryNamesList = "FR SP RPM,FR Dvel,pose-x,pose-y,pose-rot";
+String entryNamesList = "FR SP RPM,FR Dvel,pose-x,pose-y,pose-rot,Traj x,Traj y,Traj rot,Traj hol";
 
 
 public Tables(){

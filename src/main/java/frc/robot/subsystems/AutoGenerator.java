@@ -30,6 +30,8 @@ public class AutoGenerator extends SubsystemBase {
 
      private double kPXController = 1;
      private double kPYController = 1;
+     private double kDXController = 0;
+     private double kDYController = 0;
      private IntakeConveyor intake;
 
  // Constraint for the motion profilied robot angle controller
@@ -46,17 +48,20 @@ public class AutoGenerator extends SubsystemBase {
     sds=m_sds;
     intake = m_intake;
     shooter=m_shooter;
-    thetaController = new ProfiledPIDController(SwerveDriveSystem.kP_rotate, 0, 0, 
+    thetaController = new ProfiledPIDController(SwerveDriveSystem.kP_rotate, 0, SwerveDriveSystem.kD_rotate, 
         kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    xController= new PIDController(kPXController, 0, 0);
-    yController = new PIDController(kPYController, 0, 0);
+    xController= new PIDController(kPXController, 0, kDXController);
+    yController = new PIDController(kPYController, 0, kDYController);
 
 
 
     
     SmartDashboard.putNumber("Trajectory kP_x", kPXController);    
     SmartDashboard.putNumber("Trajectory kP_y", kPYController);
+    SmartDashboard.putNumber("Trajectory kD_x", kDXController);    
+    SmartDashboard.putNumber("Trajectory kD_y", kDYController);
+
     SmartDashboard.putNumber("Trajectory maxRotVel", kMaxAngularSpeedRadiansPerSecond);
     SmartDashboard.putNumber("Trajectory maxRotAcc", kMaxAngularSpeedRadiansPerSecondSquared);
   }
@@ -281,7 +286,6 @@ return commandGroup;
 return commandGroup;
 }
 
-
   //  returns a command sequence for a 4 ball auto
   public SequentialCommandGroup getAuto4(){    
     PathPlannerTrajectory traj1  = PathPlanner.loadPath("4b Path1", 2.5 ,2.5); 
@@ -359,12 +363,19 @@ public void resetControllers(){
 public void updateConstants(){
     kPXController=SmartDashboard.getNumber("Trajectory kP_x", kPXController);    
     kPYController=SmartDashboard.getNumber("Trajectory kP_y", kPYController);
+    kDXController=SmartDashboard.getNumber("Trajectory kD_x", kDXController);    
+    kDYController=SmartDashboard.getNumber("Trajectory kD_y", kDYController);
     kMaxAngularSpeedRadiansPerSecond =
          SmartDashboard.getNumber("Trajectory maxRotVel", kMaxAngularSpeedRadiansPerSecond);
     kMaxAngularSpeedRadiansPerSecondSquared = 
         SmartDashboard.getNumber("Trajectory maxRotAcc", kMaxAngularSpeedRadiansPerSecondSquared);
     kThetaControllerConstraints =new TrapezoidProfile.Constraints(
          kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+         thetaController = new ProfiledPIDController(SwerveDriveSystem.kP_rotate, 0, SwerveDriveSystem.kP_rotate, 
+         kThetaControllerConstraints);
+     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+     xController= new PIDController(kPXController, 0, kDXController);
+     yController = new PIDController(kPYController, 0, kDYController);
 }
 
 
