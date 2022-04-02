@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand6 = m_robotContainer.getAutonomousCommand6();
     m_robotContainer.setPIDslot(1);  // use the auto PID gains for teleop
-    m_autoSelected=SmartDashboard.getString("Auto Selector", "1");
+    m_autoSelected=SmartDashboard.getString("Auto Selector", "5");
     switch (m_autoSelected) {
       case "1":
         m_autonomousCommand=m_autonomousCommand1;

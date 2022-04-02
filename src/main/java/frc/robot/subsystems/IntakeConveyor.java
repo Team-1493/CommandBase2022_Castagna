@@ -31,6 +31,35 @@ public class IntakeConveyor extends SubsystemBase{
     boolean ballAtBottom=irBottomSensor.get();
     
 public IntakeConveyor(){
+    intake.setStatusFramePeriod(1, 255);
+    intake.setStatusFramePeriod(2, 255);
+    intake.setStatusFramePeriod(4, 255);
+    intake.setStatusFramePeriod(8, 255);
+    intake.setStatusFramePeriod(10, 255);
+    intake.setStatusFramePeriod(12, 255);
+    intake.setStatusFramePeriod(13, 255);
+    intake.setStatusFramePeriod(14, 255);
+    intake.setStatusFramePeriod(21, 255);
+    conveyorL.setStatusFramePeriod(1, 255);
+    conveyorL.setStatusFramePeriod(2, 255);
+    conveyorL.setStatusFramePeriod(4, 255);
+    conveyorL.setStatusFramePeriod(8, 255);
+    conveyorL.setStatusFramePeriod(10, 255);
+    conveyorL.setStatusFramePeriod(12, 255);
+    conveyorL.setStatusFramePeriod(13, 255);
+    conveyorL.setStatusFramePeriod(14, 255);
+    conveyorL.setStatusFramePeriod(21, 255);
+    conveyorU.setStatusFramePeriod(1, 255);
+    conveyorU.setStatusFramePeriod(2, 255);
+    conveyorU.setStatusFramePeriod(4, 255);
+    conveyorU.setStatusFramePeriod(8, 255);
+    conveyorU.setStatusFramePeriod(10, 255);
+    conveyorU.setStatusFramePeriod(12, 255);
+    conveyorU.setStatusFramePeriod(13, 255);
+    conveyorU.setStatusFramePeriod(14, 255);
+    conveyorU.setStatusFramePeriod(21, 255);
+
+
     solLeft.set(DoubleSolenoid.Value.kForward);
     solRight.set(DoubleSolenoid.Value.kForward);
     led3.set(false);

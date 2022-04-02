@@ -55,8 +55,8 @@ public class SwerveDriveSystem  extends SubsystemBase {
     private double rotateRP20msec=rotateDPS*Math.PI/(50.0*180.0);
 
     // Robot Dimensions for MK4 Swerve
-    private  double  maxVelocityFPS = 13.7;  //max speed in feet/sec
-    private double maxVelocityMPS = 0.3048*maxVelocityFPS; // 4.328     
+    private  double  maxVelocityFPS = 11.48;  //max speed in feet/sec
+    private double maxVelocityMPS = 0.3048*maxVelocityFPS; // 3.5     
 
 /*    public static  SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       new Translation2d(0.4064, -0.4064), 
@@ -364,8 +364,8 @@ while(i<4){
 }
 
 public void printTrajectoryPose(PathPlannerState state){
-  datatable.putNumber("Traj x",state.poseMeters.getX());
-  datatable.putNumber("Traj y",state.poseMeters.getY());
+  datatable.putNumber("Traj x",state.poseMeters.getX()*39.37);
+  datatable.putNumber("Traj y",state.poseMeters.getY()*39.37);
   datatable.putNumber("Traj rot",state.poseMeters.getRotation().getDegrees());
   datatable.putNumber("Traj hol",state.holonomicRotation.getDegrees());
 }

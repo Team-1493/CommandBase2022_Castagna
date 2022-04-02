@@ -157,7 +157,6 @@ public class CustomSwerveControllorCommand extends CommandBase {
     double curTime = m_timer.get();
     PathPlannerState desiredState = 
           (PathPlannerState)( ((PathPlannerTrajectory)m_trajectory).sample(curTime));
-    
     var targetChassisSpeeds =
         m_controller.calculate(m_pose.get(), desiredState,((PathPlannerState) desiredState).holonomicRotation );
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);

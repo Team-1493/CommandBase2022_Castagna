@@ -32,10 +32,10 @@ public class SwerveModuleMDK{
 
 
     // Robot Dimensions for MK4 Swerve
-    private  double  wheelDiamInches = 3.7435;//0.10033 meters 
-    private double wheelCircumferenceMaters=wheelDiamInches*Math.PI*0.0254; //0.315195
+    private  double  wheelDiamInches = 3.91;
+    private double wheelCircumferenceMaters=wheelDiamInches*Math.PI*0.0254; // 0.3120 
     private double gearRatioDrive=8.1428; 
-    private double MPSToRPM = 60.0*gearRatioDrive/wheelCircumferenceMaters;  // 1,550.0499
+    private double MPSToRPM = 60.0*gearRatioDrive/wheelCircumferenceMaters;  // 1,565.92  (3mps = 4695 rpm)
     private double MPSToNativeSpeed = MPSToRPM*2048.0/600.0;  // convert m/sec to Talon speed unit (counts/100ms)
     //scales the stick -1 to 1 input to meters/sec
     private double RadiansToNativePos=4096.0/(2*Math.PI);

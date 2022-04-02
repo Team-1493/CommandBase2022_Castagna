@@ -25,11 +25,11 @@ public class AutoGenerator extends SubsystemBase {
      private SwerveDriveSystem sds;   
      private Shooter shooter;
      double finalHeading=90;
-     private double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-     private double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+     private double kMaxAngularSpeedRadiansPerSecond = 10;
+     private double kMaxAngularSpeedRadiansPerSecondSquared = 30;
 
-     private double kPXController = 1;
-     private double kPYController = 1;
+     private double kPXController = 7;
+     private double kPYController = 7;
      private double kDXController = 0;
      private double kDYController = 0;
      private IntakeConveyor intake;
@@ -48,7 +48,7 @@ public class AutoGenerator extends SubsystemBase {
     sds=m_sds;
     intake = m_intake;
     shooter=m_shooter;
-    thetaController = new ProfiledPIDController(SwerveDriveSystem.kP_rotate, 0, SwerveDriveSystem.kD_rotate, 
+    thetaController = new ProfiledPIDController(12, 0, 0.1, 
         kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     xController= new PIDController(kPXController, 0, kDXController);
@@ -164,20 +164,20 @@ return commandGroup;
 
   //  returns a command sequence for a 5 ball auto
   public SequentialCommandGroup getAuto3(){    
-  PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b Path1", 3 ,3); 
+  PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b Path1", 2 ,2); //3,3 
   Pose2d initialPose1 = traj1.getInitialPose();
   CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
 
-  PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2", 3 ,3.5); 
+  PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2", 2 ,2);// 3,3.5 
   CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
 
-  PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4", 3 ,3.5); 
+  PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4", 2 ,2);//3,3.5 
   CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
 
-  PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5", 4 ,4); 
+  PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5", 2 ,2);//4,4 
   CustomSwerveControllorCommand cscc5=getSwerveControllerCommand(traj5);
 
-  PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6", 4 ,6); 
+  PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6", 2 ,2);//4,6 
   CustomSwerveControllorCommand cscc6=getSwerveControllerCommand(traj6);
 
   SequentialCommandGroup commandGroup = 
@@ -216,20 +216,20 @@ return commandGroup;
 
   //  returns a command sequence for a 5 ball auto on red side
   public SequentialCommandGroup getAuto5(){    
-    PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b Path1 red", 3 ,3); 
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b Path1 red", 2 ,2); // 3, 3
     Pose2d initialPose1 = traj1.getInitialPose();
     CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
   
-    PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2 red", 3 ,3.5); 
+    PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2 red", 3 ,2); // 3, 3.5
     CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
   
-    PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4 red", 3 ,3.5); 
+    PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4 red", 3 ,2); // 3, 3.5 
     CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
   
-    PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5 red", 4 ,4); 
+    PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5 red", 3 ,2); // 4, 4  
     CustomSwerveControllorCommand cscc5=getSwerveControllerCommand(traj5);
   
-    PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6 red", 4 ,6); 
+    PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6 red", 3 ,2);  // 3, 3 
     CustomSwerveControllorCommand cscc6=getSwerveControllerCommand(traj6);
   
     SequentialCommandGroup commandGroup = 
@@ -371,7 +371,7 @@ public void updateConstants(){
         SmartDashboard.getNumber("Trajectory maxRotAcc", kMaxAngularSpeedRadiansPerSecondSquared);
     kThetaControllerConstraints =new TrapezoidProfile.Constraints(
          kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-         thetaController = new ProfiledPIDController(SwerveDriveSystem.kP_rotate, 0, SwerveDriveSystem.kP_rotate, 
+         thetaController = new ProfiledPIDController(SwerveDriveSystem.kP_rotate, 0, SwerveDriveSystem.kD_rotate, 
          kThetaControllerConstraints);
      thetaController.enableContinuousInput(-Math.PI, Math.PI);
      xController= new PIDController(kPXController, 0, kDXController);

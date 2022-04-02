@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 
@@ -63,6 +64,13 @@ public Shooter(){
     shooterBlue.config_kD(0, blueKd);
     shooterBlue.config_kF(0, blueKff);
     shooterBlue.setStatusFramePeriod(21, 20);
+    /*
+    shooterBlue.setStatusFramePeriod(4,255);
+    shooterBlue.setStatusFramePeriod(8,255);
+    shooterBlue.setStatusFramePeriod(10,255);
+    shooterBlue.setStatusFramePeriod(12,255);
+    shooterBlue.setStatusFramePeriod(14,255);
+*/
     shooterBlue.configVelocityMeasurementWindow(8, 25);
     shooterBlue.configPeakOutputForward(bluePeakFor);
     shooterBlue.configPeakOutputReverse(bluePeakRev);
@@ -76,6 +84,12 @@ public Shooter(){
     shooterGrey.config_kD(0, GreyKd);
     shooterGrey.config_kF(0, GreyKff);
     shooterGrey.setStatusFramePeriod(21, 20);
+/*    shooterGrey.setStatusFramePeriod(4, 255);
+    shooterGrey.setStatusFramePeriod(8, 255);
+    shooterGrey.setStatusFramePeriod(10, 255);
+    shooterGrey.setStatusFramePeriod(12, 255);
+    shooterGrey.setStatusFramePeriod(14, 255);
+    */
     shooterGrey.configVelocityMeasurementWindow(8, 25);
     shooterGrey.configPeakOutputForward(greyPeakFor);
     shooterGrey.configPeakOutputReverse(greyPeakRev);

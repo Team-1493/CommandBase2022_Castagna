@@ -1,5 +1,6 @@
 package frc.robot.Sensors;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,8 +10,7 @@ public class Pigeon {
 
     public Pigeon(int ID){
         pigeon = new PigeonIMU(20);
-        pigeon.configFactoryDefault();
-      
+        pigeon.configFactoryDefault();      
     }
 
 // returns a heading angle in the rangle of -180 to +180
