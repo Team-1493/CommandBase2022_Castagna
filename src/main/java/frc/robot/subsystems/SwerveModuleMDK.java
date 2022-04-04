@@ -11,6 +11,7 @@ import frc.robot.Utilities.Util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -48,7 +49,7 @@ public class SwerveModuleMDK{
     private double kD_drive=0.0;   // 1023/20660
     private double kS_drive= 0.0399;  // Volts  0.539 from characterization
     private double kV_drive= 0.260;  
-    private double kA_drive= 0.033;  
+    private double kA_drive= 0.0;  
    
 
    // Drive Motor Constants for auto
@@ -94,6 +95,12 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     m_drive.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0, 25);
     m_drive.configVelocityMeasurementWindow(8, 10);
     m_drive.setStatusFramePeriod(21, 20);
+    m_drive.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic,255);
+    m_drive.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus,255);
+
+  
+
+
     m_drive.config_kP(0, kP_drive);
     m_drive.config_kF(0, kF_drive);
     m_drive.config_kD(0, kD_drive);

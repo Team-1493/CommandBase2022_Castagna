@@ -20,7 +20,7 @@ public class LimelightAlign extends CommandBase {
   public NetworkTableEntry txEntry = limelight.getEntry("tx");
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
   private SwerveDriveSystem sds;
-  private double kP=0.115, kS=0.3;
+  private double kP=0.03, kS=0.0;
   private double error=1;
   private JoystickButton btn;
   private Timer timer = new Timer();
@@ -45,7 +45,7 @@ public class LimelightAlign extends CommandBase {
 
   @Override
   public void execute() {
-
+    limelight.getInstance().flush();
     double seesTarget=tvEntry.getDouble(0);
     double angle=-txEntry.getDouble(0);
     error = Math.abs(angle);

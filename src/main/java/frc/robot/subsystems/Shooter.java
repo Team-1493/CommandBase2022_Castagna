@@ -34,13 +34,13 @@ public class Shooter extends SubsystemBase {
   private double shooterTOTGoal=0.1;
   private double currentTimeOnTarget=0;
   private double startTime=0;
-  private double blueKp=0.2,GreyKp=0.2;
+  private double blueKp=0.3,GreyKp=0.3;
   private double blueKd=7,GreyKd=7;
   private double blueKff=0.05,GreyKff=0.05;
   private double bluePeakFor=1,bluePeakRev=-1;
 
   private double greyPeakFor=1,greyPeakRev=-1;
-  
+  private double voltageComp=11.5;
   double currentShooterSpeedBlue=0; 
   double currentShooterSpeedGrey=0; 
   double speedFactor=100;
@@ -63,18 +63,20 @@ public Shooter(){
     shooterBlue.config_kP(0, blueKp);
     shooterBlue.config_kD(0, blueKd);
     shooterBlue.config_kF(0, blueKff);
-    shooterBlue.setStatusFramePeriod(21, 20);
-    /*
+    //  Data frame for integrated sensor position and velocity, default time is >109ms
+    shooterBlue.setStatusFramePeriod(2, 20);
+
+    
     shooterBlue.setStatusFramePeriod(4,255);
     shooterBlue.setStatusFramePeriod(8,255);
     shooterBlue.setStatusFramePeriod(10,255);
     shooterBlue.setStatusFramePeriod(12,255);
     shooterBlue.setStatusFramePeriod(14,255);
-*/
+
     shooterBlue.configVelocityMeasurementWindow(8, 25);
     shooterBlue.configPeakOutputForward(bluePeakFor);
     shooterBlue.configPeakOutputReverse(bluePeakRev);
-    shooterBlue.configVoltageCompSaturation(10);
+    shooterBlue.configVoltageCompSaturation(voltageComp);
 
 
     shooterGrey.configFactoryDefault();    
@@ -83,17 +85,18 @@ public Shooter(){
     shooterGrey.config_kP(0, GreyKp);
     shooterGrey.config_kD(0, GreyKd);
     shooterGrey.config_kF(0, GreyKff);
-    shooterGrey.setStatusFramePeriod(21, 20);
-/*    shooterGrey.setStatusFramePeriod(4, 255);
+    //  Data frame for integrated sensor position and velocity, default time is >109ms
+    shooterGrey.setStatusFramePeriod(2, 20);
+    shooterGrey.setStatusFramePeriod(4, 255);
     shooterGrey.setStatusFramePeriod(8, 255);
     shooterGrey.setStatusFramePeriod(10, 255);
     shooterGrey.setStatusFramePeriod(12, 255);
     shooterGrey.setStatusFramePeriod(14, 255);
-    */
+    
     shooterGrey.configVelocityMeasurementWindow(8, 25);
     shooterGrey.configPeakOutputForward(greyPeakFor);
     shooterGrey.configPeakOutputReverse(greyPeakRev);
-    shooterGrey.configVoltageCompSaturation(10);
+    shooterGrey.configVoltageCompSaturation(voltageComp);
 
 //    shooterGrey.configClosedloopRamp(0.25);
 
@@ -118,11 +121,12 @@ public Shooter(){
 public void shootHigh(){
     if(tvEntry.getDouble(1)==1){
       double ty=tyEntry.getDouble(1);
-      double x=1/Math.tan(ty*Math.PI/180.);
+      double x=1/(0.001+ty);
 
-      shooterSpeed=0.96*(-1.8312*x*x+74.388*x+1504.1); 
-      shooterSpeed = ty * 30;
- // shooterSpeed=-5.585*x*x+227.92*x+1057.5;
+//      shooterSpeed=0.96*(-1.8312*x*x+74.388*x+1504.1); 
+//      shooterSpeed = ty * 30;
+      shooterSpeed=5293*x+1309;
+      if (shooterSpeed>2700) shooterSpeed=2700;
     }
     else shooterSpeed=0;
     set();

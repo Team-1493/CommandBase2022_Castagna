@@ -20,8 +20,8 @@ public class IntakeConveyor extends SubsystemBase{
     DigitalOutput led2 = new DigitalOutput(1);
     DigitalOutput led3 = new DigitalOutput(2);
     PneumaticHub hub = new PneumaticHub();
-    DoubleSolenoid solLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1,2);
-    DoubleSolenoid solRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3,4);
+//    DoubleSolenoid solLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1,2);
+//    DoubleSolenoid solRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3,4);
 
     
 
@@ -60,8 +60,8 @@ public IntakeConveyor(){
     conveyorU.setStatusFramePeriod(21, 255);
 
 
-    solLeft.set(DoubleSolenoid.Value.kForward);
-    solRight.set(DoubleSolenoid.Value.kForward);
+   // solLeft.set(DoubleSolenoid.Value.kForward);
+   // solRight.set(DoubleSolenoid.Value.kForward);
     led3.set(false);
     intake.configFactoryDefault();
     intake.setNeutralMode(NeutralMode.Brake);
@@ -145,10 +145,10 @@ public boolean ballAtBottom(){
     return !irBottomSensor.get();
 }
 
-public void toggleIntake(){
+/*public void toggleIntake(){
     solLeft.toggle();
 }
-
+*/
 @Override
 public void periodic() {
     ballAtTop=ballAtTop();

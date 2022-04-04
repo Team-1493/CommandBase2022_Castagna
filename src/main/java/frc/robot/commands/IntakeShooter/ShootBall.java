@@ -41,6 +41,7 @@ public class ShootBall extends CommandBase {
     atSpeed=shooter.atSpeed;
 
     if(atSpeed && !runUpper) {
+      System.out.println("run upper");
       runUpper=true;
       intakeConveyor.startUpperConveyor();
       timer.reset();

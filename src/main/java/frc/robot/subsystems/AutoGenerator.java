@@ -24,7 +24,6 @@ import frc.robot.commands.Rotate.AlignWithField;
 public class AutoGenerator extends SubsystemBase {
      private SwerveDriveSystem sds;   
      private Shooter shooter;
-     double finalHeading=90;
      private double kMaxAngularSpeedRadiansPerSecond = 10;
      private double kMaxAngularSpeedRadiansPerSecondSquared = 30;
 
@@ -383,4 +382,3 @@ public void updateConstants(){
 
 }
 
-//.andThen(() -> sds.setMotors(new double[] {0, 0, Util.toRadians(finalHeading), 3}))  
