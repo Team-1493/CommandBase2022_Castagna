@@ -29,6 +29,18 @@ public Climber(){
     climbMotorL.configFactoryDefault();
     climbMotorR.configFactoryDefault();
 
+    climbMotorL.setStatusFramePeriod(4, 251);
+    climbMotorL.setStatusFramePeriod(8, 241);
+    climbMotorL.setStatusFramePeriod(10, 239);
+    climbMotorL.setStatusFramePeriod(12, 233);
+    climbMotorL.setStatusFramePeriod(14, 229);
+
+    climbMotorR.setStatusFramePeriod(4, 251);
+    climbMotorR.setStatusFramePeriod(8, 241);
+    climbMotorR.setStatusFramePeriod(10, 239);
+    climbMotorR.setStatusFramePeriod(12, 233);
+    climbMotorR.setStatusFramePeriod(14, 229);
+
 //    climbMotorL.setInverted(InvertType.InvertMotorOutput);
     climbMotorR.setInverted(InvertType.InvertMotorOutput);
 

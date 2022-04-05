@@ -66,12 +66,11 @@ public Shooter(){
     //  Data frame for integrated sensor position and velocity, default time is >109ms
     shooterBlue.setStatusFramePeriod(2, 20);
 
-    
-    shooterBlue.setStatusFramePeriod(4,255);
-    shooterBlue.setStatusFramePeriod(8,255);
-    shooterBlue.setStatusFramePeriod(10,255);
-    shooterBlue.setStatusFramePeriod(12,255);
-    shooterBlue.setStatusFramePeriod(14,255);
+    shooterBlue.setStatusFramePeriod(4,251);
+    shooterBlue.setStatusFramePeriod(8,241);
+    shooterBlue.setStatusFramePeriod(10,239);
+    shooterBlue.setStatusFramePeriod(12,233);
+    shooterBlue.setStatusFramePeriod(14,229);
 
     shooterBlue.configVelocityMeasurementWindow(8, 25);
     shooterBlue.configPeakOutputForward(bluePeakFor);
@@ -87,11 +86,13 @@ public Shooter(){
     shooterGrey.config_kF(0, GreyKff);
     //  Data frame for integrated sensor position and velocity, default time is >109ms
     shooterGrey.setStatusFramePeriod(2, 20);
-    shooterGrey.setStatusFramePeriod(4, 255);
-    shooterGrey.setStatusFramePeriod(8, 255);
-    shooterGrey.setStatusFramePeriod(10, 255);
-    shooterGrey.setStatusFramePeriod(12, 255);
-    shooterGrey.setStatusFramePeriod(14, 255);
+    shooterGrey.setStatusFramePeriod(4, 251);
+    shooterGrey.setStatusFramePeriod(8, 241);
+    shooterGrey.setStatusFramePeriod(10, 239);
+    shooterGrey.setStatusFramePeriod(12, 233);
+    shooterGrey.setStatusFramePeriod(14, 229);
+//    shooterGrey.setStatusFramePeriod(StatusFrame.Status_1_General, 211);
+
     
     shooterGrey.configVelocityMeasurementWindow(8, 25);
     shooterGrey.configPeakOutputForward(greyPeakFor);

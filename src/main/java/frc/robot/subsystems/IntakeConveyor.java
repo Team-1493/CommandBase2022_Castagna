@@ -20,48 +20,49 @@ public class IntakeConveyor extends SubsystemBase{
     DigitalOutput led2 = new DigitalOutput(1);
     DigitalOutput led3 = new DigitalOutput(2);
     PneumaticHub hub = new PneumaticHub();
-//    DoubleSolenoid solLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1,2);
-//    DoubleSolenoid solRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 3,4);
+    boolean pistonState=true;
+    DoubleSolenoid solLeft = new DoubleSolenoid(PneumaticsModuleType.REVPH, 8,9);
+    DoubleSolenoid solRight = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0,15);
 
     
 
-    double intakeSpeed=0.40;
+    double intakeSpeed=0.50;
     
     boolean ballAtTop=irTopSensor.get();
     boolean ballAtBottom=irBottomSensor.get();
     
 public IntakeConveyor(){
-    intake.setStatusFramePeriod(1, 255);
-    intake.setStatusFramePeriod(2, 255);
-    intake.setStatusFramePeriod(4, 255);
-    intake.setStatusFramePeriod(8, 255);
-    intake.setStatusFramePeriod(10, 255);
-    intake.setStatusFramePeriod(12, 255);
-    intake.setStatusFramePeriod(13, 255);
-    intake.setStatusFramePeriod(14, 255);
-    intake.setStatusFramePeriod(21, 255);
-    conveyorL.setStatusFramePeriod(1, 255);
-    conveyorL.setStatusFramePeriod(2, 255);
-    conveyorL.setStatusFramePeriod(4, 255);
-    conveyorL.setStatusFramePeriod(8, 255);
-    conveyorL.setStatusFramePeriod(10, 255);
-    conveyorL.setStatusFramePeriod(12, 255);
-    conveyorL.setStatusFramePeriod(13, 255);
-    conveyorL.setStatusFramePeriod(14, 255);
-    conveyorL.setStatusFramePeriod(21, 255);
-    conveyorU.setStatusFramePeriod(1, 255);
-    conveyorU.setStatusFramePeriod(2, 255);
-    conveyorU.setStatusFramePeriod(4, 255);
-    conveyorU.setStatusFramePeriod(8, 255);
-    conveyorU.setStatusFramePeriod(10, 255);
-    conveyorU.setStatusFramePeriod(12, 255);
-    conveyorU.setStatusFramePeriod(13, 255);
-    conveyorU.setStatusFramePeriod(14, 255);
-    conveyorU.setStatusFramePeriod(21, 255);
+    intake.setStatusFramePeriod(1, 251);
+    intake.setStatusFramePeriod(2, 241);
+    intake.setStatusFramePeriod(4, 239);
+    intake.setStatusFramePeriod(8, 233);
+    intake.setStatusFramePeriod(10, 229);
+    intake.setStatusFramePeriod(12, 227);
+    intake.setStatusFramePeriod(13, 223);
+    intake.setStatusFramePeriod(14, 211);
+    intake.setStatusFramePeriod(21, 199);
+    conveyorL.setStatusFramePeriod(1, 251);
+    conveyorL.setStatusFramePeriod(2, 231);
+    conveyorL.setStatusFramePeriod(4, 239);
+    conveyorL.setStatusFramePeriod(8, 233);
+    conveyorL.setStatusFramePeriod(10, 229);
+    conveyorL.setStatusFramePeriod(12, 227);
+    conveyorL.setStatusFramePeriod(13, 223);
+    conveyorL.setStatusFramePeriod(14, 211);
+    conveyorL.setStatusFramePeriod(21, 199); 
+    conveyorU.setStatusFramePeriod(1, 251);
+    conveyorU.setStatusFramePeriod(2, 231);
+    conveyorU.setStatusFramePeriod(4, 239);
+    conveyorU.setStatusFramePeriod(8, 233);
+    conveyorU.setStatusFramePeriod(10, 229);
+    conveyorU.setStatusFramePeriod(12, 227);
+    conveyorU.setStatusFramePeriod(13, 223);
+    conveyorU.setStatusFramePeriod(14, 211);
+    conveyorU.setStatusFramePeriod(21, 199);
 
 
-   // solLeft.set(DoubleSolenoid.Value.kForward);
-   // solRight.set(DoubleSolenoid.Value.kForward);
+    solLeft.set(DoubleSolenoid.Value.kForward);
+    solRight.set(DoubleSolenoid.Value.kForward);
     led3.set(false);
     intake.configFactoryDefault();
     intake.setNeutralMode(NeutralMode.Brake);
@@ -145,10 +146,17 @@ public boolean ballAtBottom(){
     return !irBottomSensor.get();
 }
 
-/*public void toggleIntake(){
-    solLeft.toggle();
+public void toggleIntake(){
+    if (solLeft.get()==DoubleSolenoid.Value.kForward){
+        solLeft.set(DoubleSolenoid.Value.kReverse);
+        solRight.set(DoubleSolenoid.Value.kReverse);
+    }
+    else{
+        solLeft.set(DoubleSolenoid.Value.kForward);
+        solRight.set(DoubleSolenoid.Value.kForward);
+    }
 }
-*/
+
 @Override
 public void periodic() {
     ballAtTop=ballAtTop();

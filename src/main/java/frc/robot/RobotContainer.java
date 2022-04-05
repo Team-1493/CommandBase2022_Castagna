@@ -56,7 +56,6 @@ public final Tables m_tables = new Tables();
 
   public JoystickButton btnBumpCCW = new JoystickButton(stick.getStick(),5);
   public JoystickButton btnBumpCW = new JoystickButton(stick.getStick(),6);
-//   public JoystickButton btnToggleIntake = new JoystickButton(stick.getStick(),9);
   public JoystickButton btnTurbo = new JoystickButton(stick.getStick(),8);
 
 
@@ -69,7 +68,7 @@ public final Tables m_tables = new Tables();
   public JoystickButton btnShootBallLow = new JoystickButton(operatorStick.getStick(),6);
   public JoystickButton btnIntakeBall = new JoystickButton(operatorStick.getStick(),7);
   public JoystickButton btnShootBallManual = new JoystickButton(operatorStick.getStick(),8);
-
+  public JoystickButton btnToggleIntake = new JoystickButton(operatorStick.getStick(),9);
   public JoystickButton btnReverseIntake = new JoystickButton(operatorStick.getStick(),3);
   
   public JoystickButton btnClimbUpManual = new JoystickButton(operatorStick.getStick(),13);
@@ -104,7 +103,7 @@ public final Camera camera = new Camera();
   public final Command m_limelightAlign  = new LimelightAlign(m_swervedriveSystem,btnLimelightAlign);
   public final Command m_limelightMove  = new LimelightMove(m_swervedriveSystem,btnLimelightAlign, stickState, shooter,intake);
   public final Command m_intakeBall  = new IntakeBall(intake, btnIntakeBall); 
-  //public final Command m_toggleIntake  = new ToggleIntake(intake); 
+//  public final Command m_toggleIntake  = new ToggleIntake(intake); 
   public final Command m_reverseIntake  = new ReverseIntake(intake, btnReverseIntake); 
   //  public final Command m_spimWheel  = new SpinWheel(shooter, btnSpinWheels);
 public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1); 
@@ -137,7 +136,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnBumpCCW.whenPressed(new HeadingBumpCCW(m_swervedriveSystem));
     btnBumpCW.whenPressed(new HeadingBumpCW(m_swervedriveSystem));
     btnTurbo.whenPressed(new TurboToggle(stick));
-//    btnToggleIntake.whenPressed(new ToggleIntake(intake));
+    btnToggleIntake.whenPressed(new InstantCommand(()-> intake.toggleIntake()));
     
 
 //    btnLimelightAlign.whenPressed(m_limelightAlign); 

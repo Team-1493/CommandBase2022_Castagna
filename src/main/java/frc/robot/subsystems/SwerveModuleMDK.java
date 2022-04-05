@@ -94,9 +94,14 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     m_drive.setNeutralMode(NeutralMode.Brake);
     m_drive.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0, 25);
     m_drive.configVelocityMeasurementWindow(8, 10);
+
     m_drive.setStatusFramePeriod(21, 20);
-    m_drive.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic,255);
-    m_drive.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus,255);
+    m_drive.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat,251);
+    m_drive.setStatusFramePeriod(8,249);
+    m_drive.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic,239);
+    m_drive.setStatusFramePeriod(StatusFrame.Status_12_Feedback1,233);
+    m_drive.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1,229);
+    m_drive.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus,227);
 
   
 
@@ -121,6 +126,15 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
 
     // set up the turn motor    
     m_turn=new TalonFX(turnID);
+    
+    m_turn.setStatusFramePeriod(21, 20);
+    m_turn.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat,251);
+    m_turn.setStatusFramePeriod(8,249);
+    m_turn.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic,239);
+    m_turn.setStatusFramePeriod(StatusFrame.Status_12_Feedback1,233);
+    m_turn.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1,229);
+    m_turn.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus,227);
+
     m_turn.configFactoryDefault();
     m_turn.setInverted(invD);
     m_turn.setNeutralMode(NeutralMode.Brake);
