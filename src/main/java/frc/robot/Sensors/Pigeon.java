@@ -1,7 +1,9 @@
 package frc.robot.Sensors;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
+import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -11,6 +13,10 @@ public class Pigeon {
     public Pigeon(int ID){
         pigeon = new PigeonIMU(20);
         pigeon.configFactoryDefault();      
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 251);
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.RawStatus_4_Mag, 251);
+
+
     }
 
 // returns a heading angle in the rangle of -180 to +180

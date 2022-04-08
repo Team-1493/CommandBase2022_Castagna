@@ -12,11 +12,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 
 
 
@@ -47,18 +49,18 @@ public class SwerveModuleMDK{
     private double kP_drive=0.0;  //1.19 from characterization;
     private double kF_drive=0.0;   // 1023/20660
     private double kD_drive=0.0;   // 1023/20660
-    private double kS_drive= 0.0399;  // Volts  0.539 from characterization
-    private double kV_drive= 0.260;  
-    private double kA_drive= 0.0;  
+    private double kS_drive= 0.0399; 
+    private double kV_drive= 0.260;  // 
+    private double kA_drive= 0.0;  //
    
 
    // Drive Motor Constants for auto
-   private double kP_driveAuto=0.025;  //1.19 from characterization;
+   private double kP_driveAuto=0.025;  // 0.0514 from SYSID
    private double kF_driveAuto=0.0;   // 1023/20660
    private double kD_driveAuto=0.0;   // 1023/20660
-   private double kS_driveAuto= 0.0399;  // Volts  0.539 from characterization
-   private double kV_driveAuto= 0.240;  //  1/max speed = 1 / 13.7mps 
-   private double kA_driveAuto= 0.033;  
+   private double kS_driveAuto= 0.0399;  //   0.6058/12 = 0.0504 from SYSID
+   private double kV_driveAuto= 0.240;  //  3.0562/12 = 0.254 from SYSID 
+   private double kA_driveAuto= 0.033;  // 0.23728 /12 = 0.024 from SYSID
   
 //  Turn (Swerve) Motor Constants
     private double kP_turn=0.5; //0.5,   0.421 from characterization 
@@ -124,16 +126,28 @@ public SwerveModuleMDK(int driveID, int turnID, int cancoderID, double zeropos,
     e_turn.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
     e_turn.setPosition(e_turn.getAbsolutePosition()-zeropos);
 
+    e_turn.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 231);  
+
     // set up the turn motor    
     m_turn=new TalonFX(turnID);
     
     m_turn.setStatusFramePeriod(21, 20);
-    m_turn.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat,251);
     m_turn.setStatusFramePeriod(8,249);
+
+    m_turn.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat,251);
+    m_turn.setStatusFramePeriod(StatusFrame.Status_12_Feedback1,251);
+    m_turn.setStatusFramePeriod(StatusFrame.Status_7_CommStatus,251);
+
+    m_turn.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 249);
+    m_turn.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer, 249);
+    m_turn.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 249);
     m_turn.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic,239);
     m_turn.setStatusFramePeriod(StatusFrame.Status_12_Feedback1,233);
     m_turn.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1,229);
     m_turn.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus,227);
+    m_turn.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 255);
+    m_turn.setStatusFramePeriod(StatusFrameEnhanced.Status_Brushless_Current, 249);
+    
 
     m_turn.configFactoryDefault();
     m_turn.setInverted(invD);

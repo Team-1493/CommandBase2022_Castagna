@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     LiveWindow.disableAllTelemetry();
     m_robotContainer = new RobotContainer();
+    SmartDashboard.putData(CommandScheduler.getInstance());
     m_robotContainer.reEnableGyro();
     m_autonomousCommand1 = m_robotContainer.getAutonomousCommand1();
     m_autonomousCommand2 = m_robotContainer.getAutonomousCommand2();

@@ -70,10 +70,7 @@ public class LimelightMove extends CommandBase {
     error = Math.abs(angle);
     SmartDashboard.putNumber("limelight angle", angle);
 
-
-
     if(seesTarget ==1 && error<0.5){
-      System.out.println("Flag B");
      shoot.schedule();
     }  
 

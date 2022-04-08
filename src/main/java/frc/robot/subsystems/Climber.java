@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -22,7 +23,10 @@ public class Climber extends SubsystemBase {
     double climb_kP=.05;
     boolean zeroedLeft = false;
     boolean zeroedRight = false;
-    int pos1=0,pos2 = 100000, pos3=169189,pos4=340000;//347507
+    int pos1L=0,pos1R=0;
+    int pos2L = 100000,pos2R = 100000;
+    int pos3L=169189,pos3R=169189;
+    int pos4L=390000,pos4R=340000;
 
 
 public Climber(){
@@ -40,6 +44,32 @@ public Climber(){
     climbMotorR.setStatusFramePeriod(10, 239);
     climbMotorR.setStatusFramePeriod(12, 233);
     climbMotorR.setStatusFramePeriod(14, 229);
+
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 251);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 239);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 255);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus,255);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer,255);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 233);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 229);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer,255);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 227);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 211);
+    climbMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmwareApiStatus,255);
+
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 251);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 239);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 255);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus,255);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer,255);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 233);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 229);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer,255);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 227);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 211);
+    climbMotorR.setStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmwareApiStatus,255);
+
+
 
 //    climbMotorL.setInverted(InvertType.InvertMotorOutput);
     climbMotorR.setInverted(InvertType.InvertMotorOutput);
@@ -152,45 +182,38 @@ public Climber(){
 
 
 public void climbPositionHigher(){
-    int pos=0;
+    int posL=0,posR=0;
 
     if (position<4) position++;
     if (position==3) position=4;
 
-    if (position==1) pos=pos1;
-    if(position==2) pos=pos2;
-    if(position==3) pos=pos3;
-    if(position==4) pos=pos4;
+    if (position==1) {posL=pos1L;posR=pos1R;}
+    if(position==2) {posL=pos2L;posR=pos2R;}
+    if(position==3) {posL=pos3L;posR=pos3R;}
+    if(position==4) {posL=pos4L;posR=pos4R;}
 
     if(zeroedLeft && zeroedRight){
-        climbMotorR.set(ControlMode.Position, pos);
-        climbMotorL.set(ControlMode.Follower,15);
+        climbMotorR.set(ControlMode.Position, posR);
+        climbMotorL.set(ControlMode.Position, posL);
     }
 }
     
 
 public void climbPositionLower(){
-    int pos=0;
+    int posL=0,posR=0;
 
     if (position>1) position--;
 
-    if (position==1) pos=pos1;
-    if(position==2) pos=pos2;
-    if(position==3) pos=pos3;
-    if(position==4) pos=pos4;
+    if (position==1) {posL=pos1L;posR=pos1R;}
+    if(position==2) {posL=pos2L;posR=pos2R;}
+    if(position==3) {posL=pos3L;posR=pos3R;}
+    if(position==4) {posL=pos4L;posR=pos4R;}
 
     if(zeroedLeft && zeroedRight){
-        climbMotorR.set(ControlMode.Position, pos);
-        climbMotorL.set(ControlMode.Follower,15);
+        climbMotorR.set(ControlMode.Position, posR);
+        climbMotorL.set(ControlMode.Position, posL);
     }
 }
-
-    public void climbPosition(int position){
-        if(zeroedLeft && zeroedRight){
-        climbMotorR.set(ControlMode.Position, position);
-        climbMotorL.set(ControlMode.Follower,15);
-        }
-    }
 
 
     public void stop(){
