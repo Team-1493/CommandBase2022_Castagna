@@ -1,4 +1,5 @@
 package frc.robot.commands.IntakeShooter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.IntakeConveyor;
@@ -10,7 +11,7 @@ public class IntakeFirstBallAuto extends CommandBase {
 
   private IntakeConveyor intakeConveyor;
   boolean ballTop=false,ballBottom=false;
-  JoystickButton btn;
+  Timer timer = new Timer();
   
 
   public IntakeFirstBallAuto(IntakeConveyor m_intakeConveyor) {
@@ -21,6 +22,8 @@ public class IntakeFirstBallAuto extends CommandBase {
 
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
   }
 
   @Override

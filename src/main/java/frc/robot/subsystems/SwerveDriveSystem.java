@@ -313,6 +313,10 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     m_odometry.resetPosition(pose, new Rotation2d(heading));
   }
 
+  public void resetOdometryWithHeading(Pose2d pose,double newHeading) {
+    m_odometry.resetPosition(pose, new Rotation2d(newHeading));
+  }
+
 public void resetOdometryToZero(){
   Pose2d zeroPose= new Pose2d(new Translation2d(0,0),new Rotation2d(0));
   m_odometry.resetPosition(zeroPose,new Rotation2d(0));

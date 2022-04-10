@@ -7,7 +7,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 public class IntakeConveyor extends SubsystemBase{
@@ -30,7 +32,7 @@ public class IntakeConveyor extends SubsystemBase{
     
     boolean ballAtTop=irTopSensor.get();
     boolean ballAtBottom=irBottomSensor.get();
-    
+    boolean inAuto=false;
 public IntakeConveyor(){
     intake.setStatusFramePeriod(1, 251);
     intake.setStatusFramePeriod(2, 241);
@@ -129,14 +131,14 @@ public IntakeConveyor(){
     intake.configFactoryDefault();
     intake.setNeutralMode(NeutralMode.Brake);
     intake.configOpenloopRamp(0.2);
-/*    
-    SupplyCurrentLimitConfiguration supplyconfig = 
+    
+/*    SupplyCurrentLimitConfiguration supplyconfig = 
         new SupplyCurrentLimitConfiguration(true,25,30,0.5);
     StatorCurrentLimitConfiguration statorconfig = 
         new StatorCurrentLimitConfiguration(true,25,30,0.5);        
     intake.configStatorCurrentLimit(statorconfig);
     intake.configSupplyCurrentLimit(supplyconfig);
- */   
+  */  
     conveyorU.configFactoryDefault();
     conveyorU.setNeutralMode(NeutralMode.Brake);
     conveyorU.configOpenloopRamp(0.2);
@@ -209,6 +211,7 @@ public boolean ballAtBottom(){
 }
 
 public void toggleIntake(){
+    
     if (solLeft.get()==DoubleSolenoid.Value.kForward){
         solLeft.set(DoubleSolenoid.Value.kReverse);
         solRight.set(DoubleSolenoid.Value.kReverse);
@@ -239,7 +242,7 @@ public void periodic() {
   }
   else {
     led1.set(true);led2.set(true);
-    intakeUp();
+    if (!inAuto) intakeUp();
   }
 
   SmartDashboard.putBoolean("lower IR snesor",ballAtBottom);

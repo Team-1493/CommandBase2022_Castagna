@@ -14,7 +14,7 @@ public class ModuleGenerator{
   private boolean invertTurnEncoders=false;
   
   // Turn Module Offsets in degrees   FR-FL-BR-BL
-  public static double[] turnMotorZeroPos={65.8, 101.7, 27.6, 60.9};
+  public static double[] turnMotorZeroPos={64.7, 105.9, 29.9, 56.9};
 
 
 public ModuleGenerator(){

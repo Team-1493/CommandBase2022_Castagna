@@ -1,5 +1,6 @@
 package frc.robot.Sensors;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
@@ -8,10 +9,10 @@ import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class Pigeon {
-     PigeonIMU pigeon;
+     Pigeon2 pigeon;
 
     public Pigeon(int ID){
-        pigeon = new PigeonIMU(20);
+        pigeon = new Pigeon2(20);
         pigeon.configFactoryDefault();      
         pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 251);
         pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.RawStatus_4_Mag, 251);
@@ -55,7 +56,7 @@ public class Pigeon {
     }
 
     public void calibrate(){
-        pigeon.enterCalibrationMode(CalibrationMode.Temperature);
+//        pigeon.enterCalibrationMode(CalibrationMode.Temperature);
     }
 
 

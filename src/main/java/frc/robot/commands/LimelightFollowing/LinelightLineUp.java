@@ -25,13 +25,17 @@ public class LinelightLineUp extends CommandBase {
   public NetworkTable limelight= inst.getTable("limelight");
   public NetworkTableEntry txEntry = limelight.getEntry("tx");
   public NetworkTableEntry tvEntry = limelight.getEntry("tv");
+  public NetworkTableEntry tyEntry = limelight.getEntry("ty");
   private SwerveDriveSystem sds;
-  private double kP=0.055, kS=0.3;
+  private double kP=0.1, kS=0.3;
   private double error=1;
   private JoystickButton btn;
   private Timer timer = new Timer();
   private boolean onTarget=false;
   private final Supplier<double[]> m_stickState;
+  private double prev_angle = 0,delta_angle=0;
+
+  private double horizantal_kP = 0.5;
   double coarseAngle=0;
 
   public LinelightLineUp(SwerveDriveSystem m_sds,JoystickButton m_btn,
@@ -40,12 +44,13 @@ public class LinelightLineUp extends CommandBase {
       btn=m_btn;
       m_stickState = stickState;
       addRequirements(sds);
-
   }
 
   @Override
   public void initialize() {
+    horizantal_kP = SmartDashboard.getNumber("Horizantal_kP", 0);
     timer.start();
+    
     timer.reset();
     onTarget=false;
   }
@@ -56,28 +61,29 @@ public class LinelightLineUp extends CommandBase {
 
     double seesTarget=tvEntry.getDouble(0);
     double angle=-txEntry.getDouble(0);
-    error = Math.abs(angle);
+    delta_angle=angle-prev_angle;
+    SmartDashboard.putNumber("prev_angle", prev_angle);
+    double verticle_angle = tyEntry.getDouble(0);
+    error = Math.abs(angle+horizantal_kP*delta_angle);
+    SmartDashboard.putNumber("Limelight Vertical Angle", verticle_angle);
     SmartDashboard.putNumber("limelight angle", angle);
-
+    //double dist = verticle_angle*angle_kp;
+    double output;
 
 
     if(seesTarget==1 && error>0.5)
       {
-        double output = angle*kP; //+kS*Math.signum(angle);
+        output = angle*kP; //+kS*Math.signum(angle);
         if (output>90) output=90;
         if (output<-90) output=-90;
         double driverstick[] = m_stickState.get();
         driverstick[2] = output;
         sds.setMotors(driverstick);
         onTarget=false;
+        prev_angle = angle;
       }
   
-    else if(seesTarget==1 && error<= 0.5 && !onTarget)  
-      {
-        timer.reset();
-        onTarget=true;
-        sds.setMotors(m_stickState.get());
-      }
+    
     else{
       sds.setMotors(m_stickState.get());
     }

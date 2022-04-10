@@ -8,6 +8,7 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -120,10 +121,11 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   public final AutoGenerator autoGenerator = new AutoGenerator(m_swervedriveSystem, intake,shooter);
 
   public RobotContainer() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
+    SmartDashboard.putNumber("Horizantal_kP", 0.5);
   }
  
   public void configureButtonBindings() {
@@ -175,7 +177,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   }
 
   public SequentialCommandGroup getAutonomousCommand5() {    
-    return autoGenerator.getAuto5();
+    return autoGenerator.getAuto5v3();
   }
   public SequentialCommandGroup getAutonomousCommand6() {    
     return autoGenerator.getAuto6();

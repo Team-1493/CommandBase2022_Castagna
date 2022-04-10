@@ -38,6 +38,7 @@ public class LimelightMove extends CommandBase {
   private IntakeConveyor intake;
   private Command shoot;
   private Command lineUp;
+  private double Angle_kP = 0.1;
   double coarseAngle=0;
 
   public LimelightMove(SwerveDriveSystem m_sds,JoystickButton m_btn,
@@ -53,9 +54,9 @@ public class LimelightMove extends CommandBase {
 
   @Override
   public void initialize() {
-    timer.start();
-    timer.reset();
-    onTarget=false;
+    //timer.start();
+    //timer.reset();
+    //onTarget=false;
     shoot=new ShootBall(intake,shooter,btn,1);
     lineUp=new LinelightLineUp(sds, btn, m_stickState);
     lineUp.schedule();
@@ -66,14 +67,42 @@ public class LimelightMove extends CommandBase {
   public void execute() {
 
     double seesTarget=tvEntry.getDouble(0);
-    double angle=-txEntry.getDouble(0);
+    double angle= -txEntry.getDouble(0);
     error = Math.abs(angle);
     SmartDashboard.putNumber("limelight angle", angle);
+    
+    
 
     if(seesTarget ==1 && error<0.5){
-     shoot.schedule();
-    }  
+      shoot.schedule();
+      }  
+    
+      
 
+    /*double vel = SmartDashboard.getNumber("Drive Vel", 0);
+    double facing = SmartDashboard.getNumber("Orientation", 0);
+    double xvel = Math.cos(facing)*vel;
+    double angle_offset = Angle_kP*xvel;
+
+
+    if(seesTarget==1 && error>0.5)
+      {
+        double output = angle*kP; //+kS*Math.signum(angle);
+        if (output>90) output=90;
+        if (output<-90) output=-90;
+        double driverstick[] = m_stickState.get();
+        driverstick[2] = output;
+        sds.setMotors(driverstick);
+       
+      }
+  
+    else if(seesTarget ==1 && error<0.5){
+      shoot.schedule();
+      }  
+
+    else{
+      sds.setMotors(m_stickState.get());
+    }*/
     }
    
   

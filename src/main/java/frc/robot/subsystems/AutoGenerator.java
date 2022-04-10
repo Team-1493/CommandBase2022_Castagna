@@ -215,20 +215,20 @@ return commandGroup;
 
   //  returns a command sequence for a 5 ball auto on red side
   public SequentialCommandGroup getAuto5(){    
-    PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b Path1 red", 2 ,2); // 3, 3
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b Path1 red", 1.75 ,1.5); // 2, 2
     Pose2d initialPose1 = traj1.getInitialPose();
     CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
   
-    PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2 red", 3 ,2); // 3, 3.5
+    PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b Path2 red", 1.75 ,1.5); // 2, 2
     CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
   
-    PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4 red", 3 ,2); // 3, 3.5 
+    PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b Path4 red", 1.75 ,1.5); // 2, 2
     CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
   
-    PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5 red", 3 ,2); // 4, 4  
+    PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b Path5 red", 1.75 ,1.5); // 2, 2
     CustomSwerveControllorCommand cscc5=getSwerveControllerCommand(traj5);
   
-    PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6 red", 3 ,2);  // 3, 3 
+    PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6 red", 2 ,2);  // 2, 2 
     CustomSwerveControllorCommand cscc6=getSwerveControllerCommand(traj6);
   
     SequentialCommandGroup commandGroup = 
@@ -264,18 +264,86 @@ return commandGroup;
   return commandGroup;
   }
   
-  public SequentialCommandGroup getAuto5v2(){    
-    PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b v2 Path1", 2 ,2); // 3, 3
+
+  //  returns a command sequence for a 5 ball auto on red side
+  public SequentialCommandGroup getAuto5v3(){    
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("5c Path1", 1 ,1); // 2, 2
     Pose2d initialPose1 = traj1.getInitialPose();
     CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
   
-    PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b v2 Path2", 3 ,2); // 3, 3.5
+    PathPlannerTrajectory traj2  = PathPlanner.loadPath("5c Path2", 1.75 ,1.5); // 2, 2
     CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
   
-    PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b v2 Path3", 3 ,2); // 3, 3.5 
+    PathPlannerTrajectory traj3  = PathPlanner.loadPath("5c Path3", 1.75 ,1.5); // 2, 2
+    CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
+  
+    PathPlannerTrajectory traj4  = PathPlanner.loadPath("5c Path4", 2 ,1.75); // 2, 2
     CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
   
-    PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b v2 Path4", 3 ,2); // 4, 4  
+    PathPlannerTrajectory traj6  = PathPlanner.loadPath("5b Path6 red", 2 ,2);  // 2, 2 
+    CustomSwerveControllorCommand cscc6=getSwerveControllerCommand(traj6);
+  
+    SequentialCommandGroup commandGroup = 
+    new SequentialCommandGroup(
+      new InstantCommand( ()->sds.resetOdometry(initialPose1)),
+      new InstantCommand( ()->resetControllers()),
+      new InstantCommand( ()->intake.toggleIntake()),
+      new InstantCommand( ()->intake.inAuto=true),
+      ((cscc1.andThen(new InstantCommand(()-> sds.allStop()))).andThen
+      ((new WaitCommand(0.1)))).deadlineWith(new IntakeFirstBallAuto(intake)) ,
+      new ShootBallAuto(intake, shooter, 3, 1730),
+  
+      cscc2.deadlineWith(new IntakeFirstBallAuto(intake).withInterrupt(()->intake.ballAtTop)),
+      new InstantCommand(()-> sds.allStop()),
+      new InstantCommand( ()->resetControllers()),
+      new ShootBallAuto(intake, shooter,3, 1775),
+
+
+      
+      ((cscc3.andThen(new InstantCommand(()-> sds.allStop()))).andThen
+      ((new WaitCommand(0.5)))).deadlineWith(new IntakeFirstBallAuto(intake)) ,
+      new InstantCommand( ()->resetControllers()),
+
+      cscc4,
+      new InstantCommand(()-> sds.allStop()),
+      new ShootBallAuto(intake, shooter,3, 1830),
+      new InstantCommand( ()->resetControllers()),
+      new InstantCommand( ()->intake.inAuto=false)
+
+
+
+     /*
+     
+      (cscc4.andThen(new WaitCommand(0.5))).deadlineWith(new IntakeFirstBallAuto(intake)),
+  
+      new InstantCommand( ()->resetControllers()),
+      cscc5,
+      new InstantCommand(()-> sds.allStop()),
+      new ShootBallAuto(intake, shooter,3,1730),
+  
+      cscc6,
+      new InstantCommand(()-> sds.allStop()),
+      new InstantCommand( ()->resetControllers()),
+      new InstantCommand( ()-> sds.setHeading(0))
+      */
+      );
+  return commandGroup;
+  }
+
+
+
+  public SequentialCommandGroup getAuto5v2(){    
+    PathPlannerTrajectory traj1  = PathPlanner.loadPath("5b v2 Path1", 1.75 ,1.5); // 3, 3
+    Pose2d initialPose1 = traj1.getInitialPose();
+    CustomSwerveControllorCommand cscc1=getSwerveControllerCommand(traj1);
+  
+    PathPlannerTrajectory traj2  = PathPlanner.loadPath("5b v2 Path2", 1.75 ,1.5); // 3, 3.5
+    CustomSwerveControllorCommand cscc2=getSwerveControllerCommand(traj2);
+  
+    PathPlannerTrajectory traj4  = PathPlanner.loadPath("5b v2 Path3", 1.75 ,1.5); // 3, 3.5 
+    CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
+  
+    PathPlannerTrajectory traj5  = PathPlanner.loadPath("5b v2 Path4", 1.75 ,1.5); // 4, 4  
     CustomSwerveControllorCommand cscc5=getSwerveControllerCommand(traj5);
 
      // This still needs to be edited to match the 5b v2 paths.
@@ -283,12 +351,12 @@ return commandGroup;
     new SequentialCommandGroup(
       new ResetPose(sds, initialPose1), 
       new InstantCommand( ()->resetControllers()),
-      new InstantCommand(()-> intake.toggleIntake()),
+//      new InstantCommand(()-> intake.toggleIntake()),
       cscc1.deadlineWith( new IntakeFirstBallAuto(intake)) ,
       new InstantCommand(()-> sds.allStop()),         //Intake should stop after picking up the cargo
       new ShootBallAuto(intake, shooter, 3, 1730),    //also stop intake afterward, just in case the cargo was missed
-      new InstantCommand( ()->resetControllers()),
-  
+      new InstantCommand( ()->resetControllers())
+      /*
   
       cscc2.deadlineWith(new IntakeFirstBallAuto(intake).withInterrupt(()->intake.ballAtTop)),
       new InstantCommand( ()->resetControllers()),
@@ -307,6 +375,7 @@ return commandGroup;
       new InstantCommand(()-> sds.allStop()),
       new InstantCommand( ()->resetControllers()),
       new InstantCommand( ()-> sds.setHeading(0))
+      */
       );
   return commandGroup;
   }

@@ -155,7 +155,7 @@ public void shootHigh(){
 //      shooterSpeed=0.96*(-1.8312*x*x+74.388*x+1504.1); 
 //      shooterSpeed = ty * 30;
       shooterSpeed=5293*x+1309;
-      if (shooterSpeed>2700) shooterSpeed=2700;
+      if (shooterSpeed>2725) shooterSpeed=2725;
     }
     else shooterSpeed=0;
     set();
