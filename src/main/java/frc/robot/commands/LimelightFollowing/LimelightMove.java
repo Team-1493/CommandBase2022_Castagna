@@ -57,7 +57,7 @@ public class LimelightMove extends CommandBase {
     //timer.start();
     //timer.reset();
     //onTarget=false;
-    shoot=new ShootBall(intake,shooter,btn,1);
+    shoot=new ShootBall(intake,shooter,btn,4);
     lineUp=new LinelightLineUp(sds, btn, m_stickState);
     lineUp.schedule();
   }

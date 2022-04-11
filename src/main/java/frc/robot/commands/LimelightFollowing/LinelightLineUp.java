@@ -2,6 +2,7 @@ package frc.robot.commands.LimelightFollowing;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -58,13 +59,25 @@ public class LinelightLineUp extends CommandBase {
 
   @Override
   public void execute() {
-
+    sds.getChassisSpeed();
+    double orientation = sds.getPose().getRotation().getDegrees();
     double seesTarget=tvEntry.getDouble(0);
     double angle=-txEntry.getDouble(0);
-    delta_angle=angle-prev_angle;
-    SmartDashboard.putNumber("prev_angle", prev_angle);
+    double Vx = SmartDashboard.getNumber("Chassis xvel", 0); //forward (field oriented)
+    double Vy = SmartDashboard.getNumber("Chassis yvel", 0);// sideways
+    double direction = SmartDashboard.getNumber("Chassis angle", 0);//vel direction
+
+    double Vel = Math.sqrt(Vx*Vx + Vy*Vy);
+    double delta_angle = orientation + angle + direction;
+    Vx = Vel * Math.cos(delta_angle);//forward
+    Vy = Vel * Math.sin(delta_angle);//sideways
+
+
+
+    //delta_angle=angle-prev_angle;
+    //SmartDashboard.putNumber("prev_angle", prev_angle);
     double verticle_angle = tyEntry.getDouble(0);
-    error = Math.abs(angle+horizantal_kP*delta_angle);
+    error = Math.abs(angle+horizantal_kP*Vy);
     SmartDashboard.putNumber("Limelight Vertical Angle", verticle_angle);
     SmartDashboard.putNumber("limelight angle", angle);
     //double dist = verticle_angle*angle_kp;

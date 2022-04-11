@@ -130,7 +130,7 @@ public IntakeConveyor(){
     led3.set(false);
     intake.configFactoryDefault();
     intake.setNeutralMode(NeutralMode.Brake);
-    intake.configOpenloopRamp(0.2);
+    intake.configOpenloopRamp(0);
     
 /*    SupplyCurrentLimitConfiguration supplyconfig = 
         new SupplyCurrentLimitConfiguration(true,25,30,0.5);
@@ -180,6 +180,14 @@ public void reverseIntake(){
 }
 
 
+public void reverseIntakeAndConveyorSlow(){
+    intake.set(ControlMode.PercentOutput,.4);
+    conveyorL.set(ControlMode.PercentOutput,0.25); 
+    conveyorU.set(ControlMode.PercentOutput,-0.25);
+}
+
+
+
 public void reverseIntakeAndConveyor(){
     intake.set(ControlMode.PercentOutput,intakeSpeed);
     conveyorL.set(ControlMode.PercentOutput,0.25); 
@@ -199,6 +207,12 @@ public void stopIntake(){
 
 public void stopLowerConveyor(){
     conveyorL.set(ControlMode.PercentOutput,0); 
+}
+
+public void stopAll(){
+    conveyorL.set(ControlMode.PercentOutput,0);
+    conveyorU.set(ControlMode.PercentOutput,0);
+    intake.set(ControlMode.PercentOutput,0);
 }
 
 

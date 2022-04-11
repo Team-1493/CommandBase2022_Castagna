@@ -249,6 +249,20 @@ public void setModuleStates(SwerveModuleState[] moduleStates){
     }
   }
 
+  public void getChassisSpeed(){
+    ChassisSpeeds chassisSpeeds = m_kinematics.toChassisSpeeds(
+      modules[0].getState(),
+      modules[1].getState(),
+      modules[2].getState(),
+      modules[3].getState()
+    );
+    double xvel = chassisSpeeds.vxMetersPerSecond; //xvel is forward
+    double yvel = chassisSpeeds.vyMetersPerSecond; // yvel is sideways
+    double angle = chassisSpeeds.omegaRadiansPerSecond; //direction? 
+    SmartDashboard.putNumber("Chassis xvel", xvel);
+    SmartDashboard.putNumber("Chassis yvel", yvel);
+    SmartDashboard.putNumber("Chassis angle", angle);
+  }
 
   public void resetGyro() {
     gyro.resetAngle();

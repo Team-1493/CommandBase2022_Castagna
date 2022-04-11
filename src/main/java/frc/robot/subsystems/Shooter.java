@@ -49,6 +49,7 @@ public class Shooter extends SubsystemBase {
   double shooterSpeedLow=850;
   double shooterSpeedManual=1750;
   double shooterSpeed=0;
+  double kP_moveshoot = 0.5;
   
   public boolean atSpeed=false;
   private double shooterTolerance=20;
@@ -144,6 +145,8 @@ shooterGrey.setStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmwareApiStatus
     SmartDashboard.putBoolean("Shooter At Spoeed",atSpeed);
     SmartDashboard.putNumber("shooter tolerance",shooterTolerance);
     SmartDashboard.putNumber("shooter TOTgoal", shooterTOTGoal);
+    
+    SmartDashboard.putNumber("kP_moveshoot", 0.5);
   }
 
 
@@ -155,7 +158,7 @@ public void shootHigh(){
 //      shooterSpeed=0.96*(-1.8312*x*x+74.388*x+1504.1); 
 //      shooterSpeed = ty * 30;
       shooterSpeed=5293*x+1309;
-      if (shooterSpeed>2725) shooterSpeed=2725;
+      if (shooterSpeed>2950) shooterSpeed=2950;
     }
     else shooterSpeed=0;
     set();
@@ -171,6 +174,21 @@ public void shootLow(){
 public void shootManual(){
   shooterSpeedManual=SmartDashboard.getNumber("Manual Shoot Speed", shooterSpeedManual);
   shooterSpeed=shooterSpeedManual;
+  set();
+}
+
+public void shootMoving(){
+  kP_moveshoot = SmartDashboard.getNumber("kP_moveshoot", 0);
+  if(tvEntry.getDouble(1)==1){
+    double ty=tyEntry.getDouble(1);
+    double x=1/(0.001+ty);
+
+//      shooterSpeed=0.96*(-1.8312*x*x+74.388*x+1504.1); 
+//      shooterSpeed = ty * 30;
+    shooterSpeed=5293*x+1309 + kP_moveshoot*SmartDashboard.getNumber("Chassis xvel", 0);
+    if (shooterSpeed>2950) shooterSpeed=2950;
+  }
+  else shooterSpeed=0;
   set();
 }
 

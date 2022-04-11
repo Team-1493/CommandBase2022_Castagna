@@ -31,7 +31,8 @@ public class ShootBall extends CommandBase {
   public void initialize() {
       if(shooterLevel==1) shooter.shootHigh();
       else if(shooterLevel==2) shooter.shootLow();
-      else shooter.shootManual();      
+      else if(shooterLevel==3) shooter.shootManual();
+      else shooter.shootMoving();      
       runUpper=false;
   }
 
