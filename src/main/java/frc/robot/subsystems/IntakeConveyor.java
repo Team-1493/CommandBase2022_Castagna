@@ -32,7 +32,7 @@ public class IntakeConveyor extends SubsystemBase{
     
     boolean ballAtTop=irTopSensor.get();
     boolean ballAtBottom=irBottomSensor.get();
-    boolean inAuto=false;
+    public boolean inAuto=false;
 public IntakeConveyor(){
     intake.setStatusFramePeriod(1, 251);
     intake.setStatusFramePeriod(2, 241);

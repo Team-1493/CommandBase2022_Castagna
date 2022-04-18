@@ -121,7 +121,7 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   public final AutoGenerator autoGenerator = new AutoGenerator(m_swervedriveSystem, intake,shooter);
 
   public RobotContainer() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
     m_swervedriveSystem.setDefaultCommand(m_driveswerve);
     m_tables.setDefaultCommand(m_updatetable);    
     configureButtonBindings();
@@ -141,8 +141,8 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
     btnToggleIntake.whenPressed(new InstantCommand(()-> intake.toggleIntake()));
     
 
-//    btnLimelightAlign.whenPressed(m_limelightAlign); 
-    btnLimelightAlign.whenPressed(m_limelightMove); 
+    btnLimelightAlign.whenPressed(m_limelightAlign); 
+//    btnLimelightAlign.whenPressed(m_limelightMove); 
     btnIntakeBall.whenPressed(m_intakeBall); 
     btnReverseIntake.whenPressed(m_reverseIntake);
     btnShootBallHigh.whenPressed(m_shootBallHigh); 
@@ -173,14 +173,19 @@ public final Command m_shootBallAuto  = new ShootBallAuto(intake, shooter,1);
   }
 
   public SequentialCommandGroup getAutonomousCommand4() {    
-    return autoGenerator.getAuto7();
+    return autoGenerator.getAuto4();
   }
 
   public SequentialCommandGroup getAutonomousCommand5() {    
-    return autoGenerator.getAuto5v2();
+    return autoGenerator.getAuto5();
   }
   public SequentialCommandGroup getAutonomousCommand6() {    
-    return autoGenerator.getAuto5v3();
+    return autoGenerator.getAuto5v2();
+  }
+
+
+  public void setAutoFlag(boolean flag){
+    intake.inAuto=flag;
   }
 
 

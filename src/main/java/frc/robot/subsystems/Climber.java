@@ -26,7 +26,7 @@ public class Climber extends SubsystemBase {
     int pos1L=0,pos1R=0;
     int pos2L = 100000,pos2R = 100000;
     int pos3L=169189,pos3R=169189;
-    int pos4L=390000,pos4R=340000;
+    int pos4L=390000,pos4R=375000;
 
 
 public Climber(){
