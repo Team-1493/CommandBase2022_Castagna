@@ -82,7 +82,10 @@ public class AutoGenerator extends SubsystemBase {
       PathPlannerTrajectory traj3  = PathPlanner.loadPath("6 Path3shootback", 1 ,0.5); // 2, 2
       CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
     
-    
+      PathPlannerTrajectory traj4  = PathPlanner.loadPath("6 Path3shootbackFinish", 1 ,0.5); // 2, 2
+      CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
+
+
       SequentialCommandGroup commandGroup = 
       new SequentialCommandGroup(
         new InstantCommand( ()->sds.resetOdometry(initialPose1)),
@@ -103,7 +106,12 @@ public class AutoGenerator extends SubsystemBase {
         new InstantCommand( ()->intake.reverseIntakeAndConveyorSlow()),
         new WaitCommand(2),
         new InstantCommand( ()->intake.stopAll()),
-        new InstantCommand( ()->intake.inAuto=false)
+        new InstantCommand( ()->intake.inAuto=false),
+
+        cscc4,
+        new InstantCommand(()-> sds.allStop()),
+        new InstantCommand( ()->resetControllers()),
+        new InstantCommand( ()-> sds.resetGyro() )
         );
     return commandGroup;
     }
@@ -147,11 +155,12 @@ public class AutoGenerator extends SubsystemBase {
         new InstantCommand( ()->resetControllers()),
         new InstantCommand(()-> sds.allStop()),
         new ShootBallAuto(intake, shooter,3,1000),
+        new WaitCommand(0.25),
   
         cscc4,
         new InstantCommand(()-> sds.allStop()),
         new InstantCommand( ()->resetControllers()),
-        new InstantCommand( ()-> sds.setHeading(0)),
+        new InstantCommand( ()-> sds.resetGyro() ),
         new InstantCommand( ()->intake.inAuto=false)
 
       );
@@ -172,7 +181,11 @@ public class AutoGenerator extends SubsystemBase {
       PathPlannerTrajectory traj3  = PathPlanner.loadPath("6 Path3", 1 ,0.5); // 2, 2
       CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
     
-    
+      PathPlannerTrajectory traj4  = PathPlanner.loadPath("6 Path3Finsih", 1 ,1); // 2, 2
+      CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
+
+      
+
       SequentialCommandGroup commandGroup = 
       new SequentialCommandGroup(
         new InstantCommand( ()->sds.resetOdometry(initialPose1)),
@@ -193,7 +206,15 @@ public class AutoGenerator extends SubsystemBase {
         new InstantCommand( ()->intake.reverseIntakeAndConveyorSlow()),
         new WaitCommand(2),
         new InstantCommand( ()->intake.stopAll()),
-        new InstantCommand( ()->intake.inAuto=false)
+        new InstantCommand( ()->intake.inAuto=false),
+
+        cscc4,
+        new InstantCommand(()-> sds.allStop()),
+        new InstantCommand( ()->resetControllers()),
+        new InstantCommand( ()-> sds.resetGyro() )
+
+
+
         );
     return commandGroup;
     }
@@ -211,6 +232,10 @@ public class AutoGenerator extends SubsystemBase {
 
   PathPlannerTrajectory traj3  = PathPlanner.loadPath("2b Path3hub", 2 ,2); 
   CustomSwerveControllorCommand cscc3=getSwerveControllerCommand(traj3);
+
+  PathPlannerTrajectory traj4  = PathPlanner.loadPath("2b Path3hubFinish", 2 ,2); 
+  CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
+
 
 
   SequentialCommandGroup commandGroup = 
@@ -236,7 +261,14 @@ public class AutoGenerator extends SubsystemBase {
       new InstantCommand( ()->intake.reverseIntakeAndConveyorSlow() ),
       new InstantCommand( ()->intake.inAuto=false),
       new WaitCommand(2),
-      new InstantCommand( ()->intake.stopAll())
+      new InstantCommand( ()->intake.stopAll()),
+
+      cscc4,
+      new InstantCommand( ()->resetControllers()),
+      new InstantCommand(()-> sds.allStop()),
+      new InstantCommand( ()-> sds.resetGyro() )
+
+
     );
   return commandGroup;
 }
@@ -260,6 +292,10 @@ public class AutoGenerator extends SubsystemBase {
     PathPlannerTrajectory traj4  = PathPlanner.loadPath("5d Path4", 2.5 ,2.5); // 2, 2
     CustomSwerveControllorCommand cscc4=getSwerveControllerCommand(traj4);
   
+    PathPlannerTrajectory traj5  = PathPlanner.loadPath("5d Path4Finsih", 2 ,2); // 2, 2
+    CustomSwerveControllorCommand cscc5=getSwerveControllerCommand(traj5);
+
+
     SequentialCommandGroup commandGroup = 
     new SequentialCommandGroup(
       new InstantCommand( ()->sds.resetOdometry(initialPose1)),
@@ -280,16 +316,24 @@ public class AutoGenerator extends SubsystemBase {
 
       (cscc3.andThen(new InstantCommand(()-> sds.allStop())).andThen(new WaitCommand(0.5))).
         deadlineWith(new IntakeFirstBallAuto(intake)) ,
-
       new InstantCommand( ()->resetControllers()),
-      
       new StartShooter(shooter,1775),
+
       cscc4.deadlineWith(new InstantCommand(()->shooter.shootAtSpeed(2200) )),
       new InstantCommand(()-> sds.allStop()),
       new ShootBallAuto(intake, shooter,3, 1775),
+      new WaitCommand(0.25),
       new InstantCommand( ()->resetControllers()),
-      new InstantCommand( ()->intake.inAuto=false)
+      new InstantCommand( ()->intake.inAuto=false),
+
+      cscc5,
+      new InstantCommand( ()->resetControllers()),
+      new InstantCommand(()-> sds.allStop()),
+      new InstantCommand( ()-> sds.resetGyro() )
+
+      
       );
+
   return commandGroup;
   }
 

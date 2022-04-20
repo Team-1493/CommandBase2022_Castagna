@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Stick extends SubsystemBase{
   private Joystick mystick;
   private boolean turbo=false;
-  private double sfTurbo=1,sfSlow=0.65;
+  private double sfTurbo=1,sfSlow=0.95;
   private double scaleFactor=sfSlow;
   private double omega=0;
   public int stickNum=1;
