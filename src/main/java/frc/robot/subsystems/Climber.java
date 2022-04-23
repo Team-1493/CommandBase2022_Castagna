@@ -18,7 +18,7 @@ public class Climber extends SubsystemBase {
   int leftID=14, rightID=15;
   TalonFX climbMotorL = new TalonFX(leftID);
   TalonFX climbMotorR = new TalonFX(rightID);
-    double currentLimit=35;
+    double currentLimit=38;
     public int position=0;
     double climb_kP=.05;
     boolean zeroedLeft = false;
@@ -84,14 +84,14 @@ public Climber(){
     climbMotorR.setSelectedSensorPosition(0, 0, 25);
 
     climbMotorL.configSupplyCurrentLimit(
-        new SupplyCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+        new SupplyCurrentLimitConfiguration(true,currentLimit,currentLimit,0.5) );
     climbMotorR.configSupplyCurrentLimit(
-        new SupplyCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+        new SupplyCurrentLimitConfiguration(true,currentLimit,currentLimit,0.5) );
 
     climbMotorL.configStatorCurrentLimit(
-        new StatorCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+        new StatorCurrentLimitConfiguration(true,currentLimit,currentLimit,0.5) );
     climbMotorR.configStatorCurrentLimit(
-        new StatorCurrentLimitConfiguration(true,currentLimit,currentLimit,0.1) );
+        new StatorCurrentLimitConfiguration(true,currentLimit,currentLimit,0.5) );
 
     SmartDashboard.putNumber("climb_kP",climb_kP);
     

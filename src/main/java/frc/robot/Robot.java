@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private SequentialCommandGroup m_autonomousCommand1,m_autonomousCommand2,m_autonomousCommand3,m_autonomousCommand4,m_autonomousCommand5,m_autonomousCommand6;
+  private SequentialCommandGroup m_autonomousCommand1,m_autonomousCommand2,m_autonomousCommand3;
+  private SequentialCommandGroup m_autonomousCommand4,m_autonomousCommand5,m_autonomousCommand6,m_autonomousCommand7;
   private SequentialCommandGroup m_autonomousCommand;
   private String m_autoSelected;
   
@@ -44,6 +45,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand4 = m_robotContainer.getAutonomousCommand4();
     m_autonomousCommand5 = m_robotContainer.getAutonomousCommand5();
     m_autonomousCommand6 = m_robotContainer.getAutonomousCommand6();
+    m_autonomousCommand7 = m_robotContainer.getAutonomousCommand7();
   }
 
 
@@ -96,6 +98,9 @@ public class Robot extends TimedRobot {
       case "6":
         m_autonomousCommand=m_autonomousCommand6;
         break;  
+      case "7":
+        m_autonomousCommand=m_autonomousCommand7;
+        break;          
       default:
       m_autonomousCommand=m_autonomousCommand1;
         break;
